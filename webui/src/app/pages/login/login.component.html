@@ -1,0 +1,40 @@
+<div class="login-box">
+  <div class="login-logo">
+    <!--<b>Admin</b>LTE-->
+  </div>
+  <div class="login-box-body">
+    <p class="login-box-msg">登录</p>
+    <app-alert [dismissible]="true"></app-alert>
+    <form name="login" action="" method="post" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
+      <div class="form-group has-feedback" [ngClass]="{ 'has-error': f.submitted && !account.valid }">
+        <input type="text" class="form-control" placeholder="账号" name="account" required [(ngModel)]="model.account" #account="ngModel">
+        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+        <div *ngIf="f.submitted && !account.valid" class="help-block">account is required</div>
+
+      </div>
+      <div class="form-group has-feedback" [ngClass]="{ 'has-error': f.submitted && !password.valid }" >
+        <input type="password" class="form-control" placeholder="密码" name="password" required [(ngModel)]="model.password" #password="ngModel">
+        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+        <div *ngIf="f.submitted && !password.valid" class="help-block">password is required</div>
+      </div>
+      <div class="row">
+        <div class="col-xs-8">
+          <!--<div class="checkbox" appIcheck>-->
+            <!--<label>-->
+              <!--<input type="checkbox"> Remember Me-->
+            <!--</label>-->
+          <!--</div>-->
+        </div>
+        <div class="col-xs-4">
+          <button [disabled]="loading" class="btn btn-primary btn-block btn-flat">
+            <i *ngIf="loading" class="fa fa-spinner fa-spin "></i>
+            登录
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <!--<a href="#">I forgot my password</a><br>-->
+    <!--<a href="register" class="text-center">Register a new membership</a>-->
+  </div>
+</div>

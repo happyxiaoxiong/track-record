@@ -1,0 +1,11 @@
+<ng-template [ngIf]="isOpen">
+  <div *ngIf="message" [class]="'alert alert-' + message.type" role="alert" [ngClass]="{ 'alert-dismissible': dismissible}">
+    <ng-template [ngIf]="dismissible">
+      <button type="button" class="close" aria-label="Close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+        <span class="sr-only">Close</span>
+      </button>
+    </ng-template>
+    {{ message.text }}
+  </div>
+</ng-template>

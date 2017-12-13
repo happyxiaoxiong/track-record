@@ -15,6 +15,10 @@
 	<dependencies>
 		<dependency>
 			<groupId>cn.cnic.trackrecord</groupId>
+			<artifactId>common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>cn.cnic.trackrecord</groupId>
 			<artifactId>model</artifactId>
 		</dependency>
 		<dependency>
@@ -37,11 +41,28 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
 		</dependency>
 	</dependencies>
 

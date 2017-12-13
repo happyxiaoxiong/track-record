@@ -1,0 +1,66 @@
+<!-- Left side column. contains the logo and sidebar -->
+<aside class="main-sidebar">
+  <!-- sidebar: style can be found in sidebar.less -->
+  <section class="sidebar" >
+    <!--&lt;!&ndash; Sidebar user panel (optional) &ndash;&gt;-->
+    <!--<div *ngIf="display_menu_user" class="user-panel">-->
+      <!--<div class="pull-left image" *ngIf="currentUser?.avatarUrl" >-->
+        <!--<img [src]="currentUser?.avatarUrl" class="img-circle"-->
+             <!--[alt]="currentUser?.getName()">-->
+      <!--</div>-->
+      <!--<div class="pull-left info">-->
+        <!--<p>{{currentUser?.getName()}}</p>-->
+        <!--&lt;!&ndash; Status &ndash;&gt;-->
+        <!--<a href="#"><i class="fa fa-circle text-success"></i> Online</a>-->
+      <!--</div>-->
+    <!--</div>-->
+    <!--&lt;!&ndash; search form (Optional) &ndash;&gt;-->
+    <!--<form *ngIf="display_menu_search" action="#" method="get" class="sidebar-form">-->
+      <!--<div class="input-group">-->
+        <!--<input type="text" name="q" class="form-control"-->
+               <!--placeholder="Search..."> <span class="input-group-btn">-->
+					<!--<button type="submit" name="search" id="search-btn"-->
+                  <!--class="btn btn-flat">-->
+						<!--<i class="fa fa-search"></i>-->
+					<!--</button>-->
+				<!--</span>-->
+      <!--</div>-->
+    <!--</form>-->
+    <!-- /.search form -->
+    <!-- Sidebar Menu -->
+    <ul class="sidebar-menu" data-widget="tree">
+      <li class="header">{{menu_title}}</li>
+      <!--<ng-template ngFor let-menuItem [ngForOf]="items" let-mainMenuItemIndex="index">-->
+        <!--<li *ngIf="showMenuItem(menuItem)" routerLinkActive="active" class="treeview">-->
+          <!--<a href="#" [routerLink]="[menuItem.route]" *ngIf="!menuItem.items.length">-->
+            <!--<i class="{{menuItem.icon}}"></i> <span>{{menuItem.displayName}}</span>-->
+          <!--</a>-->
+
+          <!--<a href="javascript:;" *ngIf="menuItem.items.length">-->
+            <!--<i class="{{menuItem.icon}}"></i> <span>{{menuItem.displayName}}</span>-->
+            <!--<span class="pull-right-container" >-->
+                            <!--<i class="fa fa-angle-left pull-right"></i>-->
+                        <!--</span>-->
+          <!--</a>-->
+
+          <!--<ul class="treeview-menu">-->
+            <!--&lt;!&ndash; menu level 2&ndash;&gt;-->
+            <!--<ng-template ngFor let-childMenuItem [ngForOf]="menuItem.items" let-mainMenuItemIndex="index">-->
+              <!--<li routerLinkActive="active"-->
+                  <!--*ngIf="showMenuItem(childMenuItem)"-->
+              <!--&gt;-->
+                <!--<a href="#" [routerLink]="[childMenuItem.route]">-->
+                  <!--<i class="{{childMenuItem.icon}}"></i>-->
+                  <!--{{childMenuItem.displayName}}-->
+                <!--</a>-->
+              <!--</li>-->
+            <!--</ng-template>-->
+            <!--&lt;!&ndash; menu level 2&ndash;&gt;-->
+          <!--</ul>-->
+        <!--</li>-->
+      <!--</ng-template>-->
+    </ul>
+    <!-- /.sidebar-menu -->
+  </section>
+  <!-- /.sidebar -->
+</aside>
