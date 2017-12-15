@@ -1,4 +1,4 @@
-package cn.cnic.trackrecord.common.constant.web;
+package cn.cnic.trackrecord.common.http;
 
 import java.util.HashMap;
 import java.util.Map;

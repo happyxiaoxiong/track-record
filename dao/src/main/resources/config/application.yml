@@ -16,7 +16,6 @@ spring:
 mybatis:
   config-location: classpath:mybatis-config.xml
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: cn.cnic.trackrecord.model
 
 #pagehelper分页插件
 pagehelper:

@@ -2,6 +2,10 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
 <configuration>
     <typeAliases>
-        <typeAlias type="cn.cnic.trackrecord.model.User" alias="User"/>
+        <package name="cn.cnic.trackrecord.model.entity"/>
     </typeAliases>
+    <typeHandlers>
+        <typeHandler handler="cn.cnic.trackrecord.common.handler.ValuedEnumTypeHandler"/>
+        <typeHandler handler="cn.cnic.trackrecord.common.handler.IntDateTypeHandler"/>
+    </typeHandlers>
 </configuration>

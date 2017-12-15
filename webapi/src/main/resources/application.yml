@@ -1,2 +1,15 @@
 logging:
-  level: debug
+  level:
+    org:
+      springframework:
+        web: debug
+spring:
+  jackson:
+    default-property-inclusion: non_empty
+  http:
+    encoding:
+      force: true
+server:
+  tomcat:
+    uri-encoding: utf-8
+

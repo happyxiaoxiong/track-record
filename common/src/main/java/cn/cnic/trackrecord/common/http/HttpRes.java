@@ -1,6 +1,5 @@
 package cn.cnic.trackrecord.common.http;
 
-import cn.cnic.trackrecord.common.constant.web.HttpResCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -8,7 +7,7 @@ import lombok.Data;
 @ApiModel(value = "响应内容")
 @Data
 public class HttpRes<T> {
-    @ApiModelProperty(value = "编码")
+    @ApiModelProperty(value = "编码", required = true)
     private int code;
 
     @ApiModelProperty(value = "信息说明")
@@ -24,10 +23,10 @@ public class HttpRes<T> {
     }
 
     public static <T> HttpRes<T> success() {
-        return create(HttpResCode.SUCCESS, null, null);
+        return create(HttpResCode.SUCCESS, "success", null);
     }
     public static <T> HttpRes<T> success(T data) {
-        return create(HttpResCode.SUCCESS, null, data);
+        return create(HttpResCode.SUCCESS, "success", data);
     }
 
     public static <T> HttpRes<T> success(String message, T data) {
@@ -35,11 +34,11 @@ public class HttpRes<T> {
     }
 
     public static <T> HttpRes<T> fail() {
-        return create(HttpResCode.FAIL, null, null);
+        return create(HttpResCode.FAIL, "fail", null);
     }
 
     public static <T> HttpRes<T> fail(T data) {
-        return create(HttpResCode.FAIL, null, data);
+        return create(HttpResCode.FAIL, "fail", data);
     }
 
     public static <T> HttpRes<T> fail(String message, T data) {
