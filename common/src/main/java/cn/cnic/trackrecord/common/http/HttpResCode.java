@@ -18,7 +18,7 @@ public enum HttpResCode {
         this.code = code;
     }
 
-    public static Map<String, Integer> httpResCodeMap() {
+    public static Map<String, Integer> codeMap() {
         Map<String, Integer> result = new HashMap<>();
         for (HttpResCode code : HttpResCode.values()) {
             result.put(code.name().toLowerCase(), code.getCode());

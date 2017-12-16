@@ -9,6 +9,8 @@ spring:
   http:
     encoding:
       force: true
+      force-request: true
+      force-response: true
 server:
   tomcat:
     uri-encoding: utf-8

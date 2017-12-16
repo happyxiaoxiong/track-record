@@ -52,12 +52,16 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
     protected void successfulAuthentication (HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authToken) throws IOException, ServletException {
         SecurityContextHolder.getContext().setAuthentication(authToken);
         User user = ((TokenUser)authToken.getPrincipal()).getUser();
-        user.setPassword("");
         String token = this.tokenUtil.createTokenForUser(user);
 
         AuthUserVo userVo = new AuthUserVo(token, user);
+        response.setContentType("application/json;charset=UTF-8");
         objectMapper.writeValue(response.getWriter(), HttpRes.success(userVo));
     }
 
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
+        objectMapper.writeValue(response.getWriter(), HttpRes.fail(failed.getMessage(), null));
+    }
 
 }

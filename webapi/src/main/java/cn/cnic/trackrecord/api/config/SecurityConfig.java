@@ -54,20 +54,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 // 允许对于网站静态资源的无授权访问,对于获取token的rest api要允许匿名访问
-                .antMatchers("/", "/swagger-ui/**", "/swagger-resources/**", "/*.html", "/**/*.html" ,
-                        "/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.gif", "/**/*.svg", "/**/*.ico",
-                        "/**/*.ttf", "/**/*.woff", "/v2/api-docs",
-                        Const.API_ROOT + "user/login",
-                        Const.API_ROOT + "user/register",
-                        Const.API_ROOT + "config/**"
+                .antMatchers("/", "/v2/api-docs", "/swagger-ui/**", "/swagger-resources/**", "/*.html", "/**/*.html" ,
+                        "/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.gif", "/**/*.svg", "/**/*.ico", "/**/*.ttf", "/**/*.woff",
+                        Const.API_ROOT + "no_auth/**", Const.API_ROOT + "config"
                 ).permitAll()
                 .and()
                 // Add CORS Filter
                 .addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class)
+                // custom JSON based authentication by POST of {"account":"<account>","password":"<password>"} which sets the token header upon authentication
+                .addFilterBefore(new AuthenticationFilter(Const.API_ROOT + "no_auth/login", HttpMethod.POST.name(), authenticationManager(), tokenUtil, objectMapper), UsernamePasswordAuthenticationFilter.class)
                 // Custom Token based authentication based on the header previously given to the client
                 .addFilterBefore(new VerifyTokenFilter(tokenUtil), UsernamePasswordAuthenticationFilter.class)
-                // custom JSON based authentication by POST of {"username":"<name>","password":"<password>"} which sets the token header upon authentication
-                .addFilterBefore(new AuthenticationFilter(Const.API_ROOT + "user/login", HttpMethod.POST.name(), authenticationManager(), tokenUtil, objectMapper), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .anyRequest().authenticated();
     }

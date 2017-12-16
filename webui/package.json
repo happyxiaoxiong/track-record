@@ -27,6 +27,7 @@
     "core-js": "^2.5.3",
     "icheck": "^1.0.2",
     "rxjs": "^5.5.5",
+    "web-animations-js": "^2.3.1",
     "zone.js": "^0.8.14"
   },
   "devDependencies": {

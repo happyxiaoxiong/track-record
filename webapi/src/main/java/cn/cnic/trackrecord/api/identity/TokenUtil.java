@@ -1,20 +1,28 @@
 package cn.cnic.trackrecord.api.identity;
 
 import cn.cnic.trackrecord.model.entity.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Objects;
 
+@Slf4j
 @Component
 public class TokenUtil {
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private TokenProperties tokenProperties;
@@ -22,7 +30,7 @@ public class TokenUtil {
     public Authentication verifyToken(HttpServletRequest request) {
         final String token = request.getHeader(tokenProperties.getHeader());
 
-        if (StringUtils.hasLength(token) && token.startsWith(tokenProperties.getTokenHead())){
+        if (StringUtils.hasLength(token) && token.startsWith(tokenProperties.getTokenHead()) && token.length() > tokenProperties.getTokenHead().length()){
             final TokenUser user = parseUserFromToken(token.replace(tokenProperties.getTokenHead(),"").trim());
             if (Objects.nonNull(user)) {
                 return  new UserAuthentication(user);
@@ -38,7 +46,12 @@ public class TokenUtil {
                 .parseClaimsJws(token)
                 .getBody();
 
-        User user = (User) claims.get("user");
+        User user = null;
+        try {
+            user = objectMapper.readValue((String)claims.get("user"), User.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return new TokenUser(user);
     }
 
@@ -47,12 +60,18 @@ public class TokenUtil {
     }
 
     public String createTokenForUser(User user) {
-        return Jwts.builder()
-                .setExpiration(new Date(System.currentTimeMillis() + tokenProperties.getExpiration()))
-                .setSubject(user.getAccount())
-                .claim("user", user)
-                .signWith(SignatureAlgorithm.HS256, tokenProperties.getSecret())
-                .compact();
+        user.setPassword("");
+        try {
+            return Jwts.builder()
+                    .setExpiration(new Date(System.currentTimeMillis() + tokenProperties.getExpiration()))
+                    .setSubject(user.getAccount())
+                    .claim("user", objectMapper.writeValueAsString(user))
+                    .signWith(SignatureAlgorithm.HS256, tokenProperties.getSecret())
+                    .compact();
+        } catch (JsonProcessingException e) {
+            log.debug(e.getMessage());
+        }
+        return "";
     }
 }
 

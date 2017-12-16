@@ -1,15 +1,17 @@
 package cn.cnic.trackrecord.api.identity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties(prefix = "jwt")
-@Data
+@Setter
+@Getter
 public class TokenProperties {
     private String header = "Authorization";
-    private String secret = "track_record";
-    private long expiration = 20 * 60 * 1000;
-    private String tokenHead = "tr_secret";
+    private String secret = "tr_secret";
+    private long expiration = 2 * 60 * 60 * 1000;
+    private String tokenHead = "track_record";
 }

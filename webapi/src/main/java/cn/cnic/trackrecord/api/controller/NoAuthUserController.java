@@ -18,10 +18,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-@Api(value = "用户api", description = "用户api", tags = "User")
+@Api(value = "未授权用户api", description = "未授权用户api", tags = "User")
 @RestController
-@RequestMapping(value = Const.API_ROOT + "user")
-public class UserController {
+@RequestMapping(value = Const.API_ROOT + "no_auth")
+public class NoAuthUserController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -41,7 +41,6 @@ public class UserController {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(login.getAccount(), login.getPassword());
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         User user = ((TokenUser) authentication.getPrincipal()).getUser();
-        user.setPassword("");
         String token = tokenUtil.createTokenForUser(user);
         AuthUserVo userVo = new AuthUserVo(token, user);
         return HttpRes.success(userVo);
