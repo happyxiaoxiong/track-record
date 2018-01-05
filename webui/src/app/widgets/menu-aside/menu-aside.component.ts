@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
+import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {NavigationEnd, Router} from '@angular/router';
 
 @Component({
   selector: 'app-menu-aside',
@@ -7,14 +7,23 @@ import {Router} from '@angular/router';
   styleUrls: ['./menu-aside.component.css']
 })
 export class MenuAsideComponent implements OnInit {
-  public currentUrl: string;
-  @Input() items: Array<any> = [];
-  @Input() menu_title = '导航';
-  constructor() {
-    // this.router.events.subscribe((evt: any) => this.currentUrl = evt.url);
+
+  private lastLi: any;
+  currentUrl: string;
+  @Input() menuItems: Array<any> = [];
+  @Input() menuTitle = '导航';
+  constructor(private router: Router) {
+    this.router.events.subscribe((evt: any) => {
+      if (evt instanceof NavigationEnd) {
+        this.currentUrl = evt.url;
+        if (this.lastLi) {
+          this.lastLi.removeClass('active');
+        }
+        this.lastLi = $(`[href='${this.currentUrl}']`).parents('li').addClass('active');
+      }
+    });
   }
 
   ngOnInit() {
   }
-
 }

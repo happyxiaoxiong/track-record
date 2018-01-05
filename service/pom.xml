@@ -16,15 +16,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>cn.cnic.trackrecord</groupId>
-			<artifactId>model</artifactId>
+			<artifactId>data</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>cn.cnic.trackrecord</groupId>
 			<artifactId>dao</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
 		</dependency>
 	</dependencies>
 

@@ -5,13 +5,29 @@ logging:
         web: debug
 spring:
   jackson:
-    default-property-inclusion: non_empty
+    default-property-inclusion: non_null
   http:
     encoding:
       force: true
       force-request: true
       force-response: true
+    multipart:
+      max-file-size: 10MB
+      file-size-threshold: 5MB
 server:
   tomcat:
     uri-encoding: utf-8
+
+track:
+  file:
+    upload-path: D:/track_file
+    unzip-path: D:/track_file
+
+hadoop:
+  conf:
+    uri: hdfs://192.168.224.176:9000/
+    track-path: gpstracks
+    user: root
+    home: D:/hadoop-2.7.1/
+
 

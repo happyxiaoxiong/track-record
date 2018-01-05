@@ -1,6 +1,6 @@
 package cn.cnic.trackrecord.dao;
 
-import cn.cnic.trackrecord.model.entity.User;
+import cn.cnic.trackrecord.data.entity.User;
 import org.apache.ibatis.annotations.Param;
 
 public interface UserDao {

@@ -4,14 +4,23 @@
   <!-- Header Navbar: style can be found in header.less -->
   <nav class="navbar navbar-static-top">
     <!-- Sidebar toggle button data-toggle="offcanvas"-->
-    <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+    <a class="sidebar-toggle" data-toggle="push-menu" role="button">
       <span class="sr-only">Toggle navigation</span>
     </a>
 
     <div class="navbar-custom-menu">
       <ul class="nav navbar-nav">
-        <!--<ng-container *ngFor="let widget of widgets">-->
-        <!--</ng-container>-->
+        <li>
+          <a class="link">
+            <i class="fa fa-user"></i>
+            <span>{{username}}</span>
+          </a>
+        </li>
+        <li *ngIf="display_logout">
+          <a href="#" (click)="logout()">
+            <i class="fa fa-power-off"></i>
+          </a>
+        </li>
       </ul>
     </div>
   </nav>

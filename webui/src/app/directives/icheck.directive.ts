@@ -1,12 +1,10 @@
 import {AfterViewInit, Directive, ElementRef, Renderer2} from '@angular/core';
-import 'iCheck';
-declare let $: any;
 
 @Directive({
   selector: '[appIcheck]'
 })
 export class IcheckDirective implements AfterViewInit {
-
+  $iCheck: any;
   constructor(private el: ElementRef, private ren2: Renderer2) { }
 
   ngAfterViewInit() {

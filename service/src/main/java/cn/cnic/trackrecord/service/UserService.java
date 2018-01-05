@@ -1,6 +1,6 @@
 package cn.cnic.trackrecord.service;
 
-import cn.cnic.trackrecord.model.entity.User;
+import cn.cnic.trackrecord.data.entity.User;
 
 public interface UserService {
     int add(User user);

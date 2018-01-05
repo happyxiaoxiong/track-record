@@ -2,7 +2,7 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
 <configuration>
     <typeAliases>
-        <package name="cn.cnic.trackrecord.model.entity"/>
+        <package name="cn.cnic.trackrecord.data.entity"/>
     </typeAliases>
     <typeHandlers>
         <typeHandler handler="cn.cnic.trackrecord.common.handler.ValuedEnumTypeHandler"/>

@@ -8,6 +8,11 @@ import {BreadcrumbComponent} from '../../widgets/breadcrumb/breadcrumb.component
 import {LogoComponent} from '../../widgets/logo/logo.component';
 import {HeaderComponent} from '../../widgets/header/header.component';
 import {FooterComponent} from '../../widgets/footer/footer.component';
+import {ShareModule} from '../../share.module';
+import { IndexComponent } from './index/index.component';
+import { RealTimePositionComponent } from './real-time-position/real-time-position.component';
+import { FileUploadComponent } from './file-upload/file-upload.component';
+import { HistoryTrackComponent } from './history-track/history-track.component';
 
 @NgModule({
   declarations: [
@@ -17,9 +22,14 @@ import {FooterComponent} from '../../widgets/footer/footer.component';
     LogoComponent,
     BreadcrumbComponent,
     MenuAsideComponent,
+    IndexComponent,
+    RealTimePositionComponent,
+    FileUploadComponent,
+    HistoryTrackComponent,
   ],
   imports: [
     CommonModule,
+    ShareModule,
     RouterModule.forChild(homeRoutes)
   ],
   exports: [RouterModule],

@@ -9,8 +9,7 @@
       "outDir": "dist",
       "assets": [
         "assets",
-        "favicon.ico",
-        { "glob": "**/*", "input": "../node_modules/icheck/skins", "output": "./assets/icheck/skins" }
+        "favicon.ico"
       ],
       "index": "index.html",
       "main": "main.ts",
@@ -25,7 +24,14 @@
       "scripts": [
         "../node_modules/jquery/dist/jquery.js",
         "../node_modules/bootstrap/dist/js/bootstrap.js",
-        "../node_modules/admin-lte/dist/js/adminlte.js"
+        "../public/jquery-ui/jquery-ui.js",
+        "../node_modules/icheck/icheck.js",
+        "../node_modules/admin-lte/dist/js/adminlte.js",
+        "../node_modules/plupload/js/plupload.full.min.js",
+        "../node_modules/plupload/js/jquery.ui.plupload/jquery.ui.plupload.js",
+        "../public/plupload/zh_CN.js",
+        "../node_modules/datatables.net/js/jquery.dataTables.js",
+        "../node_modules/datatables.net-bs/js/dataTables.bootstrap.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

@@ -2,6 +2,7 @@ package cn.cnic.trackrecord.common.handler;
 
 import cn.cnic.trackrecord.common.enumeration.Gender;
 import cn.cnic.trackrecord.common.enumeration.Role;
+import cn.cnic.trackrecord.common.enumeration.TrackFileState;
 import cn.cnic.trackrecord.common.enumeration.ValuedEnum;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
@@ -13,9 +14,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+import cn.cnic.trackrecord.common.util.Objects;
 
-@MappedTypes(value = { Gender.class, Role.class })
+@MappedTypes(value = { Gender.class, Role.class, TrackFileState.class})
 public class ValuedEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
     private final Map<Integer, E> map = new HashMap<>();
 

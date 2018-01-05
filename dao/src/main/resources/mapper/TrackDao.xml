@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cnic.trackrecord.dao.TrackDao">
+    <resultMap id="baseMap" type="Track">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="name" column="name"/>
+        <result property="startTime" column="starttime"/>
+        <result property="endTime" column="endtime"/>
+        <result property="length" column="length"/>
+        <result property="maxAltitude" column="maxaltitude"/>
+        <result property="keySitesList" column="keysiteslist"/>
+        <result property="path" column="path"/>
+        <result property="fileSize" column="filesize"/>
+        <result property="md5" column="md5"/>
+        <result property="uploadTime" column="upload_time"/>
+        <result property="annotation" column="annotation"/>
+    </resultMap>
+
+    <sql id="table">`track`</sql>
+
+    <insert id="addAndGetId" parameterType="Track" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO <include refid="table"/> (user_id, `name`, starttime, endtime, `length`, maxaltitude, keysiteslist, path, filesize, md5, upload_time, annotation)
+        VALUES (#{userId}, #{name}, #{startTime}, #{endTime}, #{length}, #{maxAltitude}, #{keySitesList}, #{path}, #{fileSize}, #{md5}, #{uploadTime}, #{annotation})
+    </insert>
+
+    <select id="existByMd5AndFileSize" resultType="boolean">
+        SELECT COUNT(id) FROM <include refid="table"/> WHERE filesize=#{fileSize} AND md5=#{md5}
+    </select>
+</mapper>

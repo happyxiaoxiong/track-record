@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cnic.trackrecord.dao.TrackPointDao">
+    <resultMap id="baseMap" type="TrackPoint">
+        <id property="id" column="id"/>
+        <result property="trackId" column="track_id"/>
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+        <result property="altitude" column="altitude"/>
+    </resultMap>
+
+    <sql id="table">`track_point`</sql>
+
+    <insert id="addAll" parameterType="collection">
+        INSERT INTO <include refid="table"/> (track_id, longitude, latitude, altitude)
+        VALUES
+        <foreach collection="list" item="it" index="index" separator=",">
+            (#{it.trackId}, #{it.longitude}, #{it.latitude}, #{it.altitude})
+        </foreach>
+    </insert>
+</mapper>

@@ -3,20 +3,19 @@ import {HttpClient} from '@angular/common/http';
 import 'rxjs/add/operator/map';
 import {AppConfig, server} from '../app.config';
 import {HttpRes} from '../models/http-res';
-import {Observable} from 'rxjs/Observable';
-import {Subject} from 'rxjs/Subject';
-import {isBoolean, isNullOrUndefined, isString} from "util";
-import {uniqueByName} from "@angular/language-service/src/utils";
+import {isString} from 'util';
+import {Router} from '@angular/router';
 
 @Injectable()
 export class UserService {
+  private hasLogin = false;
   private readonly userKey = 'user';
   private storage: Storage = sessionStorage;
 
-  constructor(private http: HttpClient, private appConfig: AppConfig) { }
+  constructor(private http: HttpClient, private appConfig: AppConfig, private router: Router) { }
 
   login(account: string, password: string, success: Function, fail: Function): void {
-    this.http.post(server.apis.no_auth.login, JSON.stringify({
+    this.http.post(server.apis.noAuth.login, JSON.stringify({
       account: account,
       password: password}))
       .subscribe((res: HttpRes) => {
@@ -33,22 +32,35 @@ export class UserService {
 
   logout() {
     this.removeUser();
+    this.router.navigate(['login']);
+  }
+
+  timeout() {
+    this.logout();
   }
 
   isLogin(): boolean {
-    return isString(this.getUser().token);
+    return this.hasLogin || isString(this.getUser().token);
   }
 
-  getToken(): string {
-    return this.getUser().token || '';
+  getTokenHeader(): any {
+    const header = {};
+    const token = this.appConfig.getTokenConfig();
+    header[`${token.header}`] = `${token.head}${this.getToken()}`;
+    return header;
   }
 
+  getUsername(): string {
+    return this.getUser().name || '';
+  }
   private setUser(user: any) {
     this.storage.setItem(this.userKey, JSON.stringify(user));
+    this.hasLogin = true;
   }
 
   private removeUser() {
     this.storage.removeItem(this.userKey);
+    this.hasLogin = false;
   }
 
   private getUser(): any {
@@ -57,5 +69,9 @@ export class UserService {
       return JSON.parse(userStr);
     }
     return {};
+  }
+
+  private getToken(): string {
+    return this.getUser().token || '';
   }
 }

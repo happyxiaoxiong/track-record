@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @JsonDeserialize(using = LongDateDeserializer.class)
 @JsonSerialize(using = LongDateSerializer.class)
@@ -27,12 +28,19 @@ public class LongDate extends IntDate {
     }
 
     public static LongDate from(String longDateStr) {
-        LongDate intLongDate = new LongDate();
+        LongDate intLongDate = new LongDate(0);
         try {
-            intLongDate.setValue(dateToInt(dateFormat.parse(longDateStr)));
-        } catch (ParseException e) {
-            intLongDate.setValue(0);
+            intLongDate.setValue(toInt(dateFormat.parse(longDateStr).getTime()));
+        } catch (ParseException ignored) {
         }
         return intLongDate;
+    }
+
+    public static LongDate from(long timeMillis) {
+        return new LongDate(toInt(timeMillis));
+    }
+
+    public static LongDate from(Date date) {
+        return new LongDate(toInt(date.getTime()));
     }
 }

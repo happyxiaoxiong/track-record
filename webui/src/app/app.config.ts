@@ -1,36 +1,43 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
 import 'rxjs/add/observable/of';
-import {HttpRes} from './models/http-res';
+import {HttpClient} from '@angular/common/http';
 
-declare let $: any;
 const SERVER_ROOT_PATH = '/api/v1/';
 
 function  urlJoin(...params: string[]) {
   return SERVER_ROOT_PATH + params.join('/');
 }
 
-const no_auth = 'no_auth';
+const noAuth = 'no_auth';
 
 export const server = {
   rootPath: SERVER_ROOT_PATH,
   apis: {
-    no_auth: {
-      login: urlJoin(no_auth, 'login'),
-      register: urlJoin(no_auth, 'register'),
-      exist: urlJoin(no_auth, 'exist')
+    noAuth: {
+      login: urlJoin(noAuth, 'login'),
+      register: urlJoin(noAuth, 'register'),
+      exist: urlJoin(noAuth, 'exist')
     },
-    config: urlJoin('config')
+    config: urlJoin('config'),
+    track: {
+      upload: urlJoin('track', 'file/upload'),
+      uploadState: urlJoin('track', 'file/upload/state')
+    }
   }
 };
 
 @Injectable()
 export class AppConfig {
   private config: any = null;
-  constructor() {
+  constructor(private http: HttpClient) {
     const me = this;
-    $.get(server.apis.config, function (res) {
-      me.config = res.data;
+    $.ajax({
+      type : 'get',
+      url : server.apis.config,
+      async : false,
+      success : function(data){
+        me.config = data.data;
+      }
     });
     // this.http.get<HttpRes>(server.apis.config).subscribe((res) => {
     //   this.config = res.data;
@@ -41,7 +48,7 @@ export class AppConfig {
     return this.config.http_res_code;
   }
 
-  getToken(): any {
+  getTokenConfig(): any {
     return this.config.token;
   }
 }

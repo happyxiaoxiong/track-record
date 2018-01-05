@@ -5,7 +5,7 @@ import cn.cnic.trackrecord.common.date.ShortDate;
 import cn.cnic.trackrecord.common.enumeration.Gender;
 import cn.cnic.trackrecord.common.enumeration.Role;
 import cn.cnic.trackrecord.dao.UserDao;
-import cn.cnic.trackrecord.model.entity.User;
+import cn.cnic.trackrecord.data.entity.User;
 import cn.cnic.trackrecord.service.UserService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-header',
@@ -6,12 +7,16 @@ import {Component, Input, OnInit} from '@angular/core';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-
-  @Input() public widgets = [];
-
-  constructor() { }
+  @Input() display_logout = true;
+  username: string;
+  constructor(private userSer: UserService) {
+    this.username = userSer.getUsername();
+  }
 
   ngOnInit() {
   }
 
+  logout() {
+    this.userSer.logout();
+  }
 }

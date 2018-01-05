@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.cnic.trackrecord.dao.UserDao">
-    <resultMap id="userResult" type="User">
+    <resultMap id="baseMap" type="User">
         <id property="id" column="id"/>
         <result property="account" column="account"/>
         <result property="password" column="password"/>
@@ -28,10 +28,10 @@
         county, township, add_time, login_time, role, visit_count) VALUES (#{account}, #{password}, #{name}, #{gender}, #{birthday}, #{email},
         #{organization}, #{country}, #{province}, #{city}, #{county}, #{township}, #{addTime}, #{loginTime}, #{role}, 0)
     </insert>
-    <select id="getByAccountAndPassword" resultMap="userResult">
+    <select id="getByAccountAndPassword" resultMap="baseMap">
         SELECT *  FROM <include refid="table"/> WHERE account=#{account} AND password=#{password}
     </select>
-    <select id="getByAccount" resultMap="userResult">
+    <select id="getByAccount" resultMap="baseMap">
         SELECT *  FROM <include refid="table"/> WHERE account=#{account}
     </select>
     <select id="existByAccount" resultType="boolean">

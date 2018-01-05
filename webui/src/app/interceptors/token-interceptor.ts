@@ -1,38 +1,33 @@
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
-import {Injectable, Injector, OnInit} from '@angular/core';
+import {Injectable, Injector} from '@angular/core';
 import 'rxjs/add/operator/catch';
-import {Router} from '@angular/router';
 import {UserService} from '../services/user.service';
-import {AppConfig, server} from '../app.config';
+import {NGXLogger} from 'ngx-logger';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  private router: Router;
-  private  userService: UserService;
-  private  appConfig: AppConfig;
+  private  userSer: UserService;
+  private log: NGXLogger;
+
   constructor(
-    private injector: Injector
+    private injector: Injector,
   ) {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (this.router == null) {
-      this.router = this.injector.get(Router);
-      this.userService = this.injector.get(UserService);
-      this.appConfig = this.injector.get(AppConfig);
+    if (this.userSer == null) {
+      this.userSer = this.injector.get(UserService);
+      this.log = this.injector.get(NGXLogger);
     }
-    const headers = {};
-    const token = this.appConfig.getToken();
-    headers[`${token.header}`] = `${token.head} ${this.userService.getToken()}`;
     req = req.clone({
-      setHeaders: headers
+      setHeaders: this.userSer.getTokenHeader()
     });
     const me = this;
     return next.handle(req).catch(function(error: any){
+      me.log.debug('error', error.status);
       if (error.status === 440) {// 会话超时
-        me.userService.logout();
-        me.router.navigate(['/login']);
+        me.userSer.timeout();
       } else {
         return Observable.throw(error || 'Server error');
       }
