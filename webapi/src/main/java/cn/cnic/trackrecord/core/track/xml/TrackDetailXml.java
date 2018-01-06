@@ -1,7 +1,7 @@
 package cn.cnic.trackrecord.core.track.xml;
 
 import cn.cnic.trackrecord.common.date.LongDate;
-import cn.cnic.trackrecord.common.xml.SaxHandler;
+import cn.cnic.trackrecord.plugin.sax.SaxHandler;
 import cn.cnic.trackrecord.data.entity.Track;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.xml.sax.SAXException;

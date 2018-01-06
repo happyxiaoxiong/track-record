@@ -9,6 +9,7 @@ function  urlJoin(...params: string[]) {
 }
 
 const noAuth = 'no_auth';
+const track = 'track';
 
 export const server = {
   rootPath: SERVER_ROOT_PATH,
@@ -20,8 +21,9 @@ export const server = {
     },
     config: urlJoin('config'),
     track: {
-      upload: urlJoin('track', 'file/upload'),
-      uploadState: urlJoin('track', 'file/upload/state')
+      upload: urlJoin(track, 'file/upload'),
+      uploadState: urlJoin(track, 'file/upload/state'),
+      search: urlJoin(track, 'search')
     }
   }
 };

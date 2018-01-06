@@ -2,12 +2,11 @@ package cn.cnic.trackrecord.web.config;
 
 import cn.cnic.trackrecord.common.formatter.LongDateFormatter;
 import cn.cnic.trackrecord.common.formatter.ShortDateFormatter;
-import cn.cnic.trackrecord.common.hadoop.HadoopBean;
 import cn.cnic.trackrecord.common.http.plupupload.PluploadBean;
-import cn.cnic.trackrecord.common.kmz.UnzipBean;
-import cn.cnic.trackrecord.web.config.property.HadoopConfProperties;
+import cn.cnic.trackrecord.plugin.ant.UnzipBean;
+import cn.cnic.trackrecord.plugin.hadoop.HadoopBean;
+import cn.cnic.trackrecord.plugin.hadoop.HadoopProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ApplicationEventMulticaster;
@@ -21,7 +20,7 @@ import java.util.concurrent.Executors;
 @Configuration
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Autowired
-    private HadoopConfProperties hadoopConfProperties;
+    private HadoopProperties hadoopConfProperties;
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
@@ -42,7 +41,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public HadoopBean hadoopBean() {
-        return new HadoopBean(hadoopConfProperties.getHadoopConf());
+        return new HadoopBean();
     }
 
     @Bean

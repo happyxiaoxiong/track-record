@@ -8,6 +8,7 @@ import cn.cnic.trackrecord.common.http.plupupload.PluploadBean;
 import cn.cnic.trackrecord.common.http.plupupload.PluploadCallback;
 import cn.cnic.trackrecord.common.util.Objects;
 import cn.cnic.trackrecord.data.entity.TrackFile;
+import cn.cnic.trackrecord.data.vo.TrackSearchParams;
 import cn.cnic.trackrecord.service.TrackFileService;
 import cn.cnic.trackrecord.service.TrackService;
 import cn.cnic.trackrecord.web.Const;
@@ -18,6 +19,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -75,6 +77,12 @@ public class TrackController {
     public HttpRes<List<TrackFile>> uploadTrackFileState() {
         LongDate startTime = LongDate.from(DateUtils.addDays(new Date(), -7));
         return HttpRes.success(trackFileService.getByStartUploadTimeAndUserId(startTime, userDetailsService.getLoginUser().getId()));
+    }
+
+    @ApiOperation(value = "轨迹搜索")
+    public HttpRes<List<TrackFile>> search(@RequestBody TrackSearchParams params) {
+        // TODO page
+        return HttpRes.success(trackService.getByTrackSearchParams(params));
     }
 
 

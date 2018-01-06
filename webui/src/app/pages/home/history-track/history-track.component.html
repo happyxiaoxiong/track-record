@@ -1,3 +1,22 @@
-<p>
-  history-track works!
-</p>
+<div class="nav-tabs-custom">
+  <!-- Tabs within a box -->
+  <ul class="nav nav-tabs pull-right">
+    <li class="">
+      <a href="#revenue-chart" data-toggle="tab" aria-expanded="false">
+        <i class="fa fa-map-marker"></i>地图
+        <small class="label pull-right bg-green">{{mapCount}}
+          <i class="fa fa-remove" title="清除"></i>
+        </small>
+      </a>
+    </li>
+    <li class=""><a href="#revenue-chart" data-toggle="tab" aria-expanded="false"><i class="fa fa-bar-chart"></i>图表</a></li>
+    <li class="active"><a href="#track-list" data-toggle="tab" aria-expanded="true"><i class="fa fa-list-alt"></i>列表</a></li>
+    <!--<li class="pull-left header"><i class="fa fa-inbox"></i> Sales</li>-->
+  </ul>
+  <div class="tab-content no-padding">
+    <div id="track-list">
+      <table id="track-table" class="table table-bordered table-hover dataTable">
+      </table>
+    </div>
+  </div>
+</div>

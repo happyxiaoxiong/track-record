@@ -6,10 +6,9 @@ import {NavigationEnd, Router} from '@angular/router';
   templateUrl: './menu-aside.component.html',
   styleUrls: ['./menu-aside.component.css']
 })
-export class MenuAsideComponent implements OnInit {
-
+export class MenuAsideComponent implements OnInit, AfterViewInit {
   private lastLi: any;
-  currentUrl: string;
+  private currentUrl: string;
   @Input() menuItems: Array<any> = [];
   @Input() menuTitle = '导航';
   constructor(private router: Router) {
@@ -25,5 +24,9 @@ export class MenuAsideComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngAfterViewInit(): void {
+    $('.sidebar-menu').tree();
   }
 }

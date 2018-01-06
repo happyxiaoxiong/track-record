@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthUserVo {
+public class AuthUser {
     @ApiModelProperty("token")
     private String token;
     @ApiModelProperty("用户信息")

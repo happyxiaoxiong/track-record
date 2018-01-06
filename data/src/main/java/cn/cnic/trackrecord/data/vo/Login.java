@@ -6,7 +6,7 @@ import lombok.Data;
 
 @ApiModel("登录参数")
 @Data
-public class LoginVo {
+public class Login {
     @ApiModelProperty(value = "账号", required = true)
     private String account;
     @ApiModelProperty(value = "密码", required = true)

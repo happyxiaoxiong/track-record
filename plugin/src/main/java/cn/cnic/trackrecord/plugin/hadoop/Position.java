@@ -1,4 +1,4 @@
-package cn.cnic.trackrecord.common.hadoop;
+package cn.cnic.trackrecord.plugin.hadoop;
 
 import lombok.Getter;
 import lombok.Setter;

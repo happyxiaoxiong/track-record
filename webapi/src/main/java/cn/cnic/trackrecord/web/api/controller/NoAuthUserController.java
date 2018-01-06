@@ -6,8 +6,8 @@ import cn.cnic.trackrecord.web.Const;
 import cn.cnic.trackrecord.common.http.HttpRes;
 import cn.cnic.trackrecord.data.entity.User;
 import cn.cnic.trackrecord.service.UserService;
-import cn.cnic.trackrecord.data.vo.AuthUserVo;
-import cn.cnic.trackrecord.data.vo.LoginVo;
+import cn.cnic.trackrecord.data.vo.AuthUser;
+import cn.cnic.trackrecord.data.vo.Login;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -37,13 +37,13 @@ public class NoAuthUserController {
 
     @ApiOperation(value = "用户登录授权")
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public HttpRes<AuthUserVo> login(@RequestBody LoginVo login) {
+    public HttpRes<AuthUser> login(@RequestBody Login login) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(login.getAccount(), login.getPassword());
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         User user = ((TokenUser) authentication.getPrincipal()).getUser();
         String token = tokenUtil.createTokenForUser(user);
         user.setPassword(null);
-        AuthUserVo userVo = new AuthUserVo(token, user);
+        AuthUser userVo = new AuthUser(token, user);
         return HttpRes.success(userVo);
     }
 

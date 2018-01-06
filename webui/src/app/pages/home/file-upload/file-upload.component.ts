@@ -22,16 +22,16 @@ import 'rxjs/add/operator/takeWhile';
   <p></p>
   <div class="row">
     <div class="col-sm-12">
-      <div class="box box-warning box-solid">
+      <div id="track-file-state-box" class="box box-warning box-solid">
         <div class="box-header with-border">
           <h3 class="box-title">最近一周轨迹上传记录</h3>
           <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            <button type="button" class="btn btn-box-tool"><i class="fa fa-minus"></i>
             </button>
           </div>
         </div>
         <div id="dtWrapper" class="box-body">
-          <table id="dt" class="table table-bordered table-hover dataTable">
+          <table id="track-file-table" class="table table-bordered table-hover dataTable">
           </table>
         </div>
       </div>
@@ -42,7 +42,7 @@ import 'rxjs/add/operator/takeWhile';
 export class FileUploadComponent implements AfterViewInit, OnDestroy {
   private uploadId = 'uploader';
   private rows = [];
-  private dt: any;
+  private $trackFileTable: any;
   private alive = false;
   private interval = 5000;
 
@@ -96,7 +96,11 @@ export class FileUploadComponent implements AfterViewInit, OnDestroy {
       init: {
         FileUploaded: function(up, file, info) {
           // Called when file has finished uploading
-          me.startSyncDt();
+          if (me.appConfig.getHttpResCode().success === JSON.parse(info.response).code) {
+            me.startSyncDt();
+          } else {
+            $plup.plupload('notify', 'error', `'${file.name}'文件上传失败`);
+          }
         },
         ChunkUploaded: function(up, file, info) {
           // Called when file chunk has finished uploading
@@ -116,7 +120,10 @@ export class FileUploadComponent implements AfterViewInit, OnDestroy {
   }
 
   initDataTables() {
-    this.dt = $('.dataTable').DataTable( {
+    $('#track-file-state-box').boxWidget({
+      collapseTrigger: '.btn.btn-box-tool'
+    });
+    this.$trackFileTable = $('#track-file-table').DataTable( {
       language: {
         url: '/assets/datatables/i18n/Chinese.json'
       },
@@ -177,9 +184,9 @@ export class FileUploadComponent implements AfterViewInit, OnDestroy {
             this.rows.forEach(function (ele) {
               ele.fileSize = FileUploadComponent.formatFileSize(ele.fileSize);
             });
-            const curPage = this.dt.page();
-            this.dt.clear();
-            this.dt.rows.add(this.rows).page(curPage).draw(false).page(curPage).draw(false);
+            const curPage = this.$trackFileTable.page();
+            this.$trackFileTable.clear();
+            this.$trackFileTable.rows.add(this.rows).page(curPage).draw(false).page(curPage).draw(false);
           }
         }));
       });

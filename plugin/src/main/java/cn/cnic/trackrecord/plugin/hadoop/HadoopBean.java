@@ -1,4 +1,4 @@
-package cn.cnic.trackrecord.common.hadoop;
+package cn.cnic.trackrecord.plugin.hadoop;
 
 import cn.cnic.trackrecord.common.util.Files;
 import cn.cnic.trackrecord.common.util.Objects;
@@ -11,7 +11,9 @@ import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.compress.DefaultCodec;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -19,17 +21,19 @@ import java.util.Map;
 
 @Slf4j
 public class HadoopBean {
-    private Conf conf;
+    @Autowired
+    private HadoopProperties properties;
     private Configuration configuration;
     private Writer writer;
-    public HadoopBean(Conf conf) {
-        this.conf = conf;
-        System.setProperty("HADOOP_USER_NAME", conf.getUser());
+
+    @PostConstruct
+    public void init() {
+        System.setProperty("HADOOP_USER_NAME", properties.getUser());
         //FIXED java.io.FileNotFoundException: HADOOP_HOME and hadoop.home.dir are unset.
-        System.setProperty("hadoop.home.dir", conf.getHome());
+        System.setProperty("hadoop.home.dir", properties.getHomeDir());
 
         configuration = new Configuration();
-        configuration.set("fs.defaultFS", conf.getUri());
+        configuration.set("fs.defaultFS", properties.getUri());
 
         //FIXED dfs.client.block.write.replace-datanode-on-failure.policy DEFAULT error
         configuration.set("dfs.client.block.write.replace-datanode-on-failure.enable", "true");
@@ -77,13 +81,13 @@ public class HadoopBean {
     }
 
     private void createWriter() throws IOException {
-        writer = SequenceFile.createWriter(configuration, SequenceFile.Writer.file(new Path(conf.getFilePath())),
+        writer = SequenceFile.createWriter(configuration, SequenceFile.Writer.file(new Path(properties.getFilePath())),
                 SequenceFile.Writer.keyClass(NullWritable.class),
                 SequenceFile.Writer.valueClass(BytesWritable.class),
 //                SequenceFile.Writer.bufferSize(fs.getConf().getInt("io.file.buffer.size",4096)),
 //                SequenceFile.Writer.replication(fs.getDefaultReplication()),
                 SequenceFile.Writer.appendIfExists(true),
-                SequenceFile.Writer.blockSize(conf.getBlockSize()),
+                SequenceFile.Writer.blockSize(properties.getBlockSize()),
                 SequenceFile.Writer.compression(SequenceFile.CompressionType.BLOCK, new DefaultCodec()),
                 SequenceFile.Writer.progressable(null),
                 SequenceFile.Writer.metadata(new SequenceFile.Metadata()));

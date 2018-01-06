@@ -49,6 +49,7 @@
         <module>dao</module>
         <module>service</module>
         <module>webapi</module>
+        <module>plugin</module>
     </modules>
 
     <properties>
@@ -56,6 +57,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <hadoopVersion>2.9.0</hadoopVersion>
+        <luceneVersion>7.2.0</luceneVersion>
     </properties>
 
     <dependencyManagement>
@@ -63,6 +65,11 @@
             <dependency>
                 <groupId>cn.cnic.trackrecord</groupId>
                 <artifactId>common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.cnic.trackrecord</groupId>
+                <artifactId>plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -150,6 +157,37 @@
                 <artifactId>hadoop-common</artifactId>
                 <version>${hadoopVersion}</version>
             </dependency>
+            <dependency>
+                <groupId>com.github.darrachequesne</groupId>
+                <artifactId>spring-data-jpa-datatables</artifactId>
+                <version>4.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-core</artifactId>
+                <version>${luceneVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-queryparser</artifactId>
+                <version>${luceneVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-highlighter</artifactId>
+                <version>${luceneVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-analyzers-common</artifactId>
+                <version>${luceneVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-analyzers</artifactId>
+                <version>3.6.2</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -169,11 +207,12 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>

@@ -1,7 +1,7 @@
 package cn.cnic.trackrecord.core.track.xml;
 
 import cn.cnic.trackrecord.common.util.Objects;
-import cn.cnic.trackrecord.common.xml.SaxHandler;
+import cn.cnic.trackrecord.plugin.sax.SaxHandler;
 import cn.cnic.trackrecord.data.entity.TrackPoint;
 import cn.cnic.trackrecord.data.kml.PlaceMarkBuilder;
 import cn.cnic.trackrecord.data.kml.PlaceMarkType;

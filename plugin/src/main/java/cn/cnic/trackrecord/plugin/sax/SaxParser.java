@@ -1,4 +1,4 @@
-package cn.cnic.trackrecord.common.xml;
+package cn.cnic.trackrecord.plugin.sax;
 
 import org.xml.sax.SAXException;
 

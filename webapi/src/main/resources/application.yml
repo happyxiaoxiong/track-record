@@ -23,11 +23,5 @@ track:
     upload-path: D:/track_file
     unzip-path: D:/track_file
 
-hadoop:
-  conf:
-    uri: hdfs://192.168.224.176:9000/
-    track-path: gpstracks
-    user: root
-    home: D:/hadoop-2.7.1/
 
 

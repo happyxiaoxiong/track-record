@@ -17,7 +17,7 @@
     <sql id="table">`track_file`</sql>
 
     <insert id="add" parameterType="TrackFile" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO <include refid="table"/> (user_id, state, upload_time, path, filename, filesize, md5, commemt, tries, update_time)
+        INSERT INTO <include refid="table"/> (user_id, state, upload_time, path, filename, filesize, md5, comment, tries, update_time)
         VALUES (#{userId}, #{state}, #{uploadTime}, #{path}, #{filename}, #{fileSize}, #{md5}, #{comment}, #{tries}, #{updateTime})
     </insert>
     <update id="update" parameterType="TrackFile">
