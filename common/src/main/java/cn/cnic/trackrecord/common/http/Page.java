@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Page {
-    @ApiModelProperty(value = "第几页", notes = "默认0")
-    private int page = 0;
-    @ApiModelProperty(value = "每页数量", notes = "默认5")
-    private int size = 5;
+    @ApiModelProperty(value = "第几页", notes = "默认1")
+    private int pageNum = 0;
+    @ApiModelProperty(value = "每页数量", notes = "默认10")
+    private int pageSize = 5;
 }

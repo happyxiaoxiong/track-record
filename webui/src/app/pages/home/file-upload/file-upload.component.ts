@@ -6,6 +6,7 @@ import {NGXLogger} from 'ngx-logger';
 import {HttpRes} from '../../../models/http-res';
 import {TimerObservable} from 'rxjs/observable/TimerObservable';
 import 'rxjs/add/operator/takeWhile';
+import {Utils} from '../../../utils';
 
 @Component({
   selector: 'app-file-upload',
@@ -22,7 +23,7 @@ import 'rxjs/add/operator/takeWhile';
   <p></p>
   <div class="row">
     <div class="col-sm-12">
-      <div id="track-file-state-box" class="box box-warning box-solid">
+      <div id="track-file-state-box" class="box">
         <div class="box-header with-border">
           <h3 class="box-title">最近一周轨迹上传记录</h3>
           <div class="box-tools pull-right">
@@ -31,7 +32,7 @@ import 'rxjs/add/operator/takeWhile';
           </div>
         </div>
         <div id="dtWrapper" class="box-body">
-          <table id="track-file-table" class="table table-bordered table-hover dataTable">
+          <table id="track-file-table" class="table table-bordered table-hover table-condensed table-striped table-responsive dataTable">
           </table>
         </div>
       </div>
@@ -45,20 +46,9 @@ export class FileUploadComponent implements AfterViewInit, OnDestroy {
   private $trackFileTable: any;
   private alive = false;
   private interval = 5000;
+  private trackFileTableTimer;
 
-  constructor(private http: HttpClient, private appConfig: AppConfig, private userSer: UserService, private log: NGXLogger) { }
-
-  static formatFileSize(size: number): String {
-    const units = ['Bytes', 'Kb', 'Mb', 'Gb'];
-    let i = 0;
-    for (; i < units.length; ++i) {
-      if (size < 1024) {
-        break;
-      }
-      size /= 1024;
-    }
-    return (size <= 0 ? 0 : size.toFixed(2).replace(/0+$/, '')) + units[i === units.length ? i - 1 : i];
-  }
+  constructor(private http: HttpClient, private appConfig: AppConfig, private userSer: UserService, private log: NGXLogger) {}
 
   ngAfterViewInit() {
     this.initPlupLoad();
@@ -123,15 +113,21 @@ export class FileUploadComponent implements AfterViewInit, OnDestroy {
     $('#track-file-state-box').boxWidget({
       collapseTrigger: '.btn.btn-box-tool'
     });
-    this.$trackFileTable = $('#track-file-table').DataTable( {
+    const me = this;
+    me.$trackFileTable = $('#track-file-table').DataTable( {
       language: {
         url: '/assets/datatables/i18n/Chinese.json'
       },
       processing: true,
+      pagingType: 'full_numbers',
+      deferRender: true,
       lengthMenu: [ [5, 10, 25, -1], [5, 10, 25, '全部'] ],
       columns: [
         { data: 'filename', title: '文件名称'},
-        { data: 'fileSize', title: '文件大小' },
+        { data: 'fileSize', title: '文件大小', 'render': function (data, type, row, meta) {
+            return Utils.formatBytes(data);
+          }
+        },
         { data: 'md5', title: '文件md5' },
         { data: 'state', title: '上传状态', 'render': function (data, type, row, meta) {
             let bg = 'red';
@@ -151,48 +147,50 @@ export class FileUploadComponent implements AfterViewInit, OnDestroy {
         { targets: '_all', 'defaultContent': ''}
       ]
     } );
-    this.startSyncDt();
+    me.startSyncDt();
   }
 
   startSyncDt() {
-    this.alive = true;
-    TimerObservable.create(0, this.interval).takeWhile(() => this.alive)
-      .subscribe(() => {
-        this.http.get(server.apis.track.uploadState).subscribe(((res: HttpRes) => {
-          if (this.appConfig.getHttpResCode().success === res.code) {
-            res.data = res.data || [];
-            // 验证数据有无更新
-            if (this.rows.length === res.data.length || this.rows.length === 0) {
-              let needSync = false, hasUpdate = false;
-              for (let i = 0; i < this.rows.length; i++) {
-                if (res.data[i].state.endsWith('...')) {
-                  needSync = true; // track need wait update
+    if (!this.alive) {
+      this.alive = true;
+      this.trackFileTableTimer = TimerObservable.create(0, this.interval).takeWhile(() => this.alive)
+        .subscribe(() => {
+          this.http.get(server.apis.track.uploadState).subscribe(((res: HttpRes) => {
+            if (this.appConfig.getHttpResCode().success === res.code) {
+              res.data = res.data || [];
+              // 验证数据有无更新
+              if (this.rows.length === res.data.length || this.rows.length === 0) {
+                let needSync = false, hasUpdate = false;
+                for (let i = 0; i < this.rows.length; i++) {
+                  if (res.data[i].state.endsWith('...')) {
+                    needSync = true; // track need wait update
+                  }
+                  if (this.rows.length !== 0 && res.data[i].state !== this.rows[i].state) {
+                    // TODO add tips, track file state update
+                    hasUpdate = true;
+                  }
                 }
-                if (this.rows.length !== 0 && res.data[i].state !== this.rows[i].state) {
-                  // TODO add tips, track file state update
-                  hasUpdate = true;
+                if (!needSync) {// 不需要在同步了
+                  this.stopSyncDt();
+                }
+                if (!hasUpdate && this.rows.length === res.data.length) {// 无更新
+                  return;
                 }
               }
-              if (!needSync) {// 不需要在同步了
-                this.stopSyncDt();
-              }
-              if (!hasUpdate && this.rows.length === res.data.length) {// 无更新
-                return;
-              }
+              this.rows = res.data;
+              const curPage = this.$trackFileTable.page();
+              this.$trackFileTable.clear();
+              this.$trackFileTable.rows.add(this.rows).draw(false).page(curPage).draw(false);
             }
-            this.rows = res.data;
-            this.rows.forEach(function (ele) {
-              ele.fileSize = FileUploadComponent.formatFileSize(ele.fileSize);
-            });
-            const curPage = this.$trackFileTable.page();
-            this.$trackFileTable.clear();
-            this.$trackFileTable.rows.add(this.rows).page(curPage).draw(false).page(curPage).draw(false);
-          }
-        }));
-      });
+          }));
+        });
+    }
   }
 
   stopSyncDt() {
     this.alive = false;
+    if (this.trackFileTableTimer) {
+      this.trackFileTableTimer.unsubscribe();
+    }
   }
 }

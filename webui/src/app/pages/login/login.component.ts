@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserService} from '../../services/user.service';
 import {AlertService} from '../../services/alert.service';
@@ -9,7 +9,7 @@ import {AlertService} from '../../services/alert.service';
   styleUrls: ['./login.component.css']
 })
 
-export class LoginComponent implements OnInit {
+export class LoginComponent implements AfterViewInit {
   model: any = {};
   loading = false;
   redirectUrl: string;
@@ -20,9 +20,9 @@ export class LoginComponent implements OnInit {
     private userSer: UserService,
     private alertSer: AlertService) { }
 
-  ngOnInit() {
+  ngAfterViewInit() {
     document.body.className = 'login-page';
-    this.redirectUrl = this.route.snapshot.queryParams['redirectUrl'] || '/home';
+    this.redirectUrl = this.route.snapshot.queryParams['redirectUrl'] || 'home';
   }
 
   login() {

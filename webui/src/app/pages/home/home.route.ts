@@ -1,19 +1,23 @@
 import {HomeComponent} from './home.component';
-import {PageNotFoundComponent} from '../page-not-found/page-not-found.component';
 import {IndexComponent} from './index/index.component';
-import {RealTimePositionComponent} from './real-time-position/real-time-position.component';
-import {FileUploadComponent} from './file-upload/file-upload.component';
-import {HistoryTrackComponent} from './history-track/history-track.component';
+import {AuthGuard} from '../../guards/auth.guard';
+import {RouterModule} from '@angular/router';
+import {HistoryTrackModule} from './history-track/history-track.module';
+import {FileUploadModule} from './file-upload/file-upload.module';
+import {RealTimePositionModule} from './real-time-position/real-time-position.module';
+import {PageNotFoundComponent} from '../page-not-found/page-not-found.component';
 
-export const homeRoutes = [
+const routes = [
   {
     path: '',
     component: HomeComponent,
     children: [
-      { path: '', component: IndexComponent },
-      { path: 'file-upload',  component: FileUploadComponent },
-      { path: 'history-track',  component: HistoryTrackComponent },
-      { path: 'real-time-position',  component: RealTimePositionComponent },
-      { path: '**',  component: PageNotFoundComponent }
+      { path: '', component: IndexComponent, canActivate: [AuthGuard] },
+      { path: 'file-upload',  loadChildren: () => FileUploadModule, canActivate: [AuthGuard]},
+      { path: 'history-track',  loadChildren: () => HistoryTrackModule, canActivate: [AuthGuard]},
+      { path: 'real-time-position',  loadChildren: () => RealTimePositionModule, canActivate: [AuthGuard] },
+      { path: '**',  component: PageNotFoundComponent },
     ]}
 ];
+
+export const homeRoutes = RouterModule.forChild(routes);

@@ -3,7 +3,7 @@ package cn.cnic.trackrecord.worker;
 import cn.cnic.trackrecord.common.date.LongDate;
 import cn.cnic.trackrecord.common.enumeration.TrackFileState;
 import cn.cnic.trackrecord.common.util.Files;
-import cn.cnic.trackrecord.plugin.sax.SaxParser;
+import cn.cnic.trackrecord.plugin.sax.SaxUtils;
 import cn.cnic.trackrecord.core.track.xml.RouteRecordXml;
 import cn.cnic.trackrecord.core.track.xml.TrackDetailXml;
 import cn.cnic.trackrecord.data.entity.Track;
@@ -119,7 +119,7 @@ public class TrackFileWorker {
                 trackFile.setComment("正在解压文件");
             }
         } catch (IOException e) {
-            log.debug(e.getMessage());
+            log.error(e.getMessage());
             trackFile.setState(TrackFileState.VERIFY_FAIL);
             trackFile.setComment("错误:文件读取异常");
         } finally {
@@ -141,7 +141,7 @@ public class TrackFileWorker {
             trackFile.setState(TrackFileState.EXTRACTING_AND_SAVING);
             trackFile.setComment("正在提取数据并保存");
         } catch (IOException e) {
-            log.debug(e.getMessage());
+            log.error(e.getMessage());
             trackFile.setState(TrackFileState.UNZIP_FAIL);
             trackFile.setComment("错误:解压异常");
         } finally {
@@ -158,14 +158,15 @@ public class TrackFileWorker {
         try {
             //TODO
             String realTrackPath = Files.getRealTrackPath(trackFile.getPath());
-            Track track = SaxParser.parse(new TrackDetailXml(Files.getPath(realTrackPath, properties.getTrackDetailFileName())));
-            RouteRecord routeRecord = SaxParser.parse(new RouteRecordXml(Files.getPath(realTrackPath, properties.getRouteRecordFileName())));
+            Track track = SaxUtils.parse(new TrackDetailXml(Files.getPath(realTrackPath, properties.getTrackDetailFileName())));
+            RouteRecord routeRecord = SaxUtils.parse(new RouteRecordXml(Files.getPath(realTrackPath, properties.getRouteRecordFileName())));
 
             Map<String, Position> map = hadoopBean.write(new File(trackFile.getPath()), false);
             track.setPath(objectMapper.writeValueAsString(map));
             track.setFileSize(trackFile.getFileSize());
             track.setMd5(trackFile.getMd5());
             track.setUploadTime(new LongDate());
+            track.setUserId(trackFile.getUserId());
             trackService.addAndGetId(track);
             List<TrackPoint> points = new LinkedList<>();
             for (PlaceMark placeMark : routeRecord.getPlaceMarks()) {
@@ -180,7 +181,7 @@ public class TrackFileWorker {
             trackFile.setState(TrackFileState.FINISH);
             trackFile.setComment("操作成功");
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            log.debug(e.getMessage());
+            log.error(e.getMessage());
             trackFile.setState(TrackFileState.EXTRACT_AND_SAVE_FAIL);
             trackFile.setComment("错误:数据格式异常");
         } finally {

@@ -18,5 +18,6 @@ export class HeaderComponent implements OnInit {
 
   logout() {
     this.userSer.logout();
+    return false;
   }
 }

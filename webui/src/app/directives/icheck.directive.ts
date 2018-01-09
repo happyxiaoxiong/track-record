@@ -4,7 +4,6 @@ import {AfterViewInit, Directive, ElementRef, Renderer2} from '@angular/core';
   selector: '[appIcheck]'
 })
 export class IcheckDirective implements AfterViewInit {
-  $iCheck: any;
   constructor(private el: ElementRef, private ren2: Renderer2) { }
 
   ngAfterViewInit() {

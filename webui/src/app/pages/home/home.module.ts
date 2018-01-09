@@ -1,18 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HomeComponent } from './home.component';
 import {homeRoutes} from './home.route';
-import {RouterModule} from '@angular/router';
 import {MenuAsideComponent} from '../../widgets/menu-aside/menu-aside.component';
 import {BreadcrumbComponent} from '../../widgets/breadcrumb/breadcrumb.component';
 import {LogoComponent} from '../../widgets/logo/logo.component';
 import {HeaderComponent} from '../../widgets/header/header.component';
 import {FooterComponent} from '../../widgets/footer/footer.component';
-import {ShareModule} from '../../share.module';
 import { IndexComponent } from './index/index.component';
-import { RealTimePositionComponent } from './real-time-position/real-time-position.component';
-import { FileUploadComponent } from './file-upload/file-upload.component';
-import { HistoryTrackComponent } from './history-track/history-track.component';
+import { DateRangeComponent } from './widgets/date-range/datetime-range.component';
+import {HomeComponent} from './home.component';
+import {ShareModule} from "../../share.module";
 
 @NgModule({
   declarations: [
@@ -23,16 +20,11 @@ import { HistoryTrackComponent } from './history-track/history-track.component';
     BreadcrumbComponent,
     MenuAsideComponent,
     IndexComponent,
-    RealTimePositionComponent,
-    FileUploadComponent,
-    HistoryTrackComponent,
   ],
   imports: [
     CommonModule,
     ShareModule,
-    RouterModule.forChild(homeRoutes)
-  ],
-  exports: [RouterModule],
-  bootstrap: [HomeComponent]
+    homeRoutes
+  ]
 })
 export class HomeModule { }

@@ -26,7 +26,7 @@ import {LoggerModule, NGXLogger, NgxLoggerLevel} from 'ngx-logger';
     RegisterComponent,
     IcheckDirective,
     LoadingComponent,
-    AlertComponent,
+    AlertComponent
   ],
   imports: [
     BrowserModule,
@@ -46,7 +46,7 @@ import {LoggerModule, NGXLogger, NgxLoggerLevel} from 'ngx-logger';
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true
-    }
+    },
   ],
   bootstrap: [AppComponent]
 })

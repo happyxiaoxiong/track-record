@@ -1,18 +1,17 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import {PageNotFoundComponent} from './pages/page-not-found/page-not-found.component';
-import {RouterModule} from '@angular/router';
+import {DateRangeComponent} from './pages/home/widgets/date-range/datetime-range.component';
 
 @NgModule({
   imports: [
-    RouterModule,
-    CommonModule
   ],
   declarations: [
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    DateRangeComponent,
   ],
   exports: [
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    DateRangeComponent,
   ]
 })
 export class ShareModule { }

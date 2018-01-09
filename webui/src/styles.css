@@ -13,6 +13,7 @@
 /*@import "~@swimlane/ngx-datatable/release/assets/icons.css";*/
 /*@import "~datatables.net-dt/css/jquery.dataTables.css";*/
 @import "~datatables.net-bs/css/dataTables.bootstrap.css";
+@import "~bootstrap-datepicker/dist/css/bootstrap-datepicker3.standalone.css";
 
 .link {
   cursor: pointer;

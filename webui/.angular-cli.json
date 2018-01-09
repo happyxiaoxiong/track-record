@@ -31,7 +31,10 @@
         "../node_modules/plupload/js/jquery.ui.plupload/jquery.ui.plupload.js",
         "../public/plupload/zh_CN.js",
         "../node_modules/datatables.net/js/jquery.dataTables.js",
-        "../node_modules/datatables.net-bs/js/dataTables.bootstrap.js"
+        "../node_modules/datatables.net-bs/js/dataTables.bootstrap.js",
+        "../node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.js",
+        "../node_modules/bootstrap-datepicker/dist/locales/bootstrap-datepicker.zh-CN.min.js",
+        "../node_modules/bootstrap-add-clear/bootstrap-add-clear.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

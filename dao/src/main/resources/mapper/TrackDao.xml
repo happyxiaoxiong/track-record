@@ -27,15 +27,27 @@
     <select id="existByMd5AndFileSize" resultType="boolean">
         SELECT COUNT(id) FROM <include refid="table"/> WHERE filesize=#{fileSize} AND md5=#{md5}
     </select>
-    <select id="getByTrackSearchParams" resultType="TrackFile" parameterType="cn.cnic.trackrecord.data.vo.TrackSearchParams">
+    <select id="getByTrackSearchParams" resultMap="baseMap" parameterType="cn.cnic.trackrecord.data.vo.TrackSearchParams">
         SELECT * FROM <include refid="table"/>
         <where>
             <if test="name != null and name != ''">
                 `name` LIKE concat('%',#{name},'%')
             </if>
-            <if test="userName != null and userName != ''">
-                AND
+            <!--<if test="userName != null and userName != ''">-->
+                <!--AND-->
+            <!--</if>-->
+            <if test="startTime != null">
+                AND starttime>=#{startTime}
             </if>
+            <if test="endTime != null">
+                AND endtime&lt;=#{endTime}
+            </if>
+            <!--<if test="minLongitude != null">-->
+                <!--AND starttime>=#{startTime}-->
+            <!--</if>-->
+            <!--<if test="maxLongitude != null">-->
+                <!--AND endtime&lt;=#{endtime}-->
+            <!--</if>-->
         </where>
     </select>
 </mapper>

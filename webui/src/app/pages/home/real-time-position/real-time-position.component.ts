@@ -1,4 +1,6 @@
 import {AfterViewInit, Component, HostListener, OnInit} from '@angular/core';
+import {Imap} from '../../../maps/imap';
+import {TiandituMap} from '../../../maps/tianditu-map';
 
 declare let T: any;
 
@@ -14,8 +16,8 @@ declare let T: any;
 export class RealTimePositionComponent implements OnInit, AfterViewInit {
 
   private mapId = 'mapContainer';
-  private map: any;
-  private defaultZoom = 11;
+  private map: Imap;
+
   @HostListener('window:resize') onResize() {
     this.mapResize();
   }
@@ -29,33 +31,14 @@ export class RealTimePositionComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.mapResize();
     // 初始化地图对象
-    this.map = new T.Map('mapContainer');
-    this.map.centerAndZoom(new T.LngLat(116.40769, 39.89945), this.defaultZoom);
-    this.getLocation();
-    this.addControls();
+    this.map = new TiandituMap(this.mapId);
   }
 
   mapResize(): void {
-    let mapHeight = $(window).height() - $('header').height() - $('footer').height() - ($('section.content-header').height() || 50) - 100;
+    let mapHeight = $(window).height() - $('header').height() - $('footer').height() - ($('section.content-header').height() || 50) - 120;
     if (mapHeight < 400) {
       mapHeight = 400;
     }
     $(`#${this.mapId}`).height(mapHeight);
   }
-  getLocation(): any {
-    // ip城市定位
-    const me = this;
-    const lc = new T.LocalCity();
-    lc.location(function (e) {
-      me.map.centerAndZoom(e.lnglat, me.defaultZoom);
-    });
-  }
-
-  private addControls() {
-    // 创建缩放平移控件对象
-    this.map.addControl(new T.Control.Zoom());
-    // 创建比例尺控件对象
-    this.map.addControl(new T.Control.Scale());
-  }
-
 }

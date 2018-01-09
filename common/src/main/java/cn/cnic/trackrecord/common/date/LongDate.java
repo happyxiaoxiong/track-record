@@ -30,7 +30,7 @@ public class LongDate extends IntDate {
     public static LongDate from(String longDateStr) {
         LongDate intLongDate = new LongDate(0);
         try {
-            intLongDate.setValue(toInt(dateFormat.parse(longDateStr).getTime()));
+            return new LongDate(toInt(dateFormat.parse(longDateStr).getTime()));
         } catch (ParseException ignored) {
         }
         return intLongDate;

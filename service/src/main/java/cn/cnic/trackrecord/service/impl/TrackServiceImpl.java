@@ -2,7 +2,6 @@ package cn.cnic.trackrecord.service.impl;
 
 import cn.cnic.trackrecord.dao.TrackDao;
 import cn.cnic.trackrecord.data.entity.Track;
-import cn.cnic.trackrecord.data.entity.TrackFile;
 import cn.cnic.trackrecord.data.vo.TrackSearchParams;
 import cn.cnic.trackrecord.service.TrackService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ public class TrackServiceImpl implements TrackService {
     }
 
     @Override
-    public List<TrackFile> getByTrackSearchParams(TrackSearchParams params) {
+    public List<Track> getByTrackSearchParams(TrackSearchParams params) {
         return trackDao.getByTrackSearchParams(params);
     }
 }

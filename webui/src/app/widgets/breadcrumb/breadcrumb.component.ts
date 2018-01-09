@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {MenuService} from '../../services/menu.service';
 import {NavigationEnd, Router} from '@angular/router';
 
@@ -7,18 +7,20 @@ import {NavigationEnd, Router} from '@angular/router';
   templateUrl: './breadcrumb.component.html',
   styleUrls: ['./breadcrumb.component.css']
 })
-export class BreadcrumbComponent implements OnInit {
+export class BreadcrumbComponent implements OnInit, OnDestroy {
+
   @Input() public display = true;
   public header = '';
   public description = '';
   public levels: Array<any> = [];
   private allBreadcrumb: Array<any> = [];
+  private evnSubscribe;
 
   constructor(private menuSer: MenuService, private router: Router) {
-    menuSer.getCurrent().subscribe((menuItems: Array<any>) => {
+    this.menuSer.getCurrent().subscribe((menuItems: Array<any>) => {
       this.allBreadcrumb = this.getAllBreadcrumb(menuItems);
     });
-    this.router.events.subscribe((evt: any) => {
+    this.evnSubscribe = this.router.events.subscribe((evt: any) => {
       if (evt instanceof NavigationEnd) {
         this.levels = this.allBreadcrumb[evt.url] || [];
         if (this.levels.length > 0) {
@@ -30,6 +32,10 @@ export class BreadcrumbComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngOnDestroy(): void {
+    this.evnSubscribe.unsubscribe();
   }
 
   getAllBreadcrumb(menuItems: Array<any>): Array<any> {

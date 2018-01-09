@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
 
 @Component({
@@ -6,19 +6,17 @@ import {NavigationEnd, Router} from '@angular/router';
   templateUrl: './menu-aside.component.html',
   styleUrls: ['./menu-aside.component.css']
 })
-export class MenuAsideComponent implements OnInit, AfterViewInit {
+export class MenuAsideComponent implements OnInit, AfterViewInit, OnDestroy {
   private lastLi: any;
   private currentUrl: string;
+  private evnSubscribe;
   @Input() menuItems: Array<any> = [];
   @Input() menuTitle = '导航';
   constructor(private router: Router) {
-    this.router.events.subscribe((evt: any) => {
+    this.evnSubscribe = this.router.events.subscribe((evt: any) => {
       if (evt instanceof NavigationEnd) {
         this.currentUrl = evt.url;
-        if (this.lastLi) {
-          this.lastLi.removeClass('active');
-        }
-        this.lastLi = $(`[href='${this.currentUrl}']`).parents('li').addClass('active');
+        this.menuChange();
       }
     });
   }
@@ -28,5 +26,17 @@ export class MenuAsideComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     $('.sidebar-menu').tree();
+    this.menuChange();
+  }
+
+  ngOnDestroy(): void {
+    this.evnSubscribe.unsubscribe();
+  }
+
+  menuChange() {
+    if (this.lastLi) {
+      this.lastLi.removeClass('active');
+    }
+    this.lastLi = $(`[href='${this.currentUrl}']`).parents('li').addClass('active');
   }
 }

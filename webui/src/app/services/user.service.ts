@@ -4,15 +4,14 @@ import 'rxjs/add/operator/map';
 import {AppConfig, server} from '../app.config';
 import {HttpRes} from '../models/http-res';
 import {isString} from 'util';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Injectable()
 export class UserService {
-  private hasLogin = false;
   private readonly userKey = 'user';
   private storage: Storage = sessionStorage;
 
-  constructor(private http: HttpClient, private appConfig: AppConfig, private router: Router) { }
+  constructor(private http: HttpClient, private appConfig: AppConfig, private router: Router, private route: ActivatedRoute) { }
 
   login(account: string, password: string, success: Function, fail: Function): void {
     this.http.post(server.apis.noAuth.login, JSON.stringify({
@@ -32,7 +31,7 @@ export class UserService {
 
   logout() {
     this.removeUser();
-    this.router.navigate(['login']);
+    this.router.navigate(['login'], { relativeTo: this.route, queryParams: { redirectUrl: this.router.url }});
   }
 
   timeout() {
@@ -40,7 +39,7 @@ export class UserService {
   }
 
   isLogin(): boolean {
-    return this.hasLogin || isString(this.getUser().token);
+    return isString(this.getUser().token);
   }
 
   getTokenHeader(): any {
@@ -55,12 +54,10 @@ export class UserService {
   }
   private setUser(user: any) {
     this.storage.setItem(this.userKey, JSON.stringify(user));
-    this.hasLogin = true;
   }
 
   private removeUser() {
     this.storage.removeItem(this.userKey);
-    this.hasLogin = false;
   }
 
   private getUser(): any {

@@ -29,7 +29,7 @@ public class ShortDate extends IntDate {
     public static ShortDate from(String shortDateStr) {
         ShortDate intShortDate = new ShortDate(0);
         try {
-            intShortDate.setValue(toInt(dateFormat.parse(shortDateStr).getTime()));
+            return new ShortDate(toInt(dateFormat.parse(shortDateStr).getTime()));
         } catch (ParseException ignored) {
         }
         return intShortDate;

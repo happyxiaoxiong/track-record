@@ -7,6 +7,7 @@ import cn.cnic.trackrecord.common.http.plupupload.Plupload;
 import cn.cnic.trackrecord.common.http.plupupload.PluploadBean;
 import cn.cnic.trackrecord.common.http.plupupload.PluploadCallback;
 import cn.cnic.trackrecord.common.util.Objects;
+import cn.cnic.trackrecord.data.entity.Track;
 import cn.cnic.trackrecord.data.entity.TrackFile;
 import cn.cnic.trackrecord.data.vo.TrackSearchParams;
 import cn.cnic.trackrecord.service.TrackFileService;
@@ -14,15 +15,14 @@ import cn.cnic.trackrecord.service.TrackService;
 import cn.cnic.trackrecord.web.Const;
 import cn.cnic.trackrecord.web.config.property.TrackFileProperties;
 import cn.cnic.trackrecord.web.identity.UserDetailsServiceImpl;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -71,18 +71,25 @@ public class TrackController {
         }
     }
 
-
     @ApiOperation(value = "获取最近一周轨迹文件上传状态")
     @RequestMapping(value = "file/upload/state", method = RequestMethod.GET)
-    public HttpRes<List<TrackFile>> uploadTrackFileState() {
+    public HttpRes<List<TrackFile>> getTrackFile() {
         LongDate startTime = LongDate.from(DateUtils.addDays(new Date(), -7));
         return HttpRes.success(trackFileService.getByStartUploadTimeAndUserId(startTime, userDetailsService.getLoginUser().getId()));
     }
 
+    @ApiOperation(value = "根据track_file_id获取track_file")
+    @RequestMapping(value = "file/{track_file_id}", method = RequestMethod.GET)
+    public HttpRes<TrackFile> getTrackFileById(@PathVariable("track_file_id") int trackFileId) {
+        return HttpRes.success(trackFileService.getById(trackFileId));
+    }
+
     @ApiOperation(value = "轨迹搜索")
-    public HttpRes<List<TrackFile>> search(@RequestBody TrackSearchParams params) {
+    @RequestMapping(value = "search", method = RequestMethod.GET)
+    public HttpRes<PageInfo<Track>> search(TrackSearchParams params) {
         // TODO page
-        return HttpRes.success(trackService.getByTrackSearchParams(params));
+        PageHelper.startPage(params.getPageNum(), params.getPageSize());
+        return HttpRes.success(new PageInfo<>(trackService.getByTrackSearchParams(params)));
     }
 
 

@@ -1,18 +1,23 @@
-import {Injectable, OnInit} from '@angular/core';
+import {Injectable, OnDestroy, OnInit} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 
 @Injectable()
-export class AlertService implements OnInit {
+export class AlertService implements OnInit, OnDestroy {
   private subject = new Subject<any>();
+  private evnSubscribe;
 
   constructor(private router: Router) {}
 
   ngOnInit(): void {
-    this.router.events.subscribe(event => {
+    this.evnSubscribe = this.router.events.subscribe(event => {
       this.subject.next();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.evnSubscribe.unsubscribe();
   }
 
   success(message: string) {
