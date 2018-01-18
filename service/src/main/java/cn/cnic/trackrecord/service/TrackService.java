@@ -10,4 +10,6 @@ public interface TrackService {
 
     boolean existByMd5AndFileSize(String md5, int fileSize);
     List<Track> getByTrackSearchParams(TrackSearchParams params);
+
+    Track get(int id);
 }

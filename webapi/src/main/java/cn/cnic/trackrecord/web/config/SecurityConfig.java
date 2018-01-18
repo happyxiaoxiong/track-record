@@ -59,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 允许对于网站静态资源的无授权访问,对于获取token的rest api要允许匿名访问
                 .antMatchers("/", "/v2/api-docs", "/swagger-ui/**", "/swagger-resources/**", "/*.html", "/**/*.html" ,
                         "/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.gif", "/**/*.svg", "/**/*.ico", "/**/*.ttf", "/**/*.woff",
-                        Const.API_ROOT + "no_auth/**", Const.API_ROOT + "config"
+                        Const.API_ROOT + "no_auth/**", Const.API_ROOT + "config", Const.API_ROOT + "extra/**"
                 ).permitAll()
                 .and()
                 // Add CORS Filter

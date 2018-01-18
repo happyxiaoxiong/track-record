@@ -3,8 +3,6 @@ package cn.cnic.trackrecord.core.track;
 import cn.cnic.trackrecord.data.entity.Track;
 import cn.cnic.trackrecord.plugin.lucene.LuceneFormatter;
 import org.apache.lucene.document.*;
-import org.apache.lucene.index.IndexableField;
-import org.locationtech.spatial4j.context.SpatialContext;
 
 public class TrackLuceneFormatter implements LuceneFormatter<Track> {
     @Override

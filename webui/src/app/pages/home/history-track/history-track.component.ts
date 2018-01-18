@@ -23,7 +23,7 @@ export class HistoryTrackComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    $('.nav.nav-tabs').tab();
+    // $('.nav.nav-tabs').tab();
   }
 
   clearTrackMap(event: any) {

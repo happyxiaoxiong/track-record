@@ -1,5 +1,8 @@
 package cn.cnic.trackrecord.web.config;
 
+import cn.cnic.trackrecord.web.config.property.TokenProperties;
+import cn.cnic.trackrecord.web.identity.TokenUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,8 @@ import static com.google.common.collect.Lists.newArrayList;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
+    @Autowired
+    private TokenProperties properties;
 
     ApiInfo apiInfo() {
       return new ApiInfoBuilder()
@@ -41,7 +46,7 @@ public class SwaggerConfig {
 
     private ApiKey apiKey() {
         //return new ApiKey("Authorization", "api_key", "header");
-        return new ApiKey("Authorization", "", "header");             // <<< === Create a Heaader (We are createing header named "Authorization" here)
+        return new ApiKey("Authorization", properties.getHeader(), "header");             // <<< === Create a Heaader (We are createing header named "Authorization" here)
     }
 
     @Bean

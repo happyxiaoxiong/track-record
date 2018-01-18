@@ -13,5 +13,5 @@ public class TokenProperties {
     private String header = "Authorization";
     private String secret = "tr_secret";
     private long expiration = 2 * 60 * 60 * 1000;
-    private String tokenHead = "track_record";
+    private String tokenHead = "tr";
 }

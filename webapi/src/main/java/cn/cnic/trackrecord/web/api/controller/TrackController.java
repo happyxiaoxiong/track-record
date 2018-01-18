@@ -7,9 +7,13 @@ import cn.cnic.trackrecord.common.http.plupupload.Plupload;
 import cn.cnic.trackrecord.common.http.plupupload.PluploadBean;
 import cn.cnic.trackrecord.common.http.plupupload.PluploadCallback;
 import cn.cnic.trackrecord.common.util.Objects;
+import cn.cnic.trackrecord.core.track.xml.RouteRecordXml;
 import cn.cnic.trackrecord.data.entity.Track;
 import cn.cnic.trackrecord.data.entity.TrackFile;
+import cn.cnic.trackrecord.data.kml.RouteRecord;
 import cn.cnic.trackrecord.data.vo.TrackSearchParams;
+import cn.cnic.trackrecord.plugin.hadoop.Hadoops;
+import cn.cnic.trackrecord.plugin.sax.SaxUtils;
 import cn.cnic.trackrecord.service.TrackFileService;
 import cn.cnic.trackrecord.service.TrackService;
 import cn.cnic.trackrecord.web.Const;
@@ -17,20 +21,28 @@ import cn.cnic.trackrecord.web.config.property.TrackFileProperties;
 import cn.cnic.trackrecord.web.identity.UserDetailsServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.xml.sax.SAXException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+@Slf4j
+@Api(value = "轨迹API", description = "轨迹API", tags = "TrackApi")
 @RestController
 @RequestMapping(value = Const.API_ROOT + "track")
 public class TrackController {
@@ -48,6 +60,9 @@ public class TrackController {
 
     @Autowired
     private TrackFileService trackFileService;
+
+    @Autowired
+    private Hadoops hadoops;
 
     @ApiOperation(value = "轨迹文件上传")
     @ApiImplicitParams({
@@ -90,6 +105,21 @@ public class TrackController {
         // TODO page
         PageHelper.startPage(params.getPageNum(), params.getPageSize());
         return HttpRes.success(new PageInfo<>(trackService.getByTrackSearchParams(params)));
+    }
+
+    @ApiOperation(value = "获取整个轨迹路线信息")
+    @RequestMapping(value = "route/{id}", method = RequestMethod.GET)
+    public HttpRes<RouteRecord> getRouteRecord(@PathVariable int id) {
+        Track track = trackService.get(id);
+        try {
+            Map<String, Long> map = hadoops.pathToMap(track.getPath());
+            RouteRecordXml routeRecordXml = new RouteRecordXml();
+            File file = hadoops.readAsFile(map.get(properties.getRouteRecordFileName()));
+            return HttpRes.success(SaxUtils.parse(routeRecordXml, file));
+        } catch (IOException | SAXException | ParserConfigurationException e) {
+            log.error(e.getMessage());
+            return HttpRes.fail("解析轨迹元信息出错", null);
+        }
     }
 
 

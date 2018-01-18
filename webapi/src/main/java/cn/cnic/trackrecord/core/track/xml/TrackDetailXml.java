@@ -10,10 +10,6 @@ public class TrackDetailXml extends SaxHandler<Track> {
     private Track track = new Track();
     private StringBuilder builder = new StringBuilder();
 
-    public TrackDetailXml(String xmlPath) {
-        this.setXmlPath(xmlPath);
-    }
-
     public void endElement(String uri, String localName, String qName) throws SAXException {
         String text = builder.toString().trim();
         builder.delete(0, builder.length());

@@ -3,6 +3,7 @@ package cn.cnic.trackrecord.worker;
 import cn.cnic.trackrecord.common.date.LongDate;
 import cn.cnic.trackrecord.common.enumeration.TrackFileState;
 import cn.cnic.trackrecord.common.util.Files;
+import cn.cnic.trackrecord.plugin.hadoop.Hadoops;
 import cn.cnic.trackrecord.plugin.sax.SaxUtils;
 import cn.cnic.trackrecord.core.track.xml.RouteRecordXml;
 import cn.cnic.trackrecord.core.track.xml.TrackDetailXml;
@@ -13,13 +14,10 @@ import cn.cnic.trackrecord.data.kml.PlaceMark;
 import cn.cnic.trackrecord.data.kml.RoutePlaceMark;
 import cn.cnic.trackrecord.data.kml.RouteRecord;
 import cn.cnic.trackrecord.plugin.ant.UnzipBean;
-import cn.cnic.trackrecord.plugin.hadoop.HadoopBean;
-import cn.cnic.trackrecord.plugin.hadoop.Position;
 import cn.cnic.trackrecord.service.TrackFileService;
 import cn.cnic.trackrecord.service.TrackPointService;
 import cn.cnic.trackrecord.service.TrackService;
 import cn.cnic.trackrecord.web.config.property.TrackFileProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -54,10 +52,7 @@ public class TrackFileWorker {
     private UnzipBean unzipBean;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private HadoopBean hadoopBean;
+    private Hadoops hadoops;
 
     @Scheduled(fixedDelay = 5000)
     public void work() {
@@ -158,11 +153,10 @@ public class TrackFileWorker {
         try {
             //TODO
             String realTrackPath = Files.getRealTrackPath(trackFile.getPath());
-            Track track = SaxUtils.parse(new TrackDetailXml(Files.getPath(realTrackPath, properties.getTrackDetailFileName())));
-            RouteRecord routeRecord = SaxUtils.parse(new RouteRecordXml(Files.getPath(realTrackPath, properties.getRouteRecordFileName())));
+            Track track = SaxUtils.parse(new TrackDetailXml(), Files.getPath(realTrackPath, properties.getTrackDetailFileName()));
+            RouteRecord routeRecord = SaxUtils.parse(new RouteRecordXml(), Files.getPath(realTrackPath, properties.getRouteRecordFileName()));
 
-            Map<String, Position> map = hadoopBean.write(new File(trackFile.getPath()), false);
-            track.setPath(objectMapper.writeValueAsString(map));
+            track.setPath(hadoops.writeFile(new File(trackFile.getPath()), false));
             track.setFileSize(trackFile.getFileSize());
             track.setMd5(trackFile.getMd5());
             track.setUploadTime(new LongDate());

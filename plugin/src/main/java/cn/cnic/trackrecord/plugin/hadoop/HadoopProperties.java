@@ -1,10 +1,13 @@
 package cn.cnic.trackrecord.plugin.hadoop;
 
+import cn.cnic.trackrecord.common.util.Files;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 
 @Component
 @PropertySource(value = {"classpath:plugin-hadoop.properties"})
@@ -17,5 +20,10 @@ public class HadoopProperties {
     private String user = "hadoop";
     private int blockSize = 1024 * 1024 * 64;
     private String homeDir;
+    private String localTmpDir;
 
+    @PostConstruct
+    public void init() {
+        Files.createDirectory(localTmpDir);
+    }
 }

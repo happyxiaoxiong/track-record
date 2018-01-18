@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
-@Api(value = "配置api", description = "配置api", tags = "Config")
+@Api(value = "配置API", description = "配置API", tags = "Config")
 @RestController
 @RequestMapping(Const.API_ROOT + "config")
 public class ConfigController {

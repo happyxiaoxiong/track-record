@@ -29,4 +29,9 @@ public class TrackServiceImpl implements TrackService {
     public List<Track> getByTrackSearchParams(TrackSearchParams params) {
         return trackDao.getByTrackSearchParams(params);
     }
+
+    @Override
+    public Track get(int id) {
+        return trackDao.get(id);
+    }
 }

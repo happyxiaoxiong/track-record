@@ -3,11 +3,13 @@ package cn.cnic.trackrecord.web.config;
 import cn.cnic.trackrecord.common.formatter.LongDateFormatter;
 import cn.cnic.trackrecord.common.formatter.ShortDateFormatter;
 import cn.cnic.trackrecord.common.http.plupupload.PluploadBean;
+import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.util.concurrent.Executor;
@@ -38,5 +40,10 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         SimpleApplicationEventMulticaster eventMulticaster = new SimpleApplicationEventMulticaster();
         eventMulticaster.setTaskExecutor(executor());
         return eventMulticaster;
+    }
+
+    @Bean
+    public RestTemplate restTemplate(HttpMessageConverters messageConverters) {
+        return new RestTemplate(messageConverters.getConverters());
     }
 }

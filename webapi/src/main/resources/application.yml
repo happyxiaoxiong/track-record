@@ -22,6 +22,8 @@ track:
   file:
     upload-path: D:/track_file
     unzip-path: D:/track_file
-
+banner:
+  image:
+    location:
 
 

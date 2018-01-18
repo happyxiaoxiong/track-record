@@ -10,4 +10,6 @@ public interface TrackDao {
     int addAndGetId(Track track);
     boolean existByMd5AndFileSize(@Param("md5") String md5, @Param("fileSize") int fileSize);
     List<Track> getByTrackSearchParams(TrackSearchParams params);
+
+    Track get(@Param("id") int id);
 }

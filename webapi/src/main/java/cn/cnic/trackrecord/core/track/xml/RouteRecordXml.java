@@ -19,10 +19,6 @@ public class RouteRecordXml extends SaxHandler<RouteRecord> {
     private RouteRecordBuilder routeRecordBuilder = new RouteRecordBuilder();
     private StringBuilder builder = new StringBuilder();
 
-    public RouteRecordXml(String xmlPath) {
-        this.setXmlPath(xmlPath);
-    }
-
     @Override
     public RouteRecord getResult() {
         return routeRecordBuilder.build();

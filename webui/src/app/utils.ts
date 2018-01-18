@@ -19,4 +19,16 @@ export class Utils {
     }
     return (num <= 0 ? '0' : num.toFixed(fixed).replace(/0+$/, '')) + units[i === units.length ? i - 1 : i];
   }
+
+  static more(val: string, len?: number) {
+    len = len || 8;
+    if (val && val.length > len) {
+      val = `<span title="${val}" data-toggle="tooltip">${val.substr(0, 8)}...</span>`;
+    }
+    return val;
+  }
+
+  static addHhMmSs(val: string) {
+    return val && val.match(/^\d{4}(-\d\d){2}$/) ? val + ' 00:00:00' : '';
+  }
 }
