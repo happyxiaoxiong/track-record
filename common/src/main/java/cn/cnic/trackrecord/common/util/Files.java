@@ -27,6 +27,10 @@ public class Files {
         return dir.getAbsolutePath();
     }
 
+    public static void delete(String filePath) {
+        delete(new File(filePath));
+    }
+
     public static void delete(File file) {
         if (file.isDirectory()) {
             File[] files = file.listFiles();
@@ -39,11 +43,19 @@ public class Files {
         file.delete();
     }
 
-    public static String getPath(String first, String... more) {
+    public static String getPathString(String first, String... more) {
         return Paths.get(first, more).normalize().toString();
     }
 
     public static File getFile(String first, String... more) {
         return Paths.get(first, more).toFile();
+    }
+
+    public static Path getPath(String first, String... more) {
+        return Paths.get(first, more).normalize();
+    }
+
+    public static boolean exists(String path) {
+        return new File(path).exists();
     }
 }

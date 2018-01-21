@@ -3,8 +3,7 @@ package cn.cnic.trackrecord.worker;
 import cn.cnic.trackrecord.common.date.LongDate;
 import cn.cnic.trackrecord.common.enumeration.TrackFileState;
 import cn.cnic.trackrecord.common.util.Files;
-import cn.cnic.trackrecord.plugin.hadoop.Hadoops;
-import cn.cnic.trackrecord.plugin.sax.SaxUtils;
+import cn.cnic.trackrecord.common.xml.Stax.Staxs;
 import cn.cnic.trackrecord.core.track.xml.RouteRecordXml;
 import cn.cnic.trackrecord.core.track.xml.TrackDetailXml;
 import cn.cnic.trackrecord.data.entity.Track;
@@ -14,6 +13,7 @@ import cn.cnic.trackrecord.data.kml.PlaceMark;
 import cn.cnic.trackrecord.data.kml.RoutePlaceMark;
 import cn.cnic.trackrecord.data.kml.RouteRecord;
 import cn.cnic.trackrecord.plugin.ant.UnzipBean;
+import cn.cnic.trackrecord.plugin.hadoop.Hadoops;
 import cn.cnic.trackrecord.service.TrackFileService;
 import cn.cnic.trackrecord.service.TrackPointService;
 import cn.cnic.trackrecord.service.TrackService;
@@ -23,15 +23,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Component
@@ -129,7 +127,7 @@ public class TrackFileWorker {
      */
     private void unzip(TrackFile trackFile) {
         try {
-            String trackPath = Files.getPath(properties.getUnzipPath(), trackFile.getFilename().replaceFirst("\\.\\w*$", ""));
+            String trackPath = Files.getPathString(properties.getUnzipPath(), trackFile.getFilename().replaceFirst("\\.\\w*$", ""));
             unzipBean.unzip(trackFile.getPath(), trackPath, false);
 
             trackFile.setPath(trackPath);//更换为解压目录
@@ -153,10 +151,10 @@ public class TrackFileWorker {
         try {
             //TODO
             String realTrackPath = Files.getRealTrackPath(trackFile.getPath());
-            Track track = SaxUtils.parse(new TrackDetailXml(), Files.getPath(realTrackPath, properties.getTrackDetailFileName()));
-            RouteRecord routeRecord = SaxUtils.parse(new RouteRecordXml(), Files.getPath(realTrackPath, properties.getRouteRecordFileName()));
+            Track track = Staxs.parse(new TrackDetailXml(), Files.getPathString(realTrackPath, properties.getTrackDetailFileName()));
+            RouteRecord routeRecord = Staxs.parse(new RouteRecordXml(), Files.getPathString(realTrackPath, properties.getRouteRecordFileName()));
 
-            track.setPath(hadoops.writeFile(new File(trackFile.getPath()), false));
+            track.setPath(hadoops.writeFile(String.valueOf(trackFile.getUserId()), new File(trackFile.getPath()), false));
             track.setFileSize(trackFile.getFileSize());
             track.setMd5(trackFile.getMd5());
             track.setUploadTime(new LongDate());
@@ -174,7 +172,7 @@ public class TrackFileWorker {
             trackPointService.addAll(points);
             trackFile.setState(TrackFileState.FINISH);
             trackFile.setComment("操作成功");
-        } catch (ParserConfigurationException | SAXException | IOException e) {
+        } catch (XMLStreamException | IOException e) {
             log.error(e.getMessage());
             trackFile.setState(TrackFileState.EXTRACT_AND_SAVE_FAIL);
             trackFile.setComment("错误:数据格式异常");

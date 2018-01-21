@@ -1,4 +1,4 @@
-package cn.cnic.trackrecord.plugin.sax;
+package cn.cnic.trackrecord.common.xml.sax;
 
 import org.xml.sax.SAXException;
 
@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class SaxUtils {
+public class Saxs {
     private static SAXParserFactory factory = SAXParserFactory.newInstance();
 
     public static  <T> T parse(SaxHandler<T> saxHandler, String xmlPath) throws ParserConfigurationException, SAXException, IOException {

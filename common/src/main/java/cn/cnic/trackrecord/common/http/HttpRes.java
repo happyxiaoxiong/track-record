@@ -16,7 +16,10 @@ public class HttpRes<T> {
     @ApiModelProperty(value = "数据")
     private T data;
 
-    private HttpRes(HttpResCode code, String message, T data) {
+    public HttpRes() {
+    }
+
+    public HttpRes(HttpResCode code, String message, T data) {
         this.code = code.getCode();
         this.message = message;
         this.data = data;

@@ -16,9 +16,9 @@ import javax.annotation.PostConstruct;
 @Getter
 public class HadoopProperties {
     private String uri = "hdfs://localhost:9000/";
-    private String filePath = "default";
+    private String storePath = "default";
     private String user = "hadoop";
-    private int blockSize = 1024 * 1024 * 64;
+    private int blockSize = 1024 * 1024 * 128;
     private String homeDir;
     private String localTmpDir;
 

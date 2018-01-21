@@ -1,66 +1,71 @@
 package cn.cnic.trackrecord.core.track.xml;
 
 import cn.cnic.trackrecord.common.util.Objects;
-import cn.cnic.trackrecord.plugin.sax.SaxHandler;
+import cn.cnic.trackrecord.common.xml.Stax.StaxHandler;
+import cn.cnic.trackrecord.common.xml.Stax.Staxs;
 import cn.cnic.trackrecord.data.entity.TrackPoint;
 import cn.cnic.trackrecord.data.kml.PlaceMarkBuilder;
 import cn.cnic.trackrecord.data.kml.PlaceMarkType;
 import cn.cnic.trackrecord.data.kml.RouteRecord;
 import cn.cnic.trackrecord.data.kml.RouteStyle;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
+import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RouteRecordXml extends SaxHandler<RouteRecord> {
+@Slf4j
+public class RouteRecordXml extends StaxHandler<RouteRecord> {
     private RouteRecordBuilder routeRecordBuilder = new RouteRecordBuilder();
-    private StringBuilder builder = new StringBuilder();
+
+    @Override
+    public void parse() throws XMLStreamException {
+        while (hasNext()) {
+            XMLEvent xmlEvent = nextEvent();
+            if (xmlEvent.isStartElement()) {
+                StartElement startElement = xmlEvent.asStartElement();
+                if (startElement.getName().getLocalPart().equals("Placemark")) {
+                    routeRecordBuilder.startPlaceMark();
+                } else if (startElement.getName().getLocalPart().equals("LineString")) {
+                    routeRecordBuilder.placeMarkType(PlaceMarkType.ROUTE);
+                } else if (startElement.getName().getLocalPart().equals("Style")) {
+                    Attribute attr = startElement.getAttributeByName(new QName("id"));
+                    if (Objects.nonNull(attr)) {
+                        routeRecordBuilder.style(attr.getValue());
+                    }
+                } else if (startElement.getName().getLocalPart().equals("coordinates")) {
+                    routeRecordBuilder.coordinates(nextData());
+                } else if (startElement.getName().getLocalPart().equals("name")) {
+                    routeRecordBuilder.name(nextData());
+                }  else if (startElement.getName().getLocalPart().equals("description")) {
+                    routeRecordBuilder.desc(nextData());
+                } else if (startElement.getName().getLocalPart().equals("color")) {
+                    routeRecordBuilder.routeStyleColor(nextData());
+                }  else if (startElement.getName().getLocalPart().equals("width")) {
+                    routeRecordBuilder.routeStyleWidth(nextData());
+                }  else if (startElement.getName().getLocalPart().equals("styleUrl")) {
+                    routeRecordBuilder.styleUrl(nextData());
+                }
+            } else if (xmlEvent.isEndElement()) {
+                EndElement endElement = xmlEvent.asEndElement();
+                if (endElement.getName().getLocalPart().equals("Placemark")) {
+                    routeRecordBuilder.endPlaceMark();
+                }
+            }
+        }
+    }
 
     @Override
     public RouteRecord getResult() {
         return routeRecordBuilder.build();
-    }
-
-    @Override
-    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-        if (qName.equals("Placemark")) {
-            routeRecordBuilder.startPlaceMark();
-        } else if (qName.equals("LineString")) {//  LineString/coordinates
-            routeRecordBuilder.placeMarkType(PlaceMarkType.ROUTE);
-        } else if (qName.equals("Point")) {
-            routeRecordBuilder.placeMarkType(PlaceMarkType.KEYPOINT);
-        } else if (qName.equals("Style")) {
-            routeRecordBuilder.style(attrs.getValue("id"));
-        }
-    }
-
-    @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-        String text = builder.toString().trim();
-        builder.delete(0, builder.length());
-        if (qName.equals("Placemark")) {//一个Placemark解析完
-            routeRecordBuilder.endPlaceMark();
-        } else if (qName.equals("coordinates")) {
-            routeRecordBuilder.coordinates(text);
-        } else if (qName.equals("name")) {
-            routeRecordBuilder.name(text);
-        }else if (qName.equals("description")) {
-            routeRecordBuilder.desc(text);
-        }  else if (qName.equals("color")) {//路线样式颜色
-            routeRecordBuilder.routeStyleColor(text);
-        } else if (qName.equals("width")) {//路线样式宽度，
-            routeRecordBuilder.routeStyleWidth(text);
-        } else if (qName.equals("styleUrl")) {//说明:引用的样式要在该路线之前设置才能获取到
-            routeRecordBuilder.styleUrl(text.substring(1));
-        }
-    }
-
-    @Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
-        builder.append(ch, start, length);
     }
 
     static private class RouteRecordBuilder {
@@ -75,7 +80,7 @@ public class RouteRecordXml extends SaxHandler<RouteRecord> {
             for (PlaceMarkBuilder placeMarkBuilder : placeMarkBuilders) {
                 RouteStyle routeStyle = placeMarkBuilder.routeStyle();
                 if (Objects.nonNull(routeStyle)) {
-                    placeMarkBuilder.routeStyle(routeStyleMap.get(routeStyle.getId()));
+                    placeMarkBuilder.routeStyle(routeStyleMap.get(routeStyle.getId().replaceFirst("^#+", "")));
                 }
                 routeRecord.getPlaceMarks().add(placeMarkBuilder.build());
             }
@@ -84,6 +89,7 @@ public class RouteRecordXml extends SaxHandler<RouteRecord> {
 
         void startPlaceMark() {
             placeMarkBuilder = new PlaceMarkBuilder();
+            placeMarkBuilder.placeMarkType(PlaceMarkType.KEYPOINT);
         }
 
         void endPlaceMark() {
@@ -121,7 +127,7 @@ public class RouteRecordXml extends SaxHandler<RouteRecord> {
         TrackPoint trackPoint(String pointText) {
             TrackPoint point = new TrackPoint();
             StringTokenizer tokenizer = new StringTokenizer(pointText, ",", false);
-            if (tokenizer.hasMoreElements())
+            if (tokenizer.hasMoreTokens())
             {
                 point.setLongitude(Double.parseDouble(tokenizer.nextToken()));
                 point.setLatitude(Double.parseDouble(tokenizer.nextToken()));
@@ -133,7 +139,7 @@ public class RouteRecordXml extends SaxHandler<RouteRecord> {
         List<TrackPoint> trackPoints(String pointsText) {
             List<TrackPoint> points = new LinkedList<>();
             StringTokenizer tokenizer = new StringTokenizer(pointsText, " ", false);
-            while (tokenizer.hasMoreElements()) {
+            while (tokenizer.hasMoreTokens()) {
                 points.add(trackPoint(tokenizer.nextToken()));
             }
             return points;
@@ -168,5 +174,9 @@ public class RouteRecordXml extends SaxHandler<RouteRecord> {
             }
             placeMarkBuilder.desc(desc);
         }
+    }
+
+    public static void main(String[] args) throws FileNotFoundException, XMLStreamException {
+        System.out.println(Staxs.parse(new RouteRecordXml(), "G:\\gpstracks\\123.xml"));
     }
 }

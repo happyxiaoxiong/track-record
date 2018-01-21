@@ -3,6 +3,9 @@ logging:
     org:
       springframework:
         web: debug
+    cn:
+      cnic:
+        trackrecord: debug
 spring:
   jackson:
     default-property-inclusion: non_null

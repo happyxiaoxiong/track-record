@@ -6,9 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
+import java.io.OutputStream;
+import java.util.List;
 
 @Component
 public class Hadoops {
@@ -20,12 +21,22 @@ public class Hadoops {
     private ObjectMapper objectMapper;
 
 
-    public Map<String, Long> pathToMap(String path) throws IOException {
-        return objectMapper.readValue(path, new TypeReference<Map<String, Long>>(){});
+    public FileInfo getFileInfoFromPath(String path, String fileName) throws IOException {
+        List<FileInfo> fileInfos = objectMapper.readValue(path, new TypeReference<List<FileInfo>>(){});
+        for (FileInfo fileInfo : fileInfos) {
+            if (fileInfo.getName().equals(fileName)) {
+                return fileInfo;
+            }
+        }
+        return null;
     }
 
-    public String writeFile(File file, boolean isDelete) throws IOException {
-        return objectMapper.writeValueAsString(hadoopBean.write(file, isDelete));
+    public List<FileInfo> pathToMap(String path) throws IOException {
+        return objectMapper.readValue(path, new TypeReference<List<FileInfo>>(){});
+    }
+
+    public String writeFile(String id, File file, boolean isDelete) throws IOException {
+        return objectMapper.writeValueAsString(hadoopBean.write(id, file, isDelete));
     }
 
     /**
@@ -34,19 +45,35 @@ public class Hadoops {
      * @return
      * @throws IOException
      */
-    public String writeFile(File file) throws IOException {
-        return writeFile(file, true);
+    public String writeFile(String id, File file) throws IOException {
+        return writeFile(id, file, true);
     }
 
-    public InputStream readAsInputStream(long offset) throws IOException {
-       return hadoopBean.readAsInputStream(offset);
+    /**
+     * 将hadoop的inputStream输出到OutputStream流中
+     * @param id
+     * @param fileInfo
+     * @param out
+     * @throws IOException
+     */
+    public void readToOutputStream(String id, FileInfo fileInfo, OutputStream out) throws IOException {
+        hadoopBean.readToOutputStream(id, fileInfo, 0, fileInfo.getSize(), out);
     }
 
-    public File readAsFile(long offset) throws IOException {
-        return hadoopBean.readAsFile(offset);
+    /**
+     *
+     * @param id
+     * @param fileInfo
+     * @param offset 文件的偏移位置
+     * @param len 读取多少个字节数
+     * @param out
+     * @throws IOException
+     */
+    public void readToOutputStream(String id, FileInfo fileInfo, int offset, int len,  OutputStream out) throws IOException {
+        hadoopBean.readToOutputStream(id, fileInfo, offset, len, out);
     }
 
-    public Bytes readAsBytes(long offset) throws IOException {
-        return hadoopBean.readAsBytes(offset);
+    public void readToCallBack(String id, FileInfo fileInfo, CallBack callBack) throws IOException {
+        hadoopBean.readCallBack(id, fileInfo, callBack);
     }
 }

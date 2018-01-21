@@ -3,17 +3,20 @@ package cn.cnic.trackrecord.web.api.controller;
 import cn.cnic.trackrecord.common.date.LongDate;
 import cn.cnic.trackrecord.common.enumeration.TrackFileState;
 import cn.cnic.trackrecord.common.http.HttpRes;
+import cn.cnic.trackrecord.common.http.HttpResCode;
 import cn.cnic.trackrecord.common.http.plupupload.Plupload;
 import cn.cnic.trackrecord.common.http.plupupload.PluploadBean;
 import cn.cnic.trackrecord.common.http.plupupload.PluploadCallback;
 import cn.cnic.trackrecord.common.util.Objects;
+import cn.cnic.trackrecord.common.xml.Stax.Staxs;
 import cn.cnic.trackrecord.core.track.xml.RouteRecordXml;
 import cn.cnic.trackrecord.data.entity.Track;
 import cn.cnic.trackrecord.data.entity.TrackFile;
 import cn.cnic.trackrecord.data.kml.RouteRecord;
 import cn.cnic.trackrecord.data.vo.TrackSearchParams;
+import cn.cnic.trackrecord.plugin.hadoop.CallBack;
+import cn.cnic.trackrecord.plugin.hadoop.FileInfo;
 import cn.cnic.trackrecord.plugin.hadoop.Hadoops;
-import cn.cnic.trackrecord.plugin.sax.SaxUtils;
 import cn.cnic.trackrecord.service.TrackFileService;
 import cn.cnic.trackrecord.service.TrackService;
 import cn.cnic.trackrecord.web.Const;
@@ -21,29 +24,27 @@ import cn.cnic.trackrecord.web.config.property.TrackFileProperties;
 import cn.cnic.trackrecord.web.identity.UserDetailsServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.xml.sax.SAXException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Api(value = "轨迹API", description = "轨迹API", tags = "TrackApi")
-@RestController
+@Controller
 @RequestMapping(value = Const.API_ROOT + "track")
 public class TrackController {
     @Autowired
@@ -72,6 +73,7 @@ public class TrackController {
             @ApiImplicitParam(name = "file", value = "文件", dataType = "file", required = true)
     })
     @RequestMapping(value = "file/upload", method = RequestMethod.POST)
+    @ResponseBody
     public HttpRes<TrackFile> upload(Plupload plupload, HttpServletRequest request, HttpServletResponse response) {
         plupload.setRequest(request);
         try {
@@ -88,6 +90,7 @@ public class TrackController {
 
     @ApiOperation(value = "获取最近一周轨迹文件上传状态")
     @RequestMapping(value = "file/upload/state", method = RequestMethod.GET)
+    @ResponseBody
     public HttpRes<List<TrackFile>> getTrackFile() {
         LongDate startTime = LongDate.from(DateUtils.addDays(new Date(), -7));
         return HttpRes.success(trackFileService.getByStartUploadTimeAndUserId(startTime, userDetailsService.getLoginUser().getId()));
@@ -95,12 +98,14 @@ public class TrackController {
 
     @ApiOperation(value = "根据track_file_id获取track_file")
     @RequestMapping(value = "file/{track_file_id}", method = RequestMethod.GET)
+    @ResponseBody
     public HttpRes<TrackFile> getTrackFileById(@PathVariable("track_file_id") int trackFileId) {
         return HttpRes.success(trackFileService.getById(trackFileId));
     }
 
     @ApiOperation(value = "轨迹搜索")
     @RequestMapping(value = "search", method = RequestMethod.GET)
+    @ResponseBody
     public HttpRes<PageInfo<Track>> search(TrackSearchParams params) {
         // TODO page
         PageHelper.startPage(params.getPageNum(), params.getPageSize());
@@ -109,19 +114,93 @@ public class TrackController {
 
     @ApiOperation(value = "获取整个轨迹路线信息")
     @RequestMapping(value = "route/{id}", method = RequestMethod.GET)
-    public HttpRes<RouteRecord> getRouteRecord(@PathVariable int id) {
-        Track track = trackService.get(id);
+    @ResponseBody
+    public HttpRes<RouteRecord> getRouteRecord(@ApiParam(name = "id", value = "轨迹id") @PathVariable int id) {
         try {
-            Map<String, Long> map = hadoops.pathToMap(track.getPath());
+            final HttpRes<RouteRecord> res = new HttpRes<>();
+            res.setCode(HttpResCode.SUCCESS.getCode());
+
+            Track track = trackService.get(id);
+            FileInfo fileInfo = hadoops.getFileInfoFromPath(track.getPath(), properties.getRouteRecordFileName());
             RouteRecordXml routeRecordXml = new RouteRecordXml();
-            File file = hadoops.readAsFile(map.get(properties.getRouteRecordFileName()));
-            return HttpRes.success(SaxUtils.parse(routeRecordXml, file));
-        } catch (IOException | SAXException | ParserConfigurationException e) {
+            hadoops.readToCallBack(String.valueOf(track.getUserId()), fileInfo, new CallBack() {
+                @Override
+                public void call(InputStream in) {
+                    try {
+                        res.setData(Staxs.parse(routeRecordXml, in));
+                    } catch (XMLStreamException e) {
+                        log.error(e.getMessage());
+                        res.setCode(HttpResCode.FAIL.getCode());
+                        res.setMessage("解析轨迹元信息出错");
+                    }
+                }
+            });
+            return res;
+        } catch (IOException e) {
             log.error(e.getMessage());
             return HttpRes.fail("解析轨迹元信息出错", null);
         }
+
     }
 
+    @ApiOperation(value = "获取轨迹图片")
+    @RequestMapping(value = "{id}/photo/{name:.+}", method = RequestMethod.GET)
+    public void getPhoto(@ApiParam(name = "id", value = "轨迹id") @PathVariable int id,
+                         @ApiParam(name = "name", value = "轨迹图片名称") @PathVariable String name,
+                         HttpServletResponse res) {
+        try {
+            Track track = trackService.get(id);
+            FileInfo fileInfo = hadoops.getFileInfoFromPath(track.getPath(), name);
+            res.setContentType(MediaType.IMAGE_JPEG_VALUE);
+            hadoops.readToOutputStream(String.valueOf(track.getUserId()), fileInfo, res.getOutputStream());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "获取轨迹音频")
+    @RequestMapping(value = "{id}/audio/{name:.+}", method = RequestMethod.GET)
+    public byte[] getAudio(@ApiParam(name = "id", value = "轨迹id") @PathVariable int id,
+                           @ApiParam(name = "name", value = "轨迹图片名称") @PathVariable String name) {
+        return null;
+    }
+
+    @ApiOperation(value = "获取轨迹视频")
+    @RequestMapping(value = "{id}/video/{name:.+}", method = RequestMethod.GET)
+    public void getVideo(@ApiParam(name = "id", value = "轨迹id") @PathVariable int id,
+                                       @ApiParam(name = "name", value = "轨迹图片名称") @PathVariable String name,
+                                       HttpServletRequest req, HttpServletResponse res) {
+        String range = req.getHeader("Range");
+        try {
+            Track track = trackService.get(id);
+            FileInfo fileInfo = hadoops.getFileInfoFromPath(track.getPath(), name);
+            res.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+//            res.setHeader("Content-type","video/mp4");
+            if (Objects.isNull(range)) {
+                res.setHeader("Content-Disposition", "attachment; filename=" + name);
+                res.setContentLength(fileInfo.getSize());
+                hadoops.readToOutputStream(String.valueOf(track.getUserId()), fileInfo, res.getOutputStream());
+            } else {
+                FileInfo realFileInfo = fileInfo.getThumb();
+                if (Objects.isNull(realFileInfo)) {
+                    realFileInfo = fileInfo;
+                }
+                int offset = Integer.valueOf(range.substring(range.indexOf("=") + 1, range.indexOf("-")));
+                int len = realFileInfo.getSize();
+                int end = realFileInfo.getSize() - 1;
+                if(!range.endsWith("-")) {
+                    end = Integer.valueOf(range.substring(range.indexOf("-") + 1));
+                }
+                String ContentRange = "bytes " + offset + "-" + end + "/" + String.valueOf(realFileInfo.getSize());
+                res.setStatus(206);
+//                res.setContentType("video/mpeg4");
+                res.setHeader("Content-Range", ContentRange);
+                hadoops.readToOutputStream(String.valueOf(track.getUserId()), fileInfo, offset, len, res.getOutputStream());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private static class TrackFilePluploadCallback implements PluploadCallback<TrackFile> {
         @Override
