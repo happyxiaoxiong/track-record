@@ -15,7 +15,7 @@ import cn.cnic.trackrecord.data.entity.TrackFile;
 import cn.cnic.trackrecord.data.kml.RouteRecord;
 import cn.cnic.trackrecord.data.vo.TrackSearchParams;
 import cn.cnic.trackrecord.plugin.hadoop.CallBack;
-import cn.cnic.trackrecord.plugin.hadoop.FileInfo;
+import cn.cnic.trackrecord.plugin.hadoop.FileMeta;
 import cn.cnic.trackrecord.plugin.hadoop.Hadoops;
 import cn.cnic.trackrecord.service.TrackFileService;
 import cn.cnic.trackrecord.service.TrackService;
@@ -28,7 +28,6 @@ import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -121,18 +120,15 @@ public class TrackController {
             res.setCode(HttpResCode.SUCCESS.getCode());
 
             Track track = trackService.get(id);
-            FileInfo fileInfo = hadoops.getFileInfoFromPath(track.getPath(), properties.getRouteRecordFileName());
+            FileMeta fileMeta = hadoops.parsePath(track.getPath(), properties.getRouteRecordFileName());
             RouteRecordXml routeRecordXml = new RouteRecordXml();
-            hadoops.readToCallBack(String.valueOf(track.getUserId()), fileInfo, new CallBack() {
-                @Override
-                public void call(InputStream in) {
-                    try {
-                        res.setData(Staxs.parse(routeRecordXml, in));
-                    } catch (XMLStreamException e) {
-                        log.error(e.getMessage());
-                        res.setCode(HttpResCode.FAIL.getCode());
-                        res.setMessage("解析轨迹元信息出错");
-                    }
+            hadoops.readToCallBack(String.valueOf(track.getUserId()), fileMeta, in -> {
+                try {
+                    res.setData(Staxs.parse(routeRecordXml, in));
+                } catch (XMLStreamException e) {
+                    log.error(e.getMessage());
+                    res.setCode(HttpResCode.FAIL.getCode());
+                    res.setMessage("解析轨迹元信息出错");
                 }
             });
             return res;
@@ -150,8 +146,11 @@ public class TrackController {
                          HttpServletResponse res) {
         try {
             Track track = trackService.get(id);
-            FileInfo fileInfo = hadoops.getFileInfoFromPath(track.getPath(), name);
-            res.setContentType(MediaType.IMAGE_JPEG_VALUE);
+            FileMeta fileInfo = hadoops.parsePath(track.getPath(), name);
+            res.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            if (Objects.nonNull(fileInfo.getThumb())) {
+               fileInfo = fileInfo.getThumb();
+            }
             hadoops.readToOutputStream(String.valueOf(track.getUserId()), fileInfo, res.getOutputStream());
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -170,33 +169,26 @@ public class TrackController {
     public void getVideo(@ApiParam(name = "id", value = "轨迹id") @PathVariable int id,
                                        @ApiParam(name = "name", value = "轨迹图片名称") @PathVariable String name,
                                        HttpServletRequest req, HttpServletResponse res) {
-        String range = req.getHeader("Range");
         try {
             Track track = trackService.get(id);
-            FileInfo fileInfo = hadoops.getFileInfoFromPath(track.getPath(), name);
-            res.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-//            res.setHeader("Content-type","video/mp4");
+            FileMeta fileInfo = hadoops.parsePath(track.getPath(), name);
+            if (Objects.nonNull(fileInfo.getThumb())) {
+                fileInfo = fileInfo.getThumb();
+            }
+            int offset = 0;
+            String range = req.getHeader("Range");
             if (Objects.isNull(range)) {
                 res.setHeader("Content-Disposition", "attachment; filename=" + name);
                 res.setContentLength(fileInfo.getSize());
-                hadoops.readToOutputStream(String.valueOf(track.getUserId()), fileInfo, res.getOutputStream());
             } else {
-                FileInfo realFileInfo = fileInfo.getThumb();
-                if (Objects.isNull(realFileInfo)) {
-                    realFileInfo = fileInfo;
-                }
-                int offset = Integer.valueOf(range.substring(range.indexOf("=") + 1, range.indexOf("-")));
-                int len = realFileInfo.getSize();
-                int end = realFileInfo.getSize() - 1;
-                if(!range.endsWith("-")) {
-                    end = Integer.valueOf(range.substring(range.indexOf("-") + 1));
-                }
-                String ContentRange = "bytes " + offset + "-" + end + "/" + String.valueOf(realFileInfo.getSize());
+                offset = Integer.valueOf(range.substring(range.indexOf("=") + 1, range.indexOf("-")));
+                int end = range.endsWith("-") ? fileInfo.getSize() - 1 : Integer.valueOf(range.substring(range.indexOf("-") + 1));
+                res.setHeader("Content-Range", "bytes " + offset + "-" + end + "/" + String.valueOf(fileInfo.getSize()));
                 res.setStatus(206);
-//                res.setContentType("video/mpeg4");
-                res.setHeader("Content-Range", ContentRange);
-                hadoops.readToOutputStream(String.valueOf(track.getUserId()), fileInfo, offset, len, res.getOutputStream());
             }
+
+            res.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            hadoops.readToOutputStream(String.valueOf(track.getUserId()), fileInfo, offset, res.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }

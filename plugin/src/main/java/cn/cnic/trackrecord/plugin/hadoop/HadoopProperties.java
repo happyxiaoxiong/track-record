@@ -18,9 +18,14 @@ public class HadoopProperties {
     private String uri = "hdfs://localhost:9000/";
     private String storePath = "default";
     private String user = "hadoop";
+    //当文件大于 (ratio * blockSize)时,不追加文件，单独写入
+    private double ratio = 0.75;
     private int blockSize = 1024 * 1024 * 128;
+    //hadoop的安装目录
     private String homeDir;
     private String localTmpDir;
+    private String originFileName = "ori";
+    private String thumbFileName = "thu";
 
     @PostConstruct
     public void init() {

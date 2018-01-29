@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -20,60 +19,42 @@ public class Hadoops {
     @Autowired
     private ObjectMapper objectMapper;
 
-
-    public FileInfo getFileInfoFromPath(String path, String fileName) throws IOException {
-        List<FileInfo> fileInfos = objectMapper.readValue(path, new TypeReference<List<FileInfo>>(){});
-        for (FileInfo fileInfo : fileInfos) {
-            if (fileInfo.getName().equals(fileName)) {
-                return fileInfo;
+    public FileMeta parsePath(String path, String fileName) throws IOException {
+        List<FileMeta> fileMetas = parsePath(path);
+        for (FileMeta fileMeta : fileMetas) {
+            if (fileMeta.getName().equals(fileName)) {
+                return fileMeta;
             }
         }
         return null;
     }
 
-    public List<FileInfo> pathToMap(String path) throws IOException {
-        return objectMapper.readValue(path, new TypeReference<List<FileInfo>>(){});
+    public List<FileMeta> parsePath(String path) throws IOException {
+        return objectMapper.readValue(path, new TypeReference<List<FileMeta>>(){});
     }
 
-    public String writeFile(String id, File file, boolean isDelete) throws IOException {
-        return objectMapper.writeValueAsString(hadoopBean.write(id, file, isDelete));
+    public String appendKmzFiles(String id, File file, boolean isDelete) throws IOException {
+        return objectMapper.writeValueAsString(hadoopBean.appendKmzFile(id, file, isDelete));
     }
 
-    /**
-     * 默认删除压缩文件
-     * @param file
-     * @return
-     * @throws IOException
-     */
-    public String writeFile(String id, File file) throws IOException {
-        return writeFile(id, file, true);
+    public String appendKmzFiles(String id, File file) throws IOException {
+        return appendKmzFiles(id, file, true);
     }
 
-    /**
-     * 将hadoop的inputStream输出到OutputStream流中
-     * @param id
-     * @param fileInfo
-     * @param out
-     * @throws IOException
-     */
-    public void readToOutputStream(String id, FileInfo fileInfo, OutputStream out) throws IOException {
+    public void readToOutputStream(String id, FileMeta fileInfo, OutputStream out) throws IOException {
         hadoopBean.readToOutputStream(id, fileInfo, 0, fileInfo.getSize(), out);
     }
 
-    /**
-     *
-     * @param id
-     * @param fileInfo
-     * @param offset 文件的偏移位置
-     * @param len 读取多少个字节数
-     * @param out
-     * @throws IOException
-     */
-    public void readToOutputStream(String id, FileInfo fileInfo, int offset, int len,  OutputStream out) throws IOException {
+    public void readToOutputStream(String id, FileMeta fileInfo, int offset, int len, OutputStream out) throws IOException {
         hadoopBean.readToOutputStream(id, fileInfo, offset, len, out);
     }
 
-    public void readToCallBack(String id, FileInfo fileInfo, CallBack callBack) throws IOException {
-        hadoopBean.readCallBack(id, fileInfo, callBack);
+    public void readToOutputStream(String id, FileMeta fileInfo, int offset, OutputStream out) throws IOException {
+        hadoopBean.readToOutputStream(id, fileInfo, offset, fileInfo.getSize() - offset, out);
     }
+
+    public void readToCallBack(String id, FileMeta fileInfo, CallBack callBack) throws IOException {
+        hadoopBean.readToCallBack(id, fileInfo, callBack);
+    }
+
 }

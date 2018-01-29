@@ -2,12 +2,15 @@ package cn.cnic.trackrecord.plugin.hadoop;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Setter
 @Getter
-public class FileInfo {
+@ToString
+public class FileMeta {
     private long offset;
     private int size;
     private String name;
-    private FileInfo thumb;
+    private String storeName;
+    private FileMeta thumb;
 }

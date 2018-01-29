@@ -154,7 +154,7 @@ public class TrackFileWorker {
             Track track = Staxs.parse(new TrackDetailXml(), Files.getPathString(realTrackPath, properties.getTrackDetailFileName()));
             RouteRecord routeRecord = Staxs.parse(new RouteRecordXml(), Files.getPathString(realTrackPath, properties.getRouteRecordFileName()));
 
-            track.setPath(hadoops.writeFile(String.valueOf(trackFile.getUserId()), new File(trackFile.getPath()), false));
+            track.setPath(hadoops.appendKmzFiles(String.valueOf(trackFile.getUserId()), new File(trackFile.getPath()), false));
             track.setFileSize(trackFile.getFileSize());
             track.setMd5(trackFile.getMd5());
             track.setUploadTime(new LongDate());

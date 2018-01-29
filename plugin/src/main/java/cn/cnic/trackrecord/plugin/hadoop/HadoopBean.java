@@ -1,10 +1,11 @@
 package cn.cnic.trackrecord.plugin.hadoop;
 
 import cn.cnic.trackrecord.common.util.Files;
-import cn.cnic.trackrecord.common.util.Images;
+import cn.cnic.trackrecord.common.util.Medias;
 import cn.cnic.trackrecord.common.util.Objects;
 import cn.cnic.trackrecord.plugin.ffmpeg.FfmpegBean;
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.IOUtils;
@@ -17,22 +18,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+
 @Slf4j
 @Component
 class HadoopBean {
+
     @Autowired
     private HadoopProperties properties;
+
     @Autowired
     private FfmpegBean ffmpegBean;
+
     private FileSystem writeFs;
     private Configuration configuration;
-    private int maxFileSize = 0;
-    private final String origin = "ori";
-    private final String thumb = "thu";
-
-    private final String[] imgTypes = { "jpg", "png", "jpeg", "bmp", "jpe", "gif", "ico" };
-    private final String[] videoTypes = { "mp4", "avi", "rmvb", "mpeg", "mov", "mkv", "vob", "flv", "rm",
-            "asf", "f4v", "m4v", "3gp", "ts", "divx", "mpg", "mpe", "wmv", "mts"};
+    private int maxFileSize;
 
     @PostConstruct
     public void init() {
@@ -48,7 +47,7 @@ class HadoopBean {
         configuration.set("dfs.client.block.write.replace-datanode-on-failure.policy", "NEVER");
         try {
             writeFs = FileSystem.get(configuration);
-            createDirectory(new Path(properties.getStorePath()));
+            createDirs(new Path(properties.getStorePath()));
         } catch (IOException e) {
             log.error(e.getMessage());
         }
@@ -56,159 +55,112 @@ class HadoopBean {
         maxFileSize = (int) (properties.getBlockSize() * 0.75);
     }
 
-    private void createDirectory(Path path) throws IOException {
+    private void createDirs(Path path) throws IOException {
         if (!writeFs.exists(path)) {
             writeFs.mkdirs(path);
         }
     }
 
-    synchronized List<FileInfo> write(String id, File file, boolean isDelete) throws IOException {
+    synchronized List<FileMeta> appendKmzFile(String id, File file, boolean isDelete) throws IOException {
         writeFs = FileSystem.get(configuration);
         Path parent = getPath(properties.getStorePath(), id);
-        createDirectory(parent);
-        writeFs.createNewFile(new Path(parent, origin));
-        writeFs.createNewFile(new Path(parent, thumb));
+        createDirs(parent);
+        writeFs.createNewFile(new Path(parent, properties.getOriginFileName()));
+        writeFs.createNewFile(new Path(parent, properties.getThumbFileName()));
 
-        List<FileInfo> fileInfos = write(parent, file);
+        List<FileMeta> fileMetas = appendKmzFile(parent, file);
 
         if (isDelete) {
             Files.delete(file);
         }
-        return fileInfos;
+        writeFs.close();
+        return fileMetas;
     }
 
-    private List<FileInfo> write(Path parent, File file) throws IOException {
-        List<FileInfo> fileInfos = new LinkedList<>();
+    private List<FileMeta> appendKmzFile(Path parent, File file) throws IOException {
+        List<FileMeta> fileMetas = new LinkedList<>();
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             if (Objects.nonNull(files)) {
                 for (File tmpFile : files) {
                     if (tmpFile.isFile()) {
-                        fileInfos.add(append(parent, tmpFile));
+                        fileMetas.add(appendFile(parent, tmpFile));
                     } else {
-                        fileInfos.addAll(write(parent, tmpFile));
+                        fileMetas.addAll(appendKmzFile(parent, tmpFile));
                     }
                 }
             }
         } else {
-            fileInfos.add(append(parent, file));
+            fileMetas.add(appendFile(parent, file));
         }
-        return fileInfos;
+        return fileMetas;
     }
 
-    private FileInfo append(Path parent, File file) throws IOException {
-        FileInfo fileInfo = new FileInfo();
+    private FileMeta appendFile(Path parent, File file) throws IOException {
+        FileMeta meta = new FileMeta();
+        String fileName = file.getName();
         if (file.length() > maxFileSize) {//超过阈值
-            writeFs.copyFromLocalFile(new Path(file.getAbsolutePath()), new Path(parent, file.getName()));
+            writeFs.copyFromLocalFile(new Path(file.getAbsolutePath()), new Path(parent, fileName));
+            meta.setStoreName(fileName);
         } else {
-            fileInfo = appendCallback(new Path(parent, origin), new Callback() {
-                @Override
-                public void call(OutputStream out) throws IOException {
-                    IOUtils.copyBytes(new FileInputStream(file), out, 4096, true);
-                }
-            });
+            meta = appendCallback(new Path(parent, properties.getOriginFileName()), out ->
+                    IOUtils.copyBytes(new FileInputStream(file), out, 4096, true));
         }
-        if (isImage(file)) {// 是图片进行压缩
-            fileInfo.setThumb(appendThumbnail(parent, file));
-        } else if (isVideo(file)) {// 是视频转码成h264
-            fileInfo.setThumb(appendH264(parent, file));
-        } else if (isAudio(file)) {
+        if (Medias.isImage(fileName)) {// 是图片进行压缩
+            meta.setThumb(thumbnail(parent, file));
+        } else if (Medias.isVideo(fileName)) {// 是视频转码成h264
+            meta.setThumb(h264(parent, file));
+        } else if (Medias.isAudio(fileName)) {
 
         }
-        fileInfo.setName(file.getName());
-        return fileInfo;
+        meta.setName(fileName);
+        log.debug("append file: {}", meta);
+        return meta;
     }
 
-    private FileInfo appendH264(Path parent, File file) throws IOException {
+    private FileMeta h264(Path parent, File file) throws IOException {
         // 需要加上 .mp4后缀，否则会出错
         String destPath = Files.getPathString(properties.getLocalTmpDir(), UUID.randomUUID().toString() + ".mp4");
         if (ffmpegBean.encodeH264(file.getAbsolutePath(), destPath)) {
-            FileInfo fileInfo = appendCallback(new Path(parent, thumb), new Callback() {
-                @Override
-                public void call(OutputStream out) throws IOException {
-                    IOUtils.copyBytes(new FileInputStream(destPath), out, 4096, true);
-                }
-            });
+            FileMeta fileMeta = appendCallback(new Path(parent, properties.getThumbFileName()), out ->
+                    IOUtils.copyBytes(new FileInputStream(destPath), out, 4096, true));
             Files.delete(destPath);
-            return fileInfo;
+            return fileMeta;
         }
         return null;
     }
 
-    private FileInfo appendThumbnail(Path parent, final File file) throws IOException {
-        return appendCallback(new Path(parent, thumb), new Callback() {
-            @Override
-            public void call(OutputStream out) throws IOException {
-                Images.createThumbnail(file, out);
-            }
+    private FileMeta thumbnail(Path parent, final File file) throws IOException {
+        return appendCallback(new Path(parent, properties.getThumbFileName()), out -> {
+            Thumbnails.of(file).width(1024).outputQuality(0.75).toOutputStream(out);
+            //must close, fix error: is already the current lease holder
+            out.close();
         });
     }
 
-    private FileInfo appendCallback(Path path, Callback callback) throws IOException {
-        FileInfo fileInfo = new FileInfo();
-        fileInfo.setOffset(writeFs.getFileStatus(path).getLen());//记录偏移位置
+    private FileMeta appendCallback(Path path, Callback callback) throws IOException {
+        FileMeta fileMeta = new FileMeta();
+        fileMeta.setOffset(writeFs.getFileStatus(path).getLen());//记录偏移位置
         OutputStream out = writeFs.append(path);
         callback.call(out);
-        fileInfo.setSize((int) (writeFs.getFileStatus(path).getLen() - fileInfo.getOffset()));
-        return fileInfo;
+        fileMeta.setSize((int) (writeFs.getFileStatus(path).getLen() - fileMeta.getOffset()));
+        fileMeta.setStoreName(path.getName());
+        return fileMeta;
     }
 
-    private boolean isImage(File file) {
-        String lowercaseName = file.getName().toLowerCase();
-        for (String imgType : imgTypes) {
-            if (lowercaseName.endsWith(imgType)) {
-                return true;
-            }
-        }
-        return false;
+    void readToOutputStream(String id, FileMeta fileMeta, int offset, long len, OutputStream out) throws IOException {
+        IOUtils.copyBytes(readAsInputStream(id, fileMeta, offset), out, len, true);
     }
 
-    private boolean isVideo(File file) {
-        String lowercaseName = file.getName().toLowerCase();
-        for (String videoType : videoTypes) {
-            if (lowercaseName.endsWith(videoType)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isAudio(File file) {
-        String lowercaseName = file.getName().toLowerCase();
-        for (String videoType : videoTypes) {
-            if (lowercaseName.endsWith(videoType)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    void readToOutputStream(String id, FileInfo fileInfo, int offset, long len, OutputStream out) throws IOException {
-        InputStream in = getInputStream(id, fileInfo, offset);
-        IOUtils.copyBytes(in, out, len, false);
-        out.flush();
-        out.close();
-        in.close();
-    }
-
-    void readCallBack(String id, FileInfo fileInfo, CallBack callBack) throws IOException {
-        InputStream in = getInputStream(id, fileInfo, 0);
+    void readToCallBack(String id, FileMeta fileMeta, CallBack callBack) throws IOException {
+        InputStream in = readAsInputStream(id, fileMeta, 0);
         callBack.call(in);
         in.close();
     }
 
-    private InputStream getInputStream(String id, FileInfo fileInfo, int offset) throws IOException {
-        long desired = fileInfo.getOffset() + offset;
-        String fileName = origin;
-        FileInfo thumbnailFileInfo = fileInfo.getThumb();
-        if (!Objects.isNull(thumbnailFileInfo)) {
-            fileName = thumb;
-            desired = thumbnailFileInfo.getOffset() + offset;
-        } else if (fileInfo.getSize() > maxFileSize) {//超过阈值
-            fileName = fileInfo.getName();
-        }
-        FSDataInputStream in = FileSystem.get(configuration).open(getPath(properties.getStorePath(), id, fileName));
-        in.seek(desired);
+    private InputStream readAsInputStream(String id, FileMeta fileMeta, long offset) throws IOException {
+        FSDataInputStream in = FileSystem.get(configuration).open(getPath(properties.getStorePath(), id, fileMeta.getStoreName()));
+        in.seek(fileMeta.getOffset() + offset);
         return in;
     }
 
@@ -216,7 +168,7 @@ class HadoopBean {
         return new Path(Files.getPathString(first, more));
     }
 
-    private static interface Callback {
+    private interface Callback {
         void call(OutputStream out) throws IOException;
     }
 }
