@@ -15,7 +15,7 @@ public interface TrackFileDao {
 
     List<TrackFile> getByStartUploadTimeAndUserId(@Param("uploadTime") LongDate uploadTime, @Param("userId") int userId);
 
-    TrackFile getById(@Param("id") int id);
+    TrackFile get(@Param("id") int id);
 
     boolean update(TrackFile trackFile);
 }

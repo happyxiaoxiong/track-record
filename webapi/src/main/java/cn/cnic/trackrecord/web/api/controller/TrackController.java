@@ -14,7 +14,6 @@ import cn.cnic.trackrecord.data.entity.Track;
 import cn.cnic.trackrecord.data.entity.TrackFile;
 import cn.cnic.trackrecord.data.kml.RouteRecord;
 import cn.cnic.trackrecord.data.vo.TrackSearchParams;
-import cn.cnic.trackrecord.plugin.hadoop.CallBack;
 import cn.cnic.trackrecord.plugin.hadoop.FileMeta;
 import cn.cnic.trackrecord.plugin.hadoop.Hadoops;
 import cn.cnic.trackrecord.service.TrackFileService;
@@ -37,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -99,7 +97,7 @@ public class TrackController {
     @RequestMapping(value = "file/{track_file_id}", method = RequestMethod.GET)
     @ResponseBody
     public HttpRes<TrackFile> getTrackFileById(@PathVariable("track_file_id") int trackFileId) {
-        return HttpRes.success(trackFileService.getById(trackFileId));
+        return HttpRes.success(trackFileService.get(trackFileId));
     }
 
     @ApiOperation(value = "轨迹搜索")

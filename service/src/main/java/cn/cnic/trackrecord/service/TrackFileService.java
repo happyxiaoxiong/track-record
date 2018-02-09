@@ -14,7 +14,7 @@ public interface TrackFileService {
 
     List<TrackFile> getByStartUploadTimeAndUserId(LongDate uploadTime, int userId);
 
-    TrackFile getById(int trackFileId);
+    TrackFile get(int trackFileId);
 
 
     boolean update(TrackFile trackFile);

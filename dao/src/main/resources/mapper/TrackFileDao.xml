@@ -50,7 +50,7 @@
             </if>
         </where>
     </select>
-    <select id="getById" resultMap="baseMap">
+    <select id="get" resultMap="baseMap">
         SELECT * FROM <include refid="table"/> WHERE id=#{id}
     </select>
 </mapper>

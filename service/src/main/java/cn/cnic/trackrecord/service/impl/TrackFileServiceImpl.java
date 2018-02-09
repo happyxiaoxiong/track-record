@@ -35,8 +35,8 @@ public class TrackFileServiceImpl implements TrackFileService {
     }
 
     @Override
-    public TrackFile getById(int trackFileId) {
-        return trackFileDao.getById(trackFileId);
+    public TrackFile get(int trackFileId) {
+        return trackFileDao.get(trackFileId);
     }
 
     @Override
