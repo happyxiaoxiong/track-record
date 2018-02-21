@@ -16,6 +16,8 @@ import cn.cnic.trackrecord.data.kml.RouteRecord;
 import cn.cnic.trackrecord.data.vo.TrackSearchParams;
 import cn.cnic.trackrecord.plugin.hadoop.FileMeta;
 import cn.cnic.trackrecord.plugin.hadoop.Hadoops;
+import cn.cnic.trackrecord.plugin.lucene.LuceneBean;
+import cn.cnic.trackrecord.plugin.lucene.LuceneQueryUtils;
 import cn.cnic.trackrecord.service.TrackFileService;
 import cn.cnic.trackrecord.service.TrackService;
 import cn.cnic.trackrecord.web.Const;
@@ -26,6 +28,14 @@ import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.xml.builders.RangeQueryBuilder;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermRangeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -61,6 +71,9 @@ public class TrackController {
 
     @Autowired
     private Hadoops hadoops;
+
+    @Autowired
+    private LuceneBean luceneBean;
 
     @ApiOperation(value = "轨迹文件上传")
     @ApiImplicitParams({
@@ -104,7 +117,32 @@ public class TrackController {
     @RequestMapping(value = "search", method = RequestMethod.GET)
     @ResponseBody
     public HttpRes<PageInfo<Track>> search(TrackSearchParams params) {
-        // TODO page
+        String[] fields = {"name", "userName", "keySitesList", "annotation"};
+        try {
+            BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
+            if (StringUtils.isNotBlank(params.getKeyword())) {
+                //多关键字搜索
+                Query keywordQuery = LuceneQueryUtils.multiFieldQuery(params.getKeyword(), fields);
+                queryBuilder.add(keywordQuery, BooleanClause.Occur.MUST);
+            }
+            if (!params.getStartTime().equals(LongDate.NullValue) || !params.getEndTime().equals(LongDate.NullValue)) {
+                if (params.getEndTime().equals(LongDate.NullValue)) {
+                    params.setEndTime(new LongDate());
+                }
+                //数字范围搜索
+                Query timeQuery = IntPoint.newRangeQuery("startTime", params.getStartTime().getValue(), params.getEndTime().getValue());
+                queryBuilder.add(timeQuery, BooleanClause.Occur.MUST);
+            }
+            if (params.getDistance() > 0 && Objects.nonNull(params.getLatitude()) && Objects.nonNull(params.getLongitude())) {
+                //范围搜索
+                Query distanceQuery = LuceneQueryUtils.spatialCircleQuery(params.getLongitude(), params.getLatitude(), params.getDistance());
+                queryBuilder.add(distanceQuery, BooleanClause.Occur.MUST);
+            }
+            luceneBean.search(queryBuilder.build());
+        } catch (ParseException | IOException e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+        }
         PageHelper.startPage(params.getPageNum(), params.getPageSize());
         return HttpRes.success(new PageInfo<>(trackService.getByTrackSearchParams(params)));
     }

@@ -45,12 +45,12 @@ class HadoopBean {
         //FIXED dfs.client.block.write.replace-datanode-on-failure.policy DEFAULT error
         configuration.set("dfs.client.block.write.replace-datanode-on-failure.enable", "true");
         configuration.set("dfs.client.block.write.replace-datanode-on-failure.policy", "NEVER");
-        try {
-            writeFs = FileSystem.get(configuration);
-            createDirs(new Path(properties.getStorePath()));
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+//        try {
+//            writeFs = FileSystem.get(configuration);
+//            createDirs(new Path(properties.getStorePath()));
+//        } catch (IOException e) {
+//            log.error(e.getMessage());
+//        }
 
         maxFileSize = (int) (properties.getBlockSize() * 0.75);
     }

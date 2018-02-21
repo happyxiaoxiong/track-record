@@ -1,5 +1,6 @@
 package cn.cnic.trackrecord.web.api.controller;
 
+import cn.cnic.trackrecord.common.http.HttpRes;
 import cn.cnic.trackrecord.data.entity.RtGpsPoint;
 import cn.cnic.trackrecord.service.RtGpsPointService;
 import cn.cnic.trackrecord.web.Const;
@@ -22,7 +23,7 @@ public class RtGpsPointController {
 
     @ApiOperation(value = "获取所有用户的当前在线位置")
     @RequestMapping(value = "all", method = RequestMethod.GET)
-    public List<RtGpsPoint> getAll() {
-        return rtGpsPointService.getAll();
+    public HttpRes<List<RtGpsPoint>> getAll() {
+        return HttpRes.success(rtGpsPointService.getAll());
     }
 }

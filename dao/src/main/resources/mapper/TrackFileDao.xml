@@ -37,7 +37,7 @@
         SELECT COUNT(id) FROM <include refid="table"/> WHERE filesize=#{fileSize} AND md5=#{md5}
     </select>
     <select id="getUnfinished" resultMap="baseMap">
-        SELECT * FROM <include refid="table"/> WHERE state IN (0,1,2,3)
+        SELECT * FROM <include refid="table"/> WHERE state!=4 AND tries&lt;3
     </select>
     <select id="getByStartUploadTimeAndUserId" resultMap="baseMap">
         SELECT * FROM <include refid="table"/>

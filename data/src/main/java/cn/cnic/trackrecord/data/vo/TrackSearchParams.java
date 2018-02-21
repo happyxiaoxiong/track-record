@@ -11,20 +11,16 @@ import lombok.Setter;
 @Setter
 @Getter
 public class TrackSearchParams extends Page {
-    @ApiModelProperty(value = "轨迹名称", notes = "like匹配")
-    private String name;
-    @ApiModelProperty(value = "上传人", notes = "like匹配")
-    private String userName;
-    @ApiModelProperty(value = "开始时间")
+    @ApiModelProperty(value = "关键字(轨迹名称、记录人、关键地点、说明)")
+    private String keyword;
+    @ApiModelProperty(value = "开始巡护时间")
     private LongDate startTime;
-    @ApiModelProperty(value = "结束时间")
+    @ApiModelProperty(value = "结束巡护时间")
     private LongDate endTime;
-    @ApiModelProperty(value = "最小经度")
-    private Double minLongitude;
-    @ApiModelProperty(value = "最大经度")
-    private Double maxLongitude;
-    @ApiModelProperty(value = "最小纬度")
-    private Double minLatitude;
-    @ApiModelProperty(value = "最大纬度")
-    private Double maxLatitude;
+    @ApiModelProperty(value = "中心点经度")
+    private Double longitude;
+    @ApiModelProperty(value = "中心点纬度")
+    private Double latitude;
+    @ApiModelProperty(value = "离中心点距离")
+    private double distance;
 }

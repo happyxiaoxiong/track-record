@@ -4,6 +4,7 @@ import cn.cnic.trackrecord.common.date.LongDate;
 import cn.cnic.trackrecord.common.enumeration.TrackFileState;
 import cn.cnic.trackrecord.common.util.Files;
 import cn.cnic.trackrecord.common.xml.Stax.Staxs;
+import cn.cnic.trackrecord.core.track.TrackLuceneFormatter;
 import cn.cnic.trackrecord.core.track.xml.RouteRecordXml;
 import cn.cnic.trackrecord.core.track.xml.TrackDetailXml;
 import cn.cnic.trackrecord.data.entity.Track;
@@ -12,8 +13,10 @@ import cn.cnic.trackrecord.data.entity.TrackPoint;
 import cn.cnic.trackrecord.data.kml.PlaceMark;
 import cn.cnic.trackrecord.data.kml.RoutePlaceMark;
 import cn.cnic.trackrecord.data.kml.RouteRecord;
+import cn.cnic.trackrecord.data.lucene.TrackLucene;
 import cn.cnic.trackrecord.plugin.ant.UnzipBean;
 import cn.cnic.trackrecord.plugin.hadoop.Hadoops;
+import cn.cnic.trackrecord.plugin.lucene.LuceneBean;
 import cn.cnic.trackrecord.service.TrackFileService;
 import cn.cnic.trackrecord.service.TrackPointService;
 import cn.cnic.trackrecord.service.TrackService;
@@ -51,6 +54,9 @@ public class TrackFileWorker {
 
     @Autowired
     private Hadoops hadoops;
+
+    @Autowired
+    private LuceneBean luceneBean;
 
     @Scheduled(fixedDelay = 5000)
     public void work() {
@@ -153,7 +159,7 @@ public class TrackFileWorker {
             String realTrackPath = Files.getRealTrackPath(trackFile.getPath());
             Track track = Staxs.parse(new TrackDetailXml(), Files.getPathString(realTrackPath, properties.getTrackDetailFileName()));
             RouteRecord routeRecord = Staxs.parse(new RouteRecordXml(), Files.getPathString(realTrackPath, properties.getRouteRecordFileName()));
-
+            //保存到hadoop中
             track.setPath(hadoops.appendKmzFiles(String.valueOf(trackFile.getUserId()), new File(trackFile.getPath()), false));
             track.setFileSize(trackFile.getFileSize());
             track.setMd5(trackFile.getMd5());
@@ -170,6 +176,9 @@ public class TrackFileWorker {
                 }
             }
             trackPointService.addAll(points);
+            //建立索引
+            createIndex(track, points);
+
             trackFile.setState(TrackFileState.FINISH);
             trackFile.setComment("操作成功");
         } catch (XMLStreamException | IOException e) {
@@ -181,4 +190,14 @@ public class TrackFileWorker {
             trackFileService.update(trackFile);
         }
     }
+
+    private void createIndex(Track track, List<TrackPoint> trackPoints) {
+        TrackLucene trackLucene = new TrackLucene(track, trackPoints);
+        try {
+            luceneBean.add(new TrackLuceneFormatter(), trackLucene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

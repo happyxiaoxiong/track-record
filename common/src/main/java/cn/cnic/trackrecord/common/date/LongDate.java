@@ -12,7 +12,7 @@ import java.util.Date;
 @JsonDeserialize(using = LongDateDeserializer.class)
 @JsonSerialize(using = LongDateSerializer.class)
 public class LongDate extends IntDate {
-    public static LongDate NullValue = new LongDate(0);
+    public final static LongDate NullValue = new LongDate(0);
 
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -28,12 +28,11 @@ public class LongDate extends IntDate {
     }
 
     public static LongDate from(String longDateStr) {
-        LongDate intLongDate = new LongDate(0);
         try {
             return new LongDate(toInt(dateFormat.parse(longDateStr).getTime()));
         } catch (ParseException ignored) {
         }
-        return intLongDate;
+        return NullValue;
     }
 
     public static LongDate from(long timeMillis) {

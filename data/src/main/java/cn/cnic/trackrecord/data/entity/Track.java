@@ -14,6 +14,8 @@ public class Track {
     private String name;
     @ApiModelProperty(value = "轨迹上传人id")
     private int userId;
+    @ApiModelProperty(value = "上传人名称")
+    private String userName;
     @ApiModelProperty(value = "轨迹开始时间", dataType = "String", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11")
     private LongDate startTime;
     @ApiModelProperty(value = "轨迹结束时间", dataType = "String", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11")

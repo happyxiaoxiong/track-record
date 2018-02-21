@@ -12,7 +12,7 @@ import java.util.Date;
 @JsonDeserialize(using = ShowDateDeserializer.class)
 @JsonSerialize(using = ShortDateSerializer.class)
 public class ShortDate extends IntDate {
-    public static ShortDate NullValue = new ShortDate(0);
+    public final static ShortDate NullValue = new ShortDate(0);
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public ShortDate() { }
@@ -27,12 +27,11 @@ public class ShortDate extends IntDate {
     }
 
     public static ShortDate from(String shortDateStr) {
-        ShortDate intShortDate = new ShortDate(0);
         try {
             return new ShortDate(toInt(dateFormat.parse(shortDateStr).getTime()));
         } catch (ParseException ignored) {
         }
-        return intShortDate;
+        return NullValue;
     }
 
     public static ShortDate from(long timeMillis) {
