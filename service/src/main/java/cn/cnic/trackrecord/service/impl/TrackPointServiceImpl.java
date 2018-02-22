@@ -18,4 +18,9 @@ public class TrackPointServiceImpl implements TrackPointService {
     public int addAll(List<TrackPoint> points) {
         return trackPointDao.addAll(points);
     }
+
+    @Override
+    public List<TrackPoint> getByTrackId(int trackId) {
+        return trackPointDao.getByTrackId(trackId);
+    }
 }

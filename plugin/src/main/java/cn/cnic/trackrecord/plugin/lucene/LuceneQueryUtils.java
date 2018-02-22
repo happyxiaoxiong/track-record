@@ -1,5 +1,6 @@
 package cn.cnic.trackrecord.plugin.lucene;
 
+import cn.cnic.trackrecord.plugin.lucene.ik.IKAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -8,7 +9,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.spatial.query.SpatialArgs;
 import org.apache.lucene.spatial.query.SpatialOperation;
 import org.locationtech.spatial4j.distance.DistanceUtils;
-import org.wltea.analyzer.lucene.IKAnalyzer;
 
 
 public class LuceneQueryUtils {

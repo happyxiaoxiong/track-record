@@ -4,7 +4,7 @@ package cn.cnic.trackrecord.common.enumeration;
 public enum Gender implements ValuedEnum {
     UNKNOWN("保密", 0),
     MAIL("男", 1),
-    FAMAIL("女", 2);
+    FEMALE("女", 2);
 
     private String name;
     private int value;

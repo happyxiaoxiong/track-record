@@ -12,5 +12,5 @@ public class Page {
     @ApiModelProperty(value = "第几页(从1开始,默认1)", notes = "默认1")
     private int pageNum = 1;
     @ApiModelProperty(value = "每页数量(默认10)", notes = "默认10")
-    private int pageSize = 5;
+    private int pageSize = 10;
 }

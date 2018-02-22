@@ -58,6 +58,9 @@ public class TrackFileWorker {
     @Autowired
     private LuceneBean luceneBean;
 
+    @Autowired
+    private TrackLuceneFormatter trackLuceneFormatter;
+
     @Scheduled(fixedDelay = 5000)
     public void work() {
         List<TrackFile> trackFiles = trackFileService.getUnfinished();
@@ -194,7 +197,7 @@ public class TrackFileWorker {
     private void createIndex(Track track, List<TrackPoint> trackPoints) {
         TrackLucene trackLucene = new TrackLucene(track, trackPoints);
         try {
-            luceneBean.add(new TrackLuceneFormatter(), trackLucene);
+            luceneBean.add(trackLuceneFormatter, trackLucene);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -45,7 +45,7 @@ public class IntDateTypeHandler<E extends IntDate> extends BaseTypeHandler<E> {
 
     private E get(int value) {
         E e = null;
-        if (value > 0) {
+        if (value >= 0) {
             try {
                 e = type.newInstance();
                 e.setValue(value);

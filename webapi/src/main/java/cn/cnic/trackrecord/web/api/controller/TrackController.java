@@ -9,6 +9,7 @@ import cn.cnic.trackrecord.common.http.plupupload.PluploadBean;
 import cn.cnic.trackrecord.common.http.plupupload.PluploadCallback;
 import cn.cnic.trackrecord.common.util.Objects;
 import cn.cnic.trackrecord.common.xml.Stax.Staxs;
+import cn.cnic.trackrecord.core.track.TrackLuceneFormatter;
 import cn.cnic.trackrecord.core.track.xml.RouteRecordXml;
 import cn.cnic.trackrecord.data.entity.Track;
 import cn.cnic.trackrecord.data.entity.TrackFile;
@@ -18,28 +19,30 @@ import cn.cnic.trackrecord.plugin.hadoop.FileMeta;
 import cn.cnic.trackrecord.plugin.hadoop.Hadoops;
 import cn.cnic.trackrecord.plugin.lucene.LuceneBean;
 import cn.cnic.trackrecord.plugin.lucene.LuceneQueryUtils;
+import cn.cnic.trackrecord.plugin.lucene.PageResult;
 import cn.cnic.trackrecord.service.TrackFileService;
 import cn.cnic.trackrecord.service.TrackService;
 import cn.cnic.trackrecord.web.Const;
 import cn.cnic.trackrecord.web.config.property.TrackFileProperties;
 import cn.cnic.trackrecord.web.identity.UserDetailsServiceImpl;
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.xml.builders.RangeQueryBuilder;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermRangeQuery;
+import org.apache.lucene.search.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -74,6 +77,9 @@ public class TrackController {
 
     @Autowired
     private LuceneBean luceneBean;
+
+    @Autowired
+    private TrackLuceneFormatter trackLuceneFormatter;
 
     @ApiOperation(value = "轨迹文件上传")
     @ApiImplicitParams({
@@ -117,15 +123,20 @@ public class TrackController {
     @RequestMapping(value = "search", method = RequestMethod.GET)
     @ResponseBody
     public HttpRes<PageInfo<Track>> search(TrackSearchParams params) {
-        String[] fields = {"name", "userName", "keySitesList", "annotation"};
         try {
             BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
             if (StringUtils.isNotBlank(params.getKeyword())) {
                 //多关键字搜索
-                Query keywordQuery = LuceneQueryUtils.multiFieldQuery(params.getKeyword(), fields);
-                queryBuilder.add(keywordQuery, BooleanClause.Occur.MUST);
+//                String[] fields = {"name", "userName", "keySitesList", "annotation"};
+//                Query keywordQuery = LuceneQueryUtils.multiFieldQuery(params.getKeyword(), fields);
+//                queryBuilder.add(keywordQuery, BooleanClause.Occur.SHOULD);
+                queryBuilder.add(new FuzzyQuery(new Term("name", params.getKeyword())), BooleanClause.Occur.SHOULD);
+                queryBuilder.add(new FuzzyQuery(new Term("userName", params.getKeyword())), BooleanClause.Occur.SHOULD);
+                queryBuilder.add(new FuzzyQuery(new Term("keySitesList", params.getKeyword())), BooleanClause.Occur.SHOULD);
+                queryBuilder.add(new FuzzyQuery(new Term("annotation", params.getKeyword())), BooleanClause.Occur.SHOULD);
             }
-            if (!params.getStartTime().equals(LongDate.NullValue) || !params.getEndTime().equals(LongDate.NullValue)) {
+            if ((Objects.nonNull(params.getStartTime()) && !params.getStartTime().equals(LongDate.NullValue))
+                    || (Objects.nonNull(params.getEndTime()) && !params.getEndTime().equals(LongDate.NullValue))) {
                 if (params.getEndTime().equals(LongDate.NullValue)) {
                     params.setEndTime(new LongDate());
                 }
@@ -138,13 +149,22 @@ public class TrackController {
                 Query distanceQuery = LuceneQueryUtils.spatialCircleQuery(params.getLongitude(), params.getLatitude(), params.getDistance());
                 queryBuilder.add(distanceQuery, BooleanClause.Occur.MUST);
             }
-            luceneBean.search(queryBuilder.build());
-        } catch (ParseException | IOException e) {
-            e.printStackTrace();
+            BooleanQuery query = queryBuilder.build();
+            if (query.clauses().isEmpty()) {
+                query = queryBuilder.add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD).build();
+            }
+            PageResult pageResult = luceneBean.search(query, params.getPageNum(), params.getPageSize());
+            Page<Track> page = new Page<>(params.getPageNum(), params.getPageSize());
+            page.setTotal(pageResult.getTotal());
+
+            for (Document doc : pageResult.getDocs()) {
+                page.add(trackLuceneFormatter.from(doc).getTrack());
+            }
+            return HttpRes.success(new PageInfo<>(page));
+        } catch (IOException e) {
             log.error(e.getMessage());
+            return HttpRes.fail();
         }
-        PageHelper.startPage(params.getPageNum(), params.getPageSize());
-        return HttpRes.success(new PageInfo<>(trackService.getByTrackSearchParams(params)));
     }
 
     @ApiOperation(value = "获取整个轨迹路线信息")

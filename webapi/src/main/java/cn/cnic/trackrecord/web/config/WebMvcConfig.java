@@ -3,6 +3,7 @@ package cn.cnic.trackrecord.web.config;
 import cn.cnic.trackrecord.common.formatter.LongDateFormatter;
 import cn.cnic.trackrecord.common.formatter.ShortDateFormatter;
 import cn.cnic.trackrecord.common.http.plupupload.PluploadBean;
+import cn.cnic.trackrecord.core.track.TrackLuceneFormatter;
 import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,11 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         super.addFormatters(registry);
         registry.addFormatter(new LongDateFormatter());
         registry.addFormatter(new ShortDateFormatter());
+    }
+
+    @Bean
+    public TrackLuceneFormatter trackLuceneFormatter() {
+        return new TrackLuceneFormatter();
     }
 
     @Bean

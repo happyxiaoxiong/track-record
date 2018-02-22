@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface TrackPointService {
     int addAll(List<TrackPoint> points);
+    List<TrackPoint> getByTrackId(int trackId);
 }

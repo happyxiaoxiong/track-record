@@ -56,7 +56,7 @@ public class NoAuthUserController {
     }
 
     @ApiOperation(value = "判断账号是否存在")
-    @RequestMapping(value = "exist", method = RequestMethod.POST)
+    @RequestMapping(value = "exist", method = RequestMethod.GET)
     public HttpRes<Boolean> existAccount(@ApiParam(value = "账号", example = "test") @RequestParam String account) {
         return HttpRes.success(userService.existByAccount(account));
     }

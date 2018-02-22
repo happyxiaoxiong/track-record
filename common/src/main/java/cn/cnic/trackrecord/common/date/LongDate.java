@@ -18,7 +18,7 @@ public class LongDate extends IntDate {
 
     public LongDate() {}
 
-    private LongDate(int value) {
+    public LongDate(int value) {
         this.setValue(value);
     }
 

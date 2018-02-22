@@ -17,8 +17,8 @@ public class ShortDate extends IntDate {
 
     public ShortDate() { }
 
-    private ShortDate(int value) {
-        this.setValue(0);
+    public ShortDate(int value) {
+        this.setValue(value);
     }
 
     @Override
