@@ -42,17 +42,32 @@ public class Hadoops {
     }
 
     public void readToOutputStream(String id, FileMeta fileInfo, OutputStream out) throws IOException {
-        hadoopBean.readToOutputStream(id, fileInfo, 0, fileInfo.getSize(), out);
+        //hadoopBean.readToOutputStream(id, fileInfo, 0, fileInfo.getSize(), out);
+        readToOutputStream(id, fileInfo, 0, fileInfo.getSize(), out);
     }
 
-    public void readToOutputStream(String id, FileMeta fileInfo, int offset, int len, OutputStream out) throws IOException {
-        hadoopBean.readToOutputStream(id, fileInfo, offset, len, out);
+    public void readToOutputStream(String id, FileMeta fileInfo, OutputStream out, boolean close) throws IOException {
+        //hadoopBean.readToOutputStream(id, fileInfo, 0, fileInfo.getSize(), out);
+        readToOutputStream(id, fileInfo, 0, fileInfo.getSize(), out, close);
     }
 
     public void readToOutputStream(String id, FileMeta fileInfo, int offset, OutputStream out) throws IOException {
-        hadoopBean.readToOutputStream(id, fileInfo, offset, fileInfo.getSize() - offset, out);
+        //hadoopBean.readToOutputStream(id, fileInfo, offset, fileInfo.getSize() - offset, out);
+        readToOutputStream(id, fileInfo, offset, fileInfo.getSize() - offset, out);
     }
 
+    public void readToOutputStream(String id, FileMeta fileInfo, int offset, OutputStream out, boolean close) throws IOException {
+        //hadoopBean.readToOutputStream(id, fileInfo, offset, fileInfo.getSize() - offset, out);
+        readToOutputStream(id, fileInfo, offset, fileInfo.getSize() - offset, out, close);
+    }
+
+    public void readToOutputStream(String id, FileMeta fileInfo, int offset, int len, OutputStream out) throws IOException {
+        readToOutputStream(id, fileInfo, offset, len, out, true);
+    }
+
+    public void readToOutputStream(String id, FileMeta fileInfo, int offset, int len, OutputStream out, boolean close) throws IOException {
+        hadoopBean.readToOutputStream(id, fileInfo, offset, len, out, close);
+    }
     public void readToCallBack(String id, FileMeta fileInfo, CallBack callBack) throws IOException {
         hadoopBean.readToCallBack(id, fileInfo, callBack);
     }

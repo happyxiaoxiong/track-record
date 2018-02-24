@@ -16,7 +16,7 @@ public class TrackPointServiceImpl implements TrackPointService {
 
     @Override
     public int addAll(List<TrackPoint> points) {
-        return trackPointDao.addAll(points);
+        return points.isEmpty() ? 0 : trackPointDao.addAll(points);
     }
 
     @Override

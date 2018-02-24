@@ -148,8 +148,10 @@ class HadoopBean {
         return fileMeta;
     }
 
-    void readToOutputStream(String id, FileMeta fileMeta, int offset, long len, OutputStream out) throws IOException {
-        IOUtils.copyBytes(readAsInputStream(id, fileMeta, offset), out, len, true);
+    void readToOutputStream(String id, FileMeta fileMeta, int offset, long len, OutputStream out, boolean close) throws IOException {
+        InputStream in = readAsInputStream(id, fileMeta, offset);
+        IOUtils.copyBytes(in, out, len, close);
+        in.close();
     }
 
     void readToCallBack(String id, FileMeta fileMeta, CallBack callBack) throws IOException {

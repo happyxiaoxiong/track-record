@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cnic.trackrecord.dao.TrackStatDao">
+    <resultMap id="baseMap" type="TrackStat">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="totalTime" column="total_time"/>
+        <result property="totalLength" column="total_length"/>
+        <result property="totalDay" column="total_day"/>
+        <result property="totalCount" column="total_count"/>
+        <result property="type" column="type"/>
+        <result property="date" column="date"/>
+    </resultMap>
+
+    <sql id="table">`track_stat`</sql>
+
+    <insert id="add" parameterType="TrackStat">
+        INSERT INTO <include refid="table"/> (user_id, user_name, total_time, total_length, total_day, total_count, `type`, `date`)
+        VALUES (#{userId}, #{userName}, #{totalTime}, #{totalLength}, #{totalDay}, #{totalCount}, #{type}, #{date})
+    </insert>
+    <insert id="addAll">
+        INSERT INTO <include refid="table"/> (user_id, user_name, total_time, total_length, total_day, total_count, `type`, `date`)
+        VALUES
+        <foreach collection="list" item="it" index="index" separator=",">
+            (#{it.userId}, #{it.userName}, #{it.totalTime}, #{it.totalLength}, #{it.totalDay}, #{it.totalCount}, #{it.type}, #{it.date})
+        </foreach>
+    </insert>
+    <select id="countUserByMonth" resultMap="baseMap">
+        SELECT user_id, user_name, sum(total_time) AS total_time, sum(total_length) AS total_length, count(id) AS total_day, sum(total_count) AS total_count FROM <include refid="table"/>
+        WHERE user_id=#{userId} `date`>=#{beginTime} AND `date`&lt;{endTime}
+    </select>
+</mapper>

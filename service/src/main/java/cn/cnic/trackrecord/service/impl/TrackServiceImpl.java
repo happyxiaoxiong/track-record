@@ -1,7 +1,9 @@
 package cn.cnic.trackrecord.service.impl;
 
+import cn.cnic.trackrecord.common.date.LongDate;
 import cn.cnic.trackrecord.dao.TrackDao;
 import cn.cnic.trackrecord.data.entity.Track;
+import cn.cnic.trackrecord.data.entity.TrackStat;
 import cn.cnic.trackrecord.data.vo.TrackSearchParams;
 import cn.cnic.trackrecord.service.TrackService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +35,10 @@ public class TrackServiceImpl implements TrackService {
     @Override
     public Track get(int id) {
         return trackDao.get(id);
+    }
+
+    @Override
+    public TrackStat countUserByDay(int userId, LongDate beginTime, LongDate endTime) {
+        return trackDao.countUserByDay(userId, beginTime, endTime);
     }
 }

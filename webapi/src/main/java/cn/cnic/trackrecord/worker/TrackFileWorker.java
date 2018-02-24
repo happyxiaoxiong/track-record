@@ -1,6 +1,7 @@
 package cn.cnic.trackrecord.worker;
 
 import cn.cnic.trackrecord.common.date.LongDate;
+import cn.cnic.trackrecord.common.ant.Ants;
 import cn.cnic.trackrecord.common.enumeration.TrackFileState;
 import cn.cnic.trackrecord.common.util.Files;
 import cn.cnic.trackrecord.common.xml.Stax.Staxs;
@@ -14,7 +15,6 @@ import cn.cnic.trackrecord.data.kml.PlaceMark;
 import cn.cnic.trackrecord.data.kml.RoutePlaceMark;
 import cn.cnic.trackrecord.data.kml.RouteRecord;
 import cn.cnic.trackrecord.data.lucene.TrackLucene;
-import cn.cnic.trackrecord.plugin.ant.UnzipBean;
 import cn.cnic.trackrecord.plugin.hadoop.Hadoops;
 import cn.cnic.trackrecord.plugin.lucene.LuceneBean;
 import cn.cnic.trackrecord.service.TrackFileService;
@@ -50,9 +50,6 @@ public class TrackFileWorker {
     private TrackPointService trackPointService;
 
     @Autowired
-    private UnzipBean unzipBean;
-
-    @Autowired
     private Hadoops hadoops;
 
     @Autowired
@@ -61,7 +58,7 @@ public class TrackFileWorker {
     @Autowired
     private TrackLuceneFormatter trackLuceneFormatter;
 
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelay = 1000 * 60)
     public void work() {
         List<TrackFile> trackFiles = trackFileService.getUnfinished();
         for (TrackFile trackFile : trackFiles) {
@@ -137,7 +134,7 @@ public class TrackFileWorker {
     private void unzip(TrackFile trackFile) {
         try {
             String trackPath = Files.getPathString(properties.getUnzipPath(), trackFile.getFilename().replaceFirst("\\.\\w*$", ""));
-            unzipBean.unzip(trackFile.getPath(), trackPath, false);
+            Ants.unzip(trackFile.getPath(), trackPath, false);
 
             trackFile.setPath(trackPath);//更换为解压目录
             trackFile.setState(TrackFileState.EXTRACTING_AND_SAVING);
@@ -165,6 +162,7 @@ public class TrackFileWorker {
             //保存到hadoop中
             track.setPath(hadoops.appendKmzFiles(String.valueOf(trackFile.getUserId()), new File(trackFile.getPath()), false));
             track.setFileSize(trackFile.getFileSize());
+            track.setFilename(trackFile.getFilename());
             track.setMd5(trackFile.getMd5());
             track.setUploadTime(new LongDate());
             track.setUserId(trackFile.getUserId());

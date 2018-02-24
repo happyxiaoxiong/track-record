@@ -11,6 +11,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -35,6 +37,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public int update(User user) {
+        return userDao.update(user);
+    }
+
+    @Override
     public User getByAccountAndPassword(String account, String password) {
         return userDao.getByAccountAndPassword(account, password);
     }
@@ -42,5 +49,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existByAccount(String account) {
         return userDao.existByAccount(account);
+    }
+
+    @Override
+    public List<User> getAll() {
+        return userDao.getAll();
+    }
+
+    @Override
+    public User get(int id) {
+        return userDao.get(id);
     }
 }

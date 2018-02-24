@@ -1,5 +1,7 @@
 package cn.cnic.trackrecord.web.api.controller;
 
+import cn.cnic.trackrecord.common.ant.Ants;
+import cn.cnic.trackrecord.common.ant.FileSource;
 import cn.cnic.trackrecord.common.date.LongDate;
 import cn.cnic.trackrecord.common.enumeration.TrackFileState;
 import cn.cnic.trackrecord.common.http.HttpRes;
@@ -7,6 +9,8 @@ import cn.cnic.trackrecord.common.http.HttpResCode;
 import cn.cnic.trackrecord.common.http.plupupload.Plupload;
 import cn.cnic.trackrecord.common.http.plupupload.PluploadBean;
 import cn.cnic.trackrecord.common.http.plupupload.PluploadCallback;
+import cn.cnic.trackrecord.common.util.Files;
+import cn.cnic.trackrecord.common.util.Medias;
 import cn.cnic.trackrecord.common.util.Objects;
 import cn.cnic.trackrecord.common.xml.Stax.Staxs;
 import cn.cnic.trackrecord.core.track.TrackLuceneFormatter;
@@ -34,7 +38,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.IntPoint;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -49,6 +52,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -245,6 +249,34 @@ public class TrackController {
 
             res.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
             hadoops.readToOutputStream(String.valueOf(track.getUserId()), fileInfo, offset, res.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @ApiOperation(value = "获取轨迹视频")
+    @RequestMapping(value = "download/{id}", method = RequestMethod.GET)
+    public void download(@ApiParam(name = "id", value = "轨迹id") @PathVariable int id, HttpServletResponse res) {
+        try {
+            Track track = trackService.get(id);
+            List<FileMeta> fileMetas = hadoops.parsePath(track.getPath());
+            List<FileSource> sources = new ArrayList<>(fileMetas.size());
+            for (FileMeta meta : fileMetas) {
+                String pathPrefix = "";
+                if (Medias.isImage(meta.getName())) {
+                    pathPrefix = "photo";
+                } else if (Medias.isVideo(meta.getName())) {
+                    pathPrefix = "video";
+                } else if (Medias.isAudio(meta.getName())) {
+                    pathPrefix = "audio";
+                }
+                sources.add(new FileSource(Files.getPathString(pathPrefix, meta.getName()),
+                        os -> hadoops.readToOutputStream(String.valueOf(track.getId()), meta, os, false)));
+            }
+            res.setHeader("Content-Disposition", "attachment; filename=" + track.getFilename());
+            res.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            res.setContentLength(track.getFileSize());
+            Ants.zip(sources, res.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }

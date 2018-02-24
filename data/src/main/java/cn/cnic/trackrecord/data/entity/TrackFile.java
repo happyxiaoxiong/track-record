@@ -11,7 +11,7 @@ import lombok.Data;
 public class TrackFile {
     @ApiModelProperty(value = "主键", notes = "数据库自动生成")
     private int id;
-    @ApiModelProperty(value = "轨迹上传人id")
+    @ApiModelProperty(value = "用户id")
     private int userId;
     @ApiModelProperty(value = "轨迹文件状态", dataType = "int")
     private TrackFileState state;

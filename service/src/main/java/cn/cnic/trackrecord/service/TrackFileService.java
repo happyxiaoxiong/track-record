@@ -17,6 +17,6 @@ public interface TrackFileService {
     TrackFile get(int trackFileId);
 
 
-    boolean update(TrackFile trackFile);
+    int update(TrackFile trackFile);
 
 }

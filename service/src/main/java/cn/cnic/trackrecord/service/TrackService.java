@@ -1,6 +1,8 @@
 package cn.cnic.trackrecord.service;
 
+import cn.cnic.trackrecord.common.date.LongDate;
 import cn.cnic.trackrecord.data.entity.Track;
+import cn.cnic.trackrecord.data.entity.TrackStat;
 import cn.cnic.trackrecord.data.vo.TrackSearchParams;
 
 import java.util.List;
@@ -12,4 +14,5 @@ public interface TrackService {
     List<Track> getByTrackSearchParams(TrackSearchParams params);
 
     Track get(int id);
+    TrackStat countUserByDay(int userId, LongDate beginTime, LongDate endTime);
 }

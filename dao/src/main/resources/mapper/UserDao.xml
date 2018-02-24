@@ -28,6 +28,27 @@
         county, township, add_time, login_time, role, visit_count) VALUES (#{account}, #{password}, #{name}, #{gender}, #{birthday}, #{email},
         #{organization}, #{country}, #{province}, #{city}, #{county}, #{township}, #{addTime}, #{loginTime}, #{role}, 0)
     </insert>
+    <update id="update" parameterType="User">
+        UPDATE <include refid="table"/>
+        <set>
+            <if test="account != null">account=#{account},</if>
+            <if test="password != null">password=#{password},</if>
+            <if test="name != null">name=#{name},</if>
+            <if test="gender != null">gender=#{gender},</if>
+            <if test="birthday != null">birthday=#{birthday},</if>
+            <if test="email != null">email=#{email}</if>
+            <if test="organization != null">organization=#{organization}</if>
+            <if test="country != null">country=#{country}</if>
+            <if test="province != null">province=#{province}</if>
+            <if test="city != null">city=#{city}</if>
+            <if test="county != null">county=#{county}</if>
+            <if test="township != null">township=#{township}</if>
+            <if test="loginTime != null">loginTime=#{loginTime}</if>
+            <if test="role != null">role=#{role}</if>
+            <if test="visitCount != 0">visitCount=#{visitCount}</if>
+        </set>
+        WHERE id=#{id}
+    </update>
     <select id="getByAccountAndPassword" resultMap="baseMap">
         SELECT *  FROM <include refid="table"/> WHERE account=#{account} AND password=#{password}
     </select>
@@ -36,5 +57,11 @@
     </select>
     <select id="existByAccount" resultType="boolean">
         SELECT COUNT(id) FROM <include refid="table"/> WHERE account=#{account}
+    </select>
+    <select id="getAll" resultMap="baseMap">
+        SELECT * FROM <include refid="table"/>
+    </select>
+    <select id="get" resultMap="baseMap">
+        SELECT * FROM <include refid="table"/> WHERE id=#{id}
     </select>
 </mapper>

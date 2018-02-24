@@ -40,7 +40,7 @@ public class TrackFileServiceImpl implements TrackFileService {
     }
 
     @Override
-    public boolean update(TrackFile trackFile) {
+    public int update(TrackFile trackFile) {
         return trackFileDao.update(trackFile);
     }
 

@@ -12,9 +12,9 @@ public class Track {
     private int id;
     @ApiModelProperty(value = "轨迹名称")
     private String name;
-    @ApiModelProperty(value = "轨迹上传人id")
+    @ApiModelProperty(value = "用户id")
     private int userId;
-    @ApiModelProperty(value = "上传人名称")
+    @ApiModelProperty(value = "用户名")
     private String userName;
     @ApiModelProperty(value = "轨迹开始时间", dataType = "String", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11")
     private LongDate startTime;
@@ -31,6 +31,8 @@ public class Track {
     @ApiModelProperty(value = "轨迹文件大小")
     private int fileSize;
     @ApiModelProperty(value = "文件md5")
+    private String filename;
+    @ApiModelProperty(value = "轨迹文件大小")
     private String md5;
     @ApiModelProperty(value = "上传时间", dataType = "String", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11")
     private LongDate uploadTime;

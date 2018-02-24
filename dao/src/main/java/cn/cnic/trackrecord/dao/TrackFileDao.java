@@ -17,5 +17,5 @@ public interface TrackFileDao {
 
     TrackFile get(@Param("id") int id);
 
-    boolean update(TrackFile trackFile);
+    int update(TrackFile trackFile);
 }

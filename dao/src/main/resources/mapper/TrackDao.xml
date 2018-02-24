@@ -13,6 +13,7 @@
         <result property="keySitesList" column="keysiteslist"/>
         <result property="path" column="path"/>
         <result property="fileSize" column="filesize"/>
+        <result property="filename" column="filename"/>
         <result property="md5" column="md5"/>
         <result property="uploadTime" column="upload_time"/>
         <result property="annotation" column="annotation"/>
@@ -53,5 +54,10 @@
     </select>
     <select id="get" resultMap="baseMap">
         SELECT * FROM <include refid="table"/> WHERE id=#{id}
+    </select>
+
+    <select id="countUserByDay" resultMap="cn.cnic.trackrecord.dao.TrackStatDao.baseMap">
+        SELECT user_id, user_name, count(id) AS total_count, sum(`length`) AS total_length, sum(endtime - starttime) AS total_time FROM <include refid="table"/>
+        WHERE user_id=#{userId} starttime>=#{beginTime} AND starttime&lt;{endTime}
     </select>
 </mapper>
