@@ -10,4 +10,7 @@ public interface TrackStatService {
     int addAll(List<TrackStat> trackStats);
 
     TrackStat countUserByMonth(int userId, ShortDate beginTime, ShortDate endTime);
+
+    List<TrackStat> getByMonth(ShortDate month);
+    List<TrackStat> getByUserIdAndRangeDay(int userId, ShortDate beginTime, ShortDate endTime);
 }

@@ -30,4 +30,10 @@
         SELECT user_id, user_name, sum(total_time) AS total_time, sum(total_length) AS total_length, count(id) AS total_day, sum(total_count) AS total_count FROM <include refid="table"/>
         WHERE user_id=#{userId} `date`>=#{beginTime} AND `date`&lt;{endTime}
     </select>
+    <select id="getByMonth" resultMap="baseMap">
+        SELECT * FROM <include refid="table"/> WHERE `date`=#{date} AND `type`=1
+    </select>
+    <select id="getByUserIdAndRangeDay" resultType="TrackStat">
+        SELECT * FROM <include refid="table"/> WHERE user_id=#{userId} AND `date`>=#{beginTime} AND `date`&lt;#{endTime} AND `type`=0
+    </select>
 </mapper>

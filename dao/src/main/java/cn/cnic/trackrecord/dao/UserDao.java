@@ -17,4 +17,6 @@ public interface UserDao {
     int update(User user);
 
     User get(@Param("id") int id);
+
+    List<User> getAllByFields(List<String> fields);
 }

@@ -11,4 +11,8 @@ public interface TrackStatDao {
     int addAll(List<TrackStat> trackStats);
 
     TrackStat countUserByMonth(@Param("userId") int userId, @Param("beginTime") ShortDate beginTime, @Param("endTime") ShortDate endTime);
+
+    List<TrackStat> getByMonth(@Param("date") ShortDate date);
+
+    List<TrackStat> getByUserIdAndRangeDay(@Param("userId") int userId, @Param("beginTime") ShortDate beginTime, @Param("endTime") ShortDate endTime);
 }

@@ -3,6 +3,7 @@ package cn.cnic.trackrecord.web.api.controller;
 import cn.cnic.trackrecord.common.ant.Ants;
 import cn.cnic.trackrecord.common.ant.FileSource;
 import cn.cnic.trackrecord.common.date.LongDate;
+import cn.cnic.trackrecord.common.date.ShortDate;
 import cn.cnic.trackrecord.common.enumeration.TrackFileState;
 import cn.cnic.trackrecord.common.http.HttpRes;
 import cn.cnic.trackrecord.common.http.HttpResCode;
@@ -17,6 +18,7 @@ import cn.cnic.trackrecord.core.track.TrackLuceneFormatter;
 import cn.cnic.trackrecord.core.track.xml.RouteRecordXml;
 import cn.cnic.trackrecord.data.entity.Track;
 import cn.cnic.trackrecord.data.entity.TrackFile;
+import cn.cnic.trackrecord.data.entity.TrackStat;
 import cn.cnic.trackrecord.data.kml.RouteRecord;
 import cn.cnic.trackrecord.data.vo.TrackSearchParams;
 import cn.cnic.trackrecord.plugin.hadoop.FileMeta;
@@ -26,6 +28,7 @@ import cn.cnic.trackrecord.plugin.lucene.LuceneQueryUtils;
 import cn.cnic.trackrecord.plugin.lucene.PageResult;
 import cn.cnic.trackrecord.service.TrackFileService;
 import cn.cnic.trackrecord.service.TrackService;
+import cn.cnic.trackrecord.service.TrackStatService;
 import cn.cnic.trackrecord.web.Const;
 import cn.cnic.trackrecord.web.config.property.TrackFileProperties;
 import cn.cnic.trackrecord.web.identity.UserDetailsServiceImpl;
@@ -42,10 +45,7 @@ import org.apache.lucene.search.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -84,6 +84,9 @@ public class TrackController {
 
     @Autowired
     private TrackLuceneFormatter trackLuceneFormatter;
+
+    @Autowired
+    private TrackStatService trackStatService;
 
     @ApiOperation(value = "轨迹文件上传")
     @ApiImplicitParams({
@@ -217,16 +220,17 @@ public class TrackController {
         }
     }
 
-    @ApiOperation(value = "获取轨迹音频")
-    @RequestMapping(value = "{id}/audio/{name:.+}", method = RequestMethod.GET)
-    public byte[] getAudio(@ApiParam(name = "id", value = "轨迹id") @PathVariable int id,
-                           @ApiParam(name = "name", value = "轨迹图片名称") @PathVariable String name) {
-        return null;
-    }
+//    @ApiOperation(value = "获取轨迹音频")
+//    @RequestMapping(value = "{id}/audio/{name:.+}", method = RequestMethod.GET)
+//    public byte[] getAudio(@ApiParam(name = "id", value = "轨迹id") @PathVariable int id,
+//                           @ApiParam(name = "name", value = "轨迹图片名称") @PathVariable String name) {
+//        return null;
+//    }
 
-    @ApiOperation(value = "获取轨迹视频")
-    @RequestMapping(value = "{id}/video/{name:.+}", method = RequestMethod.GET)
+    @ApiOperation(value = "获取轨迹音/视频")
+    @RequestMapping(value = "{id}/{media:audio|video}/{name:.+}", method = RequestMethod.GET)
     public void getVideo(@ApiParam(name = "id", value = "轨迹id") @PathVariable int id,
+                                       @ApiParam(name = "media", value = "多媒体类型") @PathVariable String media,
                                        @ApiParam(name = "name", value = "轨迹图片名称") @PathVariable String name,
                                        HttpServletRequest req, HttpServletResponse res) {
         try {
@@ -281,6 +285,21 @@ public class TrackController {
             e.printStackTrace();
         }
     }
+
+    @ApiOperation(value = "轨迹统计")
+    @RequestMapping(value = "stat/month", method = RequestMethod.GET)
+    @ResponseBody
+    public HttpRes<List<TrackStat>> statByMonth(@ApiParam(name = "month", value = "月份") @RequestParam ShortDate month) {
+        return HttpRes.success(trackStatService.getByMonth(month));
+    }
+
+    @ApiOperation(value = "轨迹统计")
+    @RequestMapping(value = "stat/day", method = RequestMethod.GET)
+    @ResponseBody
+    public HttpRes<List<TrackStat>> stat(@RequestParam int userId, @RequestParam ShortDate beginTime, @RequestParam ShortDate endTime) {
+        return HttpRes.success(trackStatService.getByUserIdAndRangeDay(userId, beginTime, endTime));
+    }
+
 
     private static class TrackFilePluploadCallback implements PluploadCallback<TrackFile> {
         @Override

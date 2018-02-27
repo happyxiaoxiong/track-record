@@ -64,4 +64,8 @@
     <select id="get" resultMap="baseMap">
         SELECT * FROM <include refid="table"/> WHERE id=#{id}
     </select>
+    <select id="getAllByFields" resultMap="baseMap">
+        SELECT <foreach collection="list" item="it" index="index" separator=",">${it}</foreach> FROM
+        <include refid="table"/>
+    </select>
 </mapper>

@@ -29,4 +29,14 @@ public class TrackStatServiceImpl implements TrackStatService {
     public TrackStat countUserByMonth(int userId, ShortDate beginTime, ShortDate endTime) {
         return trackStatDao.countUserByMonth(userId, beginTime, endTime);
     }
+
+    @Override
+    public List<TrackStat> getByMonth(ShortDate date) {
+        return trackStatDao.getByMonth(date);
+    }
+
+    @Override
+    public List<TrackStat> getByUserIdAndRangeDay(int userId, ShortDate beginTime, ShortDate endTime) {
+        return trackStatDao.getByUserIdAndRangeDay(userId, beginTime, endTime);
+    }
 }
