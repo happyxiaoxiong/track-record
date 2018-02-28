@@ -29,6 +29,7 @@ public class TrackLuceneFormatter implements LuceneFormatter<TrackLucene> {
         doc.add(new StoredField("maxAltitude", track.getMaxAltitude()));
         doc.add(new TextField("keySitesList", track.getKeySitesList(), Field.Store.YES));
         doc.add(new StoredField("fileSize", track.getFileSize()));
+        doc.add(new StoredField("filename", track.getFilename()));
         doc.add(new TextField("annotation", track.getAnnotation(), Field.Store.YES));
         doc.add(new StoredField("uploadTime", track.getUploadTime().getValue()));
 

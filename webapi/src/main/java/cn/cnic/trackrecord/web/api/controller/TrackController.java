@@ -275,7 +275,7 @@ public class TrackController {
                     pathPrefix = "audio";
                 }
                 sources.add(new FileSource(Files.getPathString(pathPrefix, meta.getName()),
-                        os -> hadoops.readToOutputStream(String.valueOf(track.getId()), meta, os, false)));
+                        os -> hadoops.readToOutputStream(String.valueOf(track.getUserId()), meta, os, false)));
             }
             res.setHeader("Content-Disposition", "attachment; filename=" + track.getFilename());
             res.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
