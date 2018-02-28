@@ -16,17 +16,16 @@ public class CorsFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) servletResponse;
         HttpServletRequest req = (HttpServletRequest) servletRequest;
 
-        // Just REPLY OK if request method is OPTIONS for CORS (pre-flight)
-        if ( req.getMethod().equals("OPTIONS") ) {
-            res.setStatus(HttpServletResponse.SC_OK);
-            return;
-        }
-
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS");
         res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Accept-Encoding, Accept-Language, Host, Referer, Connection, User-Agent, authorization, sw-useragent, sw-version");
 
-        filterChain.doFilter(servletRequest, servletResponse);
+        // Just REPLY OK if request method is OPTIONS for CORS (pre-flight)
+        if ( req.getMethod().equals("OPTIONS") ) {
+            res.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            filterChain.doFilter(servletRequest, servletResponse);
+        }
     }
 
     @Override
