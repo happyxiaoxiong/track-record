@@ -54,6 +54,7 @@ public class TrackLuceneFormatter implements LuceneFormatter<TrackLucene> {
         track.setMaxAltitude(Double.valueOf(doc.get("maxAltitude")));
         track.setKeySitesList(doc.get("keySitesList"));
         track.setFileSize(Integer.valueOf(doc.get("fileSize")));
+        track.setFilename(doc.get("filename"));
         track.setAnnotation(doc.get("annotation"));
         track.setUploadTime(new LongDate(Integer.valueOf(doc.get("uploadTime"))));
         return new TrackLucene(track, null);
