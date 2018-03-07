@@ -1,0 +1,9 @@
+track:
+  file:
+    upload-path: D:/track_file
+    unzip-path: D:/track_file
+
+plugin:
+  ffmpeg:
+    conf:
+      path: D:/ffmpeg/bin/ffmpeg

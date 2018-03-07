@@ -1,14 +1,8 @@
-logging:
-  level:
-    org:
-      springframework:
-        web: debug
-    cn:
-      cnic:
-        trackrecord: debug
 spring:
+  profiles:
+    active: @profileActive@
   jackson:
-    default-property-inclusion: non_null
+      default-property-inclusion: non_null
   http:
     encoding:
       force: true
@@ -17,16 +11,15 @@ spring:
     multipart:
       max-file-size: 10MB
       file-size-threshold: 5MB
+logging:
+  level:
+    org:
+      springframework:
+        web: debug
+    cn:
+      cnic:
+        trackrecord: debug
+
 server:
   tomcat:
     uri-encoding: utf-8
-
-track:
-  file:
-    upload-path: D:/track_file
-    unzip-path: D:/track_file
-banner:
-  image:
-    location:
-
-

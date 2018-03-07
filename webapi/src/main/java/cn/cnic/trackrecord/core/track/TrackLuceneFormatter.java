@@ -7,7 +7,6 @@ import cn.cnic.trackrecord.data.lucene.TrackLucene;
 import cn.cnic.trackrecord.plugin.lucene.LuceneFormatter;
 import cn.cnic.trackrecord.plugin.lucene.SpatialUtils;
 import org.apache.lucene.document.*;
-import org.apache.lucene.index.IndexableField;
 
 public class TrackLuceneFormatter implements LuceneFormatter<TrackLucene> {
 
@@ -59,6 +58,4 @@ public class TrackLuceneFormatter implements LuceneFormatter<TrackLucene> {
         track.setUploadTime(new LongDate(Integer.valueOf(doc.get("uploadTime"))));
         return new TrackLucene(track, null);
     }
-
-
 }

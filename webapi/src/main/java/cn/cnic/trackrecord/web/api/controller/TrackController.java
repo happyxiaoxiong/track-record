@@ -18,8 +18,10 @@ import cn.cnic.trackrecord.core.track.TrackLuceneFormatter;
 import cn.cnic.trackrecord.core.track.xml.RouteRecordXml;
 import cn.cnic.trackrecord.data.entity.Track;
 import cn.cnic.trackrecord.data.entity.TrackFile;
+import cn.cnic.trackrecord.data.entity.TrackPoint;
 import cn.cnic.trackrecord.data.entity.TrackStat;
 import cn.cnic.trackrecord.data.kml.RouteRecord;
+import cn.cnic.trackrecord.data.lucene.TrackLucene;
 import cn.cnic.trackrecord.data.vo.TrackSearchParams;
 import cn.cnic.trackrecord.plugin.hadoop.FileMeta;
 import cn.cnic.trackrecord.plugin.hadoop.Hadoops;
@@ -27,6 +29,7 @@ import cn.cnic.trackrecord.plugin.lucene.LuceneBean;
 import cn.cnic.trackrecord.plugin.lucene.LuceneQueryUtils;
 import cn.cnic.trackrecord.plugin.lucene.PageResult;
 import cn.cnic.trackrecord.service.TrackFileService;
+import cn.cnic.trackrecord.service.TrackPointService;
 import cn.cnic.trackrecord.service.TrackService;
 import cn.cnic.trackrecord.service.TrackStatService;
 import cn.cnic.trackrecord.web.Const;
@@ -72,6 +75,9 @@ public class TrackController {
 
     @Autowired
     private TrackService trackService;
+
+    @Autowired
+    private TrackPointService trackPointService;
 
     @Autowired
     private TrackFileService trackFileService;
@@ -279,7 +285,7 @@ public class TrackController {
             }
             res.setHeader("Content-Disposition", "attachment; filename=" + track.getFilename());
             res.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-            res.setContentLength(track.getFileSize());
+//            res.setContentLength(track.getFileSize());
             Ants.zip(sources, res.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
@@ -298,6 +304,23 @@ public class TrackController {
     @ResponseBody
     public HttpRes<List<TrackStat>> stat(@RequestParam int userId, @RequestParam ShortDate beginTime, @RequestParam ShortDate endTime) {
         return HttpRes.success(trackStatService.getByUserIdAndRangeDay(userId, beginTime, endTime));
+    }
+
+    @ApiOperation(value = "创建索引")
+    @RequestMapping(value = "lucene", method = RequestMethod.GET)
+    @ResponseBody
+    public HttpRes<?> lucene() {
+        List<Track> tracks = trackService.getAll();
+        for (Track track: tracks) {
+            List<TrackPoint> points = trackPointService.getByTrackId(track.getId());
+            try {
+                luceneBean.add(new TrackLuceneFormatter(), new TrackLucene(track, points));
+            } catch (IOException e) {
+                log.error(e.getMessage());
+                return HttpRes.fail();
+            }
+        }
+        return HttpRes.success();
     }
 
 

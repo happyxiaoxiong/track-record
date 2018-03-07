@@ -41,4 +41,9 @@ public class TrackServiceImpl implements TrackService {
     public TrackStat countUserByDay(int userId, LongDate beginTime, LongDate endTime) {
         return trackDao.countUserByDay(userId, beginTime, endTime);
     }
+
+    @Override
+    public List<Track> getAll() {
+        return trackDao.getAll();
+    }
 }

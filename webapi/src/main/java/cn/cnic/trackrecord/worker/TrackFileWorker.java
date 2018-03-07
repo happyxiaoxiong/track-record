@@ -68,7 +68,6 @@ public class TrackFileWorker {
 
     private void process(TrackFile trackFile) {
         checkTries(trackFile);
-
         if (TrackFileState.VERIFYING.equals(trackFile.getState())) {
             verifying(trackFile);
         }

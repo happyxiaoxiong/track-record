@@ -19,9 +19,9 @@
     <profiles>
         <profile>
             <id>dev</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <!--<activation>-->
+                <!--<activeByDefault>true</activeByDefault>-->
+            <!--</activation>-->
             <properties>
                 <profileActive>dev</profileActive>
                 <mysqlUsername>root</mysqlUsername>
@@ -31,8 +31,14 @@
         </profile>
         <profile>
             <id>test</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <profileActive>test</profileActive>
+                <mysqlUsername>jecyhw</mysqlUsername>
+                <mysqlPassword>jecyhw@215</mysqlPassword>
+                <mysqlUrl>jdbc:mysql://127.0.0.1:3306/track_record</mysqlUrl>
             </properties>
         </profile>
         <profile>
@@ -261,7 +267,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

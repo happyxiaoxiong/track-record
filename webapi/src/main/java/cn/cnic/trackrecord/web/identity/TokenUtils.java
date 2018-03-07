@@ -29,8 +29,10 @@ public class TokenUtils {
     private TokenProperties tokenProperties;
 
     public Authentication verifyToken(HttpServletRequest request) {
-        final String token = request.getHeader(tokenProperties.getHeader());
-
+        String token = request.getHeader(tokenProperties.getHeader());
+        if (!StringUtils.hasLength(token)) {
+            token = request.getParameter(tokenProperties.getHeader());
+        }
         if (StringUtils.hasLength(token) && token.startsWith(tokenProperties.getTokenHead()) && token.length() > tokenProperties.getTokenHead().length()){
             final TokenUser user = parseUserFromToken(token.replace(tokenProperties.getTokenHead(),"").trim());
             if (Objects.nonNull(user)) {
