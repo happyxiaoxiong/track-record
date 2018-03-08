@@ -36,7 +36,7 @@ public class TestController {
     @Autowired
     private TrackFileProperties properties;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET, value = "encode")
     public HttpRes<?> encodePassword() {
         for (User user : userService.getAll()) {
             if (user.getPassword().length() < 20) {
@@ -47,7 +47,7 @@ public class TestController {
         return HttpRes.success();
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET, value = "import")
     public HttpRes<?> importTracks() {
         try {
             for (String fileName : FileUtils.readLines(new File("/root/path.txt"), "UTF-8")) {
