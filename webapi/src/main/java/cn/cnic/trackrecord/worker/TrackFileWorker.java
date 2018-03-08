@@ -174,6 +174,7 @@ public class TrackFileWorker {
             User user = userService.getByName(track.getUserName());
             track.setUserId(Objects.nonNull(user) ? user.getId() : trackFile.getUserId());
 
+            log.debug("{}", track);
             trackService.addAndGetId(track);
             List<TrackPoint> points = new LinkedList<>();
             for (PlaceMark placeMark : routeRecord.getPlaceMarks()) {
