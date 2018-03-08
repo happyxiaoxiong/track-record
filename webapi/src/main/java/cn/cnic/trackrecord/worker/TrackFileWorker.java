@@ -171,7 +171,7 @@ public class TrackFileWorker {
             log.debug("{}", track);
             RouteRecord routeRecord = Staxs.parse(new RouteRecordXml(), Files.getPathString(realTrackPath, properties.getRouteRecordFileName()));
             //保存到hadoop中
-            track.setPath(hadoops.appendKmzFiles(String.valueOf(trackFile.getUserId()), new File(trackFile.getPath()), false));
+            track.setPath(hadoops.appendKmzFiles(String.valueOf(track.getUserId()), new File(trackFile.getPath()), false));
             track.setFileSize(trackFile.getFileSize());
             track.setFilename(trackFile.getFilename());
             track.setMd5(trackFile.getMd5());
