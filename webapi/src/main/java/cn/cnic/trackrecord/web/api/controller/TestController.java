@@ -6,6 +6,7 @@ import cn.cnic.trackrecord.common.http.HttpRes;
 import cn.cnic.trackrecord.common.util.Files;
 import cn.cnic.trackrecord.data.entity.TrackFile;
 import cn.cnic.trackrecord.data.entity.User;
+import cn.cnic.trackrecord.service.TrackFileService;
 import cn.cnic.trackrecord.service.UserService;
 import cn.cnic.trackrecord.web.Const;
 import cn.cnic.trackrecord.web.config.property.TrackFileProperties;
@@ -35,6 +36,9 @@ public class TestController {
 
     @Autowired
     private TrackFileProperties properties;
+
+    @Autowired
+    private TrackFileService trackFileService;
 
     @RequestMapping(method = RequestMethod.GET, value = "encode")
     public HttpRes<?> encodePassword() {
@@ -69,6 +73,7 @@ public class TestController {
                     trackFile.setComment("");
                     trackFile.setTries(0);
                     trackFile.setFileSize((int) file.length());
+                    trackFileService.add(trackFile);
                 }
             }
             return HttpRes.success();
