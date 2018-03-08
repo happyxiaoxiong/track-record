@@ -58,7 +58,7 @@ public class TestController {
                 File file = new File(fileName + ".kmz");
                 File destFile = Files.getFile(properties.getUploadPath(), file.getName());
                 log.debug("srcFile: {}, destFile: {}", file.getName(), destFile.getAbsolutePath());
-                if (file.exists() && !destFile.exists()) {
+                if (file.exists()) {
                     log.debug("copy file: srcFile: {}, destFile: {}", file.getName(), destFile.getAbsolutePath());
                     FileUtils.copyFile(file, destFile);
                     LongDate curTime = new LongDate();
