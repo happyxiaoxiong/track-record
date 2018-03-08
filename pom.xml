@@ -26,7 +26,7 @@
                 <profileActive>dev</profileActive>
                 <mysqlUsername>root</mysqlUsername>
                 <mysqlPassword>123654</mysqlPassword>
-                <mysqlUrl>jdbc:mysql://127.0.0.1:3306/ynwls_db</mysqlUrl>
+                <mysqlUrl>jdbc:mysql://127.0.0.1:3306/ynwls_db?useUnicode=true&amp;characterEncoding=UTF-8</mysqlUrl>
             </properties>
         </profile>
         <profile>
@@ -38,7 +38,7 @@
                 <profileActive>test</profileActive>
                 <mysqlUsername>jecyhw</mysqlUsername>
                 <mysqlPassword>jecyhw@215</mysqlPassword>
-                <mysqlUrl>jdbc:mysql://127.0.0.1:3306/track_record</mysqlUrl>
+                <mysqlUrl>jdbc:mysql://127.0.0.1:3306/track_record?useUnicode=true&amp;characterEncoding=UTF-8</mysqlUrl>
             </properties>
         </profile>
         <profile>

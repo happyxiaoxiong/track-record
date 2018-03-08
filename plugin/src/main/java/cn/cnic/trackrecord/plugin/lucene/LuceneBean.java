@@ -1,13 +1,11 @@
 package cn.cnic.trackrecord.plugin.lucene;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.hadoop.hdfs.server.federation.store.records.QueryResult;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -26,7 +24,6 @@ public class LuceneBean {
     @Autowired
     private LuceneProperties properties;
     private Directory directory;
-    private IndexWriterConfig config;
     private Analyzer analyzer = LuceneQueryUtils.getAnalyzer();
     @PostConstruct
     public void init() {
@@ -36,12 +33,14 @@ public class LuceneBean {
             e.printStackTrace();
             log.error(e.getMessage());
         }
-        config = new IndexWriterConfig(analyzer);
-        config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
-        config.setMaxBufferedDocs(100);
+
     }
 
     public <T> void add(LuceneFormatter<T> formatter, T source) throws IOException {
+        // FIXED: java.lang.IllegalStateException: do not share IndexWriterConfig instances across IndexWriters
+        IndexWriterConfig config = new IndexWriterConfig(analyzer);
+        config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+        config.setMaxBufferedDocs(100);
         IndexWriter writer = new IndexWriter(directory, config);
         writer.addDocument(formatter.to(source));
         writer.close();
