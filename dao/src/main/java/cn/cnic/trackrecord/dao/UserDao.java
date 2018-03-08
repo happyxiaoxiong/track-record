@@ -19,4 +19,6 @@ public interface UserDao {
     User get(@Param("id") int id);
 
     List<User> getAllByFields(List<String> fields);
+
+    User getByName(@Param("name") String name);
 }

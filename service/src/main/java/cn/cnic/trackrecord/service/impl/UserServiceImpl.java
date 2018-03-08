@@ -65,4 +65,9 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllByFields(List<String> fields) {
         return userDao.getAllByFields(fields);
     }
+
+    @Override
+    public User getByName(String name) {
+        return userDao.getByName(name);
+    }
 }

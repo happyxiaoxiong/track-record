@@ -11,6 +11,6 @@ public interface UserService {
     boolean existByAccount(String account);
     List<User> getAll();
     User get(int id);
-
     List<User> getAllByFields(List<String> strings);
+    User getByName(String name);
 }

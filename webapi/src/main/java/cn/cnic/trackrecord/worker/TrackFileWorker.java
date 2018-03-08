@@ -4,6 +4,7 @@ import cn.cnic.trackrecord.common.date.LongDate;
 import cn.cnic.trackrecord.common.ant.Ants;
 import cn.cnic.trackrecord.common.enumeration.TrackFileState;
 import cn.cnic.trackrecord.common.util.Files;
+import cn.cnic.trackrecord.common.util.Objects;
 import cn.cnic.trackrecord.common.xml.Stax.Staxs;
 import cn.cnic.trackrecord.core.track.TrackLuceneFormatter;
 import cn.cnic.trackrecord.core.track.xml.RouteRecordXml;
@@ -11,6 +12,7 @@ import cn.cnic.trackrecord.core.track.xml.TrackDetailXml;
 import cn.cnic.trackrecord.data.entity.Track;
 import cn.cnic.trackrecord.data.entity.TrackFile;
 import cn.cnic.trackrecord.data.entity.TrackPoint;
+import cn.cnic.trackrecord.data.entity.User;
 import cn.cnic.trackrecord.data.kml.PlaceMark;
 import cn.cnic.trackrecord.data.kml.RoutePlaceMark;
 import cn.cnic.trackrecord.data.kml.RouteRecord;
@@ -20,6 +22,7 @@ import cn.cnic.trackrecord.plugin.lucene.LuceneBean;
 import cn.cnic.trackrecord.service.TrackFileService;
 import cn.cnic.trackrecord.service.TrackPointService;
 import cn.cnic.trackrecord.service.TrackService;
+import cn.cnic.trackrecord.service.UserService;
 import cn.cnic.trackrecord.web.config.property.TrackFileProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +48,9 @@ public class TrackFileWorker {
 
     @Autowired
     private TrackService trackService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private TrackPointService trackPointService;
@@ -164,7 +170,10 @@ public class TrackFileWorker {
             track.setFilename(trackFile.getFilename());
             track.setMd5(trackFile.getMd5());
             track.setUploadTime(new LongDate());
-            track.setUserId(trackFile.getUserId());
+
+            User user = userService.getByName(track.getUserName());
+            track.setUserId(Objects.nonNull(user) ? user.getId() : trackFile.getUserId());
+
             trackService.addAndGetId(track);
             List<TrackPoint> points = new LinkedList<>();
             for (PlaceMark placeMark : routeRecord.getPlaceMarks()) {

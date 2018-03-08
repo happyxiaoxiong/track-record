@@ -68,4 +68,7 @@
         SELECT <foreach collection="list" item="it" index="index" separator=",">${it}</foreach> FROM
         <include refid="table"/>
     </select>
+    <select id="getByName" resultMap="baseMap">
+        SELECT * FROM <include refid="table"/> WHERE name=#{name} limit 0, 1
+    </select>
 </mapper>
