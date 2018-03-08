@@ -22,6 +22,6 @@ public class RtGpsPoint {
     private double latitude;
     @ApiModelProperty("高度")
     private double altitude;
-    @ApiModelProperty("时间")
+    @ApiModelProperty(value = "时间", dataType = "string", notes = "格式: yyyy-MM-dd HH:mm:ss")
     private LongDate time;
 }

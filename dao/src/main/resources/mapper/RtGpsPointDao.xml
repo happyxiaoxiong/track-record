@@ -13,6 +13,10 @@
 
     <sql id="rt">`rt_gpspoint`</sql>
     <sql id="rtDay">`rt_gpspoint_day`</sql>
+    <insert id="add" parameterType="RtGpsPoint">
+        INSERT INTO <include refid="rt"/> (user_id, user_name, longitude, latitude, altitude, `time`)
+        VALUES (#{userId}, #{userName}, #{longitude}, #{latitude}, #{altitude}, #{time})
+    </insert>
     <select id="getAll" resultMap="baseMap">
         SELECT * FROM <include refid="rtDay"/>
     </select>

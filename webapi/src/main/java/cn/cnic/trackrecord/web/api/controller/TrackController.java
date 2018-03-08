@@ -29,7 +29,6 @@ import cn.cnic.trackrecord.plugin.lucene.LuceneBean;
 import cn.cnic.trackrecord.plugin.lucene.LuceneQueryUtils;
 import cn.cnic.trackrecord.plugin.lucene.PageResult;
 import cn.cnic.trackrecord.service.TrackFileService;
-import cn.cnic.trackrecord.service.TrackPointService;
 import cn.cnic.trackrecord.service.TrackService;
 import cn.cnic.trackrecord.service.TrackStatService;
 import cn.cnic.trackrecord.web.Const;
@@ -75,9 +74,6 @@ public class TrackController {
 
     @Autowired
     private TrackService trackService;
-
-    @Autowired
-    private TrackPointService trackPointService;
 
     @Autowired
     private TrackFileService trackFileService;
@@ -312,24 +308,6 @@ public class TrackController {
     public HttpRes<List<TrackStat>> stat(@RequestParam int userId, @RequestParam ShortDate beginTime, @RequestParam ShortDate endTime) {
         return HttpRes.success(trackStatService.getByUserIdAndRangeDay(userId, beginTime, endTime));
     }
-
-    @ApiOperation(value = "创建索引")
-    @RequestMapping(value = "lucene", method = RequestMethod.GET)
-    @ResponseBody
-    public HttpRes<?> lucene() {
-        List<Track> tracks = trackService.getAll();
-        for (Track track: tracks) {
-            List<TrackPoint> points = trackPointService.getByTrackId(track.getId());
-            try {
-                luceneBean.add(new TrackLuceneFormatter(), new TrackLucene(track, points));
-            } catch (IOException e) {
-                log.error(e.getMessage());
-                return HttpRes.fail();
-            }
-        }
-        return HttpRes.success();
-    }
-
 
     private static class TrackFilePluploadCallback implements PluploadCallback<TrackFile> {
         @Override

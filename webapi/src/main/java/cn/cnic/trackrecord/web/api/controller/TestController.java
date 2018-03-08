@@ -4,23 +4,33 @@ import cn.cnic.trackrecord.common.date.LongDate;
 import cn.cnic.trackrecord.common.enumeration.TrackFileState;
 import cn.cnic.trackrecord.common.http.HttpRes;
 import cn.cnic.trackrecord.common.util.Files;
+import cn.cnic.trackrecord.core.track.TrackLuceneFormatter;
+import cn.cnic.trackrecord.data.entity.Track;
 import cn.cnic.trackrecord.data.entity.TrackFile;
+import cn.cnic.trackrecord.data.entity.TrackPoint;
 import cn.cnic.trackrecord.data.entity.User;
+import cn.cnic.trackrecord.data.lucene.TrackLucene;
+import cn.cnic.trackrecord.plugin.lucene.LuceneBean;
 import cn.cnic.trackrecord.service.TrackFileService;
+import cn.cnic.trackrecord.service.TrackPointService;
+import cn.cnic.trackrecord.service.TrackService;
 import cn.cnic.trackrecord.service.UserService;
 import cn.cnic.trackrecord.web.Const;
 import cn.cnic.trackrecord.web.config.property.TrackFileProperties;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @Api(value = "测试API", description = "测试API", tags = "Test")
@@ -39,6 +49,15 @@ public class TestController {
 
     @Autowired
     private TrackFileService trackFileService;
+
+    @Autowired
+    private LuceneBean luceneBean;
+
+    @Autowired
+    private TrackPointService trackPointService;
+
+    @Autowired
+    private TrackService trackService;
 
     @RequestMapping(method = RequestMethod.GET, value = "encode")
     public HttpRes<?> encodePassword() {
@@ -82,5 +101,21 @@ public class TestController {
             log.error(e.getMessage());
             return HttpRes.fail();
         }
+    }
+
+    @ApiOperation(value = "创建索引")
+    @RequestMapping(value = "lucene", method = RequestMethod.GET)
+    public HttpRes<?> lucene() {
+        List<Track> tracks = trackService.getAll();
+        for (Track track: tracks) {
+            List<TrackPoint> points = trackPointService.getByTrackId(track.getId());
+            try {
+                luceneBean.add(new TrackLuceneFormatter(), new TrackLucene(track, points));
+            } catch (IOException e) {
+                log.error(e.getMessage());
+                return HttpRes.fail();
+            }
+        }
+        return HttpRes.success();
     }
 }

@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface RtGpsPointService {
     List<RtGpsPoint> getAll();
+
+    int add(RtGpsPoint gpsPoint);
 }

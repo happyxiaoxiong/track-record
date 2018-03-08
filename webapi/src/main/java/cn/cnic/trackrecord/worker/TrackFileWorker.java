@@ -164,9 +164,11 @@ public class TrackFileWorker {
             String realTrackPath = Files.getRealTrackPath(trackFile.getPath());
             Track track = Staxs.parse(new TrackDetailXml(), Files.getPathString(realTrackPath, properties.getTrackDetailFileName()));
 
-            // get user id
-            User user = userService.getByName(track.getUserName());
-            track.setUserId(Objects.nonNull(user) ? user.getId() : trackFile.getUserId());
+            if (track.getUserId() <= 0) {
+                // get user id
+                User user = userService.getByName(track.getUserName());
+                track.setUserId(Objects.nonNull(user) ? user.getId() : trackFile.getUserId());
+            }
 
             log.debug("{}", track);
             RouteRecord routeRecord = Staxs.parse(new RouteRecordXml(), Files.getPathString(realTrackPath, properties.getRouteRecordFileName()));

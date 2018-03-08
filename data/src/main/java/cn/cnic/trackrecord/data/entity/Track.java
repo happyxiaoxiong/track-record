@@ -30,9 +30,9 @@ public class Track {
     private String path;
     @ApiModelProperty(value = "轨迹文件大小")
     private int fileSize;
-    @ApiModelProperty(value = "文件md5")
+    @ApiModelProperty(value = "轨迹文件名称")
     private String filename;
-    @ApiModelProperty(value = "轨迹文件大小")
+    @ApiModelProperty(value = "文件md5")
     private String md5;
     @ApiModelProperty(value = "上传时间", dataType = "String", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11")
     private LongDate uploadTime;

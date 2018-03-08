@@ -18,4 +18,9 @@ public class RtGpsPointServiceImpl implements RtGpsPointService {
     public List<RtGpsPoint> getAll() {
         return rtGpsPointDao.getAll();
     }
+
+    @Override
+    public int add(RtGpsPoint gpsPoint) {
+        return rtGpsPointDao.add(gpsPoint);
+    }
 }

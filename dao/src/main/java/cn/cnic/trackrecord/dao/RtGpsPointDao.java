@@ -13,4 +13,6 @@ public interface RtGpsPointDao {
     List<RtGpsPoint> getRouteByUserId(@Param("userId") int userId,
                                       @Param("startTime") LongDate startTime,
                                       @Param("endTime") LongDate endTime);
+
+    int add(RtGpsPoint gpsPoint);
 }
