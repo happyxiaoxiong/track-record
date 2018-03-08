@@ -163,6 +163,12 @@ public class TrackFileWorker {
             //TODO
             String realTrackPath = Files.getRealTrackPath(trackFile.getPath());
             Track track = Staxs.parse(new TrackDetailXml(), Files.getPathString(realTrackPath, properties.getTrackDetailFileName()));
+
+            // get user id
+            User user = userService.getByName(track.getUserName());
+            track.setUserId(Objects.nonNull(user) ? user.getId() : trackFile.getUserId());
+
+            log.debug("{}", track);
             RouteRecord routeRecord = Staxs.parse(new RouteRecordXml(), Files.getPathString(realTrackPath, properties.getRouteRecordFileName()));
             //保存到hadoop中
             track.setPath(hadoops.appendKmzFiles(String.valueOf(trackFile.getUserId()), new File(trackFile.getPath()), false));
@@ -171,10 +177,6 @@ public class TrackFileWorker {
             track.setMd5(trackFile.getMd5());
             track.setUploadTime(new LongDate());
 
-            User user = userService.getByName(track.getUserName());
-            track.setUserId(Objects.nonNull(user) ? user.getId() : trackFile.getUserId());
-
-            log.debug("{}", track);
             trackService.addAndGetId(track);
             List<TrackPoint> points = new LinkedList<>();
             for (PlaceMark placeMark : routeRecord.getPlaceMarks()) {
