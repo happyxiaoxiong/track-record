@@ -132,6 +132,13 @@ public class TrackController {
         return HttpRes.success(trackFileService.get(trackFileId));
     }
 
+    @ApiOperation(value = "根据用户id获取用户所有轨迹")
+    @RequestMapping(value = "{user_id:\\d+}", method = RequestMethod.GET)
+    @ResponseBody
+    public HttpRes<List<Track>> getAllTracksByUserId(@PathVariable("user_id") int userId) {
+        return HttpRes.success(trackService.getByUserId(userId));
+    }
+
     @ApiOperation(value = "轨迹搜索")
     @RequestMapping(value = "search", method = RequestMethod.GET)
     @ResponseBody

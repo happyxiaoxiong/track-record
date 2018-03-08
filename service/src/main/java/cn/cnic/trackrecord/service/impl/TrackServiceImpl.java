@@ -46,4 +46,9 @@ public class TrackServiceImpl implements TrackService {
     public List<Track> getAll() {
         return trackDao.getAll();
     }
+
+    @Override
+    public List<Track> getByUserId(int userId) {
+        return trackDao.getByUserId(userId);
+    }
 }

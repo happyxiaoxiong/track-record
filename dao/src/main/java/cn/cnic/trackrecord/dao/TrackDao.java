@@ -17,4 +17,6 @@ public interface TrackDao {
     TrackStat countUserByDay(@Param("userId") int userId, @Param("beginTime") LongDate beginTime, @Param("endTime") LongDate endTime);
 
     List<Track> getAll();
+
+    List<Track> getByUserId(@Param("userId") int userId);
 }

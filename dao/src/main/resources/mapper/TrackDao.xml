@@ -63,4 +63,7 @@
     <select id="getAll" resultMap="baseMap">
         SELECT * FROM <include refid="table"/>
     </select>
+    <select id="getByUserId" resultMap="baseMap">
+        SELECT * FROM <include refid="table"/> WHERE user_id=#{userId}
+    </select>
 </mapper>

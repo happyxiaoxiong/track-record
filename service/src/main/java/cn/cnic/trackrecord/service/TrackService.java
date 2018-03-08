@@ -17,4 +17,6 @@ public interface TrackService {
     TrackStat countUserByDay(int userId, LongDate beginTime, LongDate endTime);
 
     List<Track> getAll();
+
+    List<Track> getByUserId(int userId);
 }
