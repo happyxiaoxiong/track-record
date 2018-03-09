@@ -24,6 +24,6 @@ public class TrackStat {
     private int totalCount;
     @ApiModelProperty(value = "0.按天统计,1.按月统计")
     private int type;
-    @ApiModelProperty(value = "统计日期")
+    @ApiModelProperty(value = "统计日期", dataType = "String", notes = "格式:yyyy-MM-dd", example = "2017-11-11", reference = "String")
     private ShortDate date;
 }

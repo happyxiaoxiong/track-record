@@ -307,7 +307,7 @@ public class TrackController {
     @ApiOperation(value = "轨迹统计")
     @RequestMapping(value = "stat/month", method = RequestMethod.GET)
     @ResponseBody
-    public HttpRes<List<TrackStat>> statByMonth(@ApiParam(name = "month", value = "月份") @RequestParam ShortDate month) {
+    public HttpRes<List<TrackStat>> statByMonth(@ApiParam(name = "month", value = "月份", type = "String", example = "2017-11-11") @RequestParam ShortDate month) {
         return HttpRes.success(trackStatService.getByMonth(month));
     }
 
