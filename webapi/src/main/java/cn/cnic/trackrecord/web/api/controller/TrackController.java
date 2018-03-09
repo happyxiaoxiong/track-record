@@ -29,6 +29,7 @@ import cn.cnic.trackrecord.plugin.lucene.LuceneBean;
 import cn.cnic.trackrecord.plugin.lucene.LuceneQueryUtils;
 import cn.cnic.trackrecord.plugin.lucene.PageResult;
 import cn.cnic.trackrecord.service.TrackFileService;
+import cn.cnic.trackrecord.service.TrackPointService;
 import cn.cnic.trackrecord.service.TrackService;
 import cn.cnic.trackrecord.service.TrackStatService;
 import cn.cnic.trackrecord.web.Const;
@@ -136,6 +137,10 @@ public class TrackController {
     }
 
     @ApiOperation(value = "轨迹搜索")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startTime", value = "开始时间,格式:yyyy-MM-dd HH:mm:ss", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "endTime", value = "结束时间,格式:yyyy-MM-dd HH:mm:ss", dataType = "string", paramType = "query"),
+    })
     @RequestMapping(value = "search", method = RequestMethod.GET)
     @ResponseBody
     public HttpRes<PageInfo<Track>> search(TrackSearchParams params) {
@@ -146,10 +151,14 @@ public class TrackController {
 //                String[] fields = {"name", "userName", "keySitesList", "annotation"};
 //                Query keywordQuery = LuceneQueryUtils.multiFieldQuery(params.getKeyword(), fields);
 //                queryBuilder.add(keywordQuery, BooleanClause.Occur.SHOULD);
-                queryBuilder.add(new FuzzyQuery(new Term("name", params.getKeyword())), BooleanClause.Occur.SHOULD);
-                queryBuilder.add(new FuzzyQuery(new Term("userName", params.getKeyword())), BooleanClause.Occur.SHOULD);
-                queryBuilder.add(new FuzzyQuery(new Term("keySitesList", params.getKeyword())), BooleanClause.Occur.SHOULD);
-                queryBuilder.add(new FuzzyQuery(new Term("annotation", params.getKeyword())), BooleanClause.Occur.SHOULD);
+//                queryBuilder.add(new FuzzyQuery(new Term("name", params.getKeyword())), BooleanClause.Occur.SHOULD);
+//                queryBuilder.add(new FuzzyQuery(new Term("userName", params.getKeyword())), BooleanClause.Occur.SHOULD);
+//                queryBuilder.add(new FuzzyQuery(new Term("keySitesList", params.getKeyword())), BooleanClause.Occur.SHOULD);
+//                queryBuilder.add(new FuzzyQuery(new Term("annotation", params.getKeyword())), BooleanClause.Occur.SHOULD);
+                queryBuilder.add(new WildcardQuery(new Term("name", "*" + params.getKeyword() + "*")), BooleanClause.Occur.SHOULD);
+                queryBuilder.add(new WildcardQuery(new Term("userName", "*" + params.getKeyword() + "*")), BooleanClause.Occur.SHOULD);
+                queryBuilder.add(new WildcardQuery(new Term("keySitesList", "*" + params.getKeyword() + "*")), BooleanClause.Occur.SHOULD);
+                queryBuilder.add(new WildcardQuery(new Term("annotation", "*" + params.getKeyword() + "*")), BooleanClause.Occur.SHOULD);
             }
             if ((Objects.nonNull(params.getStartTime()) && !params.getStartTime().equals(LongDate.NullValue))
                     || (Objects.nonNull(params.getEndTime()) && !params.getEndTime().equals(LongDate.NullValue))) {

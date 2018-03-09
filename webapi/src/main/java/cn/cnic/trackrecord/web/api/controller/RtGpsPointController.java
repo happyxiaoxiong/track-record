@@ -8,6 +8,7 @@ import cn.cnic.trackrecord.web.Const;
 import cn.cnic.trackrecord.web.identity.UserDetailsServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,9 +34,9 @@ public class RtGpsPointController {
         return HttpRes.success(rtGpsPointService.getAll());
     }
 
-    @ApiOperation(value = "跟新位置信息", notes = "id和userId和userName三个参数不用设置")
+    @ApiOperation(value = "跟新位置信息", notes = "id和userId和userName三个参数不用设置,time参数格式为yyyy-MM-dd HH:mm:ss")
     @RequestMapping(value = "update", method = RequestMethod.POST)
-    public HttpRes<Boolean> updatePosition(@RequestBody RtGpsPoint gpsPoint) {
+    public HttpRes<Boolean> updatePosition( @RequestBody RtGpsPoint gpsPoint) {
         User user = userDetailsService.getLoginUser();
         gpsPoint.setUserId(user.getId());
         gpsPoint.setUserName(user.getName());
