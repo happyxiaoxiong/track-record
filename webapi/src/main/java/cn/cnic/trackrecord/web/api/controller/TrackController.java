@@ -315,6 +315,11 @@ public class TrackController {
     }
 
     @ApiOperation(value = "轨迹统计")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户id", dataType = "integer", paramType = "query", required = true),
+            @ApiImplicitParam(name = "beginTime", value = "开始时间,格式:yyyy-MM-dd", dataType = "string", paramType = "query", required = true),
+            @ApiImplicitParam(name = "endTime", value = "结束时间,格式:yyyy-MM-dd", dataType = "string", paramType = "query", required = true)
+    })
     @RequestMapping(value = "stat/day", method = RequestMethod.GET)
     @ResponseBody
     public HttpRes<List<TrackStat>> stat(@RequestParam int userId, @RequestParam ShortDate beginTime, @RequestParam ShortDate endTime) {
