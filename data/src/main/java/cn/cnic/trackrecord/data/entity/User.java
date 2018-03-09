@@ -17,9 +17,9 @@ import lombok.NoArgsConstructor;
 public class User {
     @ApiModelProperty(value = "主键", notes = "数据库自动生成")
     private int id;
-    @ApiModelProperty(value = "账号", required = true)
+    @ApiModelProperty(value = "账号", required = true, notes = "唯一")
     private String account;
-    @ApiModelProperty(value = "密码", required = true, notes = "唯一")
+    @ApiModelProperty(value = "密码", required = true, hidden = true)
     private String password;
     @ApiModelProperty(value = "姓名", required = true)
     private String name;

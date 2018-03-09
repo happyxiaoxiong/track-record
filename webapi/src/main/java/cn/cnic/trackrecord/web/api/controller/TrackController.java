@@ -248,7 +248,7 @@ public class TrackController {
     @ApiOperation(value = "获取轨迹音/视频")
     @RequestMapping(value = "{id}/{media:audio|video}/{name:.+}", method = RequestMethod.GET)
     public void getVideo(@ApiParam(name = "id", value = "轨迹id") @PathVariable int id,
-                                       @ApiParam(name = "media", value = "多媒体类型") @PathVariable String media,
+                                       @ApiParam(name = "media", value = "多媒体类型(取值audio或者video)" ) @PathVariable String media,
                                        @ApiParam(name = "name", value = "轨迹图片名称") @PathVariable String name,
                                        HttpServletRequest req, HttpServletResponse res) {
         try {
