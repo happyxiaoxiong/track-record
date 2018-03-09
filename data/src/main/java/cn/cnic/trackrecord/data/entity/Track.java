@@ -16,9 +16,9 @@ public class Track {
     private int userId;
     @ApiModelProperty(value = "用户名")
     private String userName;
-    @ApiModelProperty(value = "轨迹开始时间", dataType = "String", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11", reference = "String")
+    @ApiModelProperty(value = "轨迹开始时间", dataType = "string", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11", reference = "string")
     private LongDate startTime;
-    @ApiModelProperty(value = "轨迹结束时间", dataType = "String", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11", reference = "String")
+    @ApiModelProperty(value = "轨迹结束时间", dataType = "string", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11", reference = "string")
     private LongDate endTime;
     @ApiModelProperty(value = "轨迹长度")
     private double length;
@@ -34,7 +34,7 @@ public class Track {
     private String filename;
     @ApiModelProperty(value = "文件md5")
     private String md5;
-    @ApiModelProperty(value = "上传时间", dataType = "String", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11", reference = "String")
+    @ApiModelProperty(value = "上传时间", dataType = "string", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11", reference = "string")
     private LongDate uploadTime;
     @ApiModelProperty(value = "注释说明")
     private String annotation;

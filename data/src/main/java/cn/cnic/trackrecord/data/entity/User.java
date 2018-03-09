@@ -25,7 +25,7 @@ public class User {
     private String name;
     @ApiModelProperty(value = "性别")
     private Gender gender;
-    @ApiModelProperty(value = "生日", dataType = "String", notes = "格式:yyyy-MM-dd", example = "2017-11-11", reference = "string")
+    @ApiModelProperty(value = "生日", dataType = "string", notes = "格式:yyyy-MM-dd", example = "2017-11-11", reference = "string")
     private ShortDate birthday;
     @ApiModelProperty(value = "邮箱")
     private String email;
