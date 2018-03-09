@@ -306,7 +306,7 @@ public class TrackController {
 
     @ApiOperation(value = "轨迹统计")
     @ApiImplicitParams(
-            @ApiImplicitParam(name = "month", value = "开始时间,格式:yyyy-MM-dd", dataType = "string", paramType = "query")
+            @ApiImplicitParam(name = "month", value = "开始时间,格式:yyyy-MM-dd", dataType = "string", paramType = "query", required = true)
     )
     @RequestMapping(value = "stat/month", method = RequestMethod.GET)
     @ResponseBody
