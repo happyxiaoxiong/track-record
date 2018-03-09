@@ -25,7 +25,7 @@ public class User {
     private String name;
     @ApiModelProperty(value = "性别")
     private Gender gender;
-    @ApiModelProperty(value = "生日", dataType = "String", notes = "格式:yyyy-MM-dd", example = "2017-11-11", reference = "String")
+    @ApiModelProperty(value = "生日", dataType = "String", notes = "格式:yyyy-MM-dd", example = "2017-11-11", reference = "string")
     private ShortDate birthday;
     @ApiModelProperty(value = "邮箱")
     private String email;
@@ -41,9 +41,9 @@ public class User {
     private String county;
     @ApiModelProperty(value = "乡")
     private String township;
-    @ApiModelProperty(value = "注册时间", dataType = "String", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11", reference = "String")
+    @ApiModelProperty(value = "注册时间", dataType = "string", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11", reference = "string")
     private LongDate addTime;
-    @ApiModelProperty(value = "生日", dataType = "String", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11", reference = "String")
+    @ApiModelProperty(value = "生日", dataType = "string", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11", reference = "string")
     private LongDate loginTime;
     @ApiModelProperty(value = "性别")
     private Role role;
