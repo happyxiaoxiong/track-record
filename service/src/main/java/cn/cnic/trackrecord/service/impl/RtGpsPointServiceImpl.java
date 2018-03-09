@@ -1,5 +1,6 @@
 package cn.cnic.trackrecord.service.impl;
 
+import cn.cnic.trackrecord.common.date.LongDate;
 import cn.cnic.trackrecord.dao.RtGpsPointDao;
 import cn.cnic.trackrecord.data.entity.RtGpsPoint;
 import cn.cnic.trackrecord.service.RtGpsPointService;
@@ -15,8 +16,8 @@ public class RtGpsPointServiceImpl implements RtGpsPointService {
     private RtGpsPointDao rtGpsPointDao;
 
     @Override
-    public List<RtGpsPoint> getAll() {
-        return rtGpsPointDao.getAll();
+    public List<RtGpsPoint> getByGtTime(LongDate startTime) {
+        return rtGpsPointDao.getByGtTime(startTime);
     }
 
     @Override

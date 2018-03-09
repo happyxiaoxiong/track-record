@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface RtGpsPointDao {
-    List<RtGpsPoint> getAll();
     List<RtGpsPoint> getByGtTime(@Param("startTime") LongDate startTime);
     RtGpsPoint getByUserId(@Param("userId") int userId);
     List<RtGpsPoint> getRouteByUserId(@Param("userId") int userId,
