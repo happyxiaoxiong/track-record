@@ -2,7 +2,6 @@ package cn.cnic.trackrecord.common.date;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
-import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

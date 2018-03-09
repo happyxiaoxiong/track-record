@@ -4,11 +4,13 @@ import cn.cnic.trackrecord.common.serializer.LongDateDeserializer;
 import cn.cnic.trackrecord.common.serializer.LongDateSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.swagger.annotations.ApiModel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+@ApiModel("日期格式: yyyy-MM-dd HH:mm:ss")
 @JsonDeserialize(using = LongDateDeserializer.class)
 @JsonSerialize(using = LongDateSerializer.class)
 public class LongDate extends IntDate {

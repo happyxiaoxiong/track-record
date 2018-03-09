@@ -4,11 +4,13 @@ import cn.cnic.trackrecord.common.serializer.ShortDateSerializer;
 import cn.cnic.trackrecord.common.serializer.ShowDateDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.swagger.annotations.ApiModel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+@ApiModel("日期格式: yyyy-MM-dd")
 @JsonDeserialize(using = ShowDateDeserializer.class)
 @JsonSerialize(using = ShortDateSerializer.class)
 public class ShortDate extends IntDate {
