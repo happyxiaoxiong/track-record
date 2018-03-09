@@ -15,7 +15,7 @@ public class TrackFile {
     private int userId;
     @ApiModelProperty(value = "轨迹文件状态", dataType = "int")
     private TrackFileState state;
-    @ApiModelProperty(value = "轨迹上传时间", dataType = "String", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11")
+    @ApiModelProperty(value = "轨迹上传时间", dataType = "String", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11", reference = "String")
     private LongDate uploadTime;
     @ApiModelProperty(value = "轨迹路径信息")
     private String path;
@@ -29,6 +29,6 @@ public class TrackFile {
     private String comment;
     @ApiModelProperty(value = "重试次数")
     private int tries;
-    @ApiModelProperty(value = "更新时间", dataType = "String", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11")
+    @ApiModelProperty(value = "更新时间", dataType = "String", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11", reference = "String")
     private LongDate updateTime;
 }
