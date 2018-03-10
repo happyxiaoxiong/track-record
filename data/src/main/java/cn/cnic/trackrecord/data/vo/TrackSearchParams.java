@@ -18,9 +18,9 @@ public class TrackSearchParams extends Page {
     @ApiModelProperty(value = "结束巡护时间", dataType = "string", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11", reference = "string")
     private LongDate endTime;
     @ApiModelProperty(value = "中心点经度")
-    private Double longitude;
+    private Double lng;
     @ApiModelProperty(value = "中心点纬度")
-    private Double latitude;
+    private Double lat;
     @ApiModelProperty(value = "离中心点距离")
     private double distance;
 }

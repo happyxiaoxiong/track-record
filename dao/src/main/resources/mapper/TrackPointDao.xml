@@ -4,8 +4,8 @@
     <resultMap id="baseMap" type="TrackPoint">
         <id property="id" column="id"/>
         <result property="trackId" column="track_id"/>
-        <result property="longitude" column="longitude"/>
-        <result property="latitude" column="latitude"/>
+        <result property="lng" column="longitude"/>
+        <result property="lat" column="latitude"/>
         <result property="altitude" column="altitude"/>
     </resultMap>
 
@@ -15,7 +15,7 @@
         INSERT INTO <include refid="table"/> (track_id, longitude, latitude, altitude)
         VALUES
         <foreach collection="list" item="it" index="index" separator=",">
-            (#{it.trackId}, #{it.longitude}, #{it.latitude}, #{it.altitude})
+            (#{it.trackId}, #{it.lng}, #{it.lat}, #{it.altitude})
         </foreach>
     </insert>
     <select id="getByTrackId" resultMap="baseMap">

@@ -12,9 +12,9 @@ public class TrackPoint {
     @ApiModelProperty("轨迹id")
     private int trackId;
     @ApiModelProperty("经度")
-    private double longitude;
+    private double lng;
     @ApiModelProperty("纬度")
-    private double latitude;
+    private double lat;
     @ApiModelProperty("高度")
     private double altitude;
 }

@@ -26,9 +26,9 @@ public class LuceneQueryUtils {
         return multiFieldQuery(keyword, fields, occurs);
     }
 
-    public static Query spatialCircleQuery(double longitude, double latitude, double distance) {
+    public static Query spatialCircleQuery(double lng, double lat, double distance) {
         return SpatialUtils.getSpatialStrategy().makeQuery(new SpatialArgs(SpatialOperation.Intersects,
-                SpatialUtils.getShapeFactory().circle(longitude, latitude,
+                SpatialUtils.getShapeFactory().circle(lng, lat,
                         DistanceUtils.dist2Degrees(distance, DistanceUtils.EARTH_MEAN_RADIUS_KM))));
     }
 

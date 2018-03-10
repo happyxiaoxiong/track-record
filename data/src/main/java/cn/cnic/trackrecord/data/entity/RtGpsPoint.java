@@ -17,9 +17,9 @@ public class RtGpsPoint {
     @ApiModelProperty("用户名")
     private String userName;
     @ApiModelProperty("经度")
-    private double longitude;
+    private double lng;
     @ApiModelProperty("纬度")
-    private double latitude;
+    private double lat;
     @ApiModelProperty("高度")
     private double altitude;
     @ApiModelProperty(value = "时间", dataType = "string", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11", reference = "string")

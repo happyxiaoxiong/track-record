@@ -5,8 +5,8 @@
         <id property="id" column="id"/>
         <result property="userId" column="user_id"/>
         <result property="userName" column="user_name"/>
-        <result property="longitude" column="longitude"/>
-        <result property="latitude" column="latitude"/>
+        <result property="lng" column="longitude"/>
+        <result property="lat" column="latitude"/>
         <result property="altitude" column="altitude"/>
         <result property="time" column="time"/>
     </resultMap>
@@ -15,7 +15,7 @@
     <sql id="rtDay">`rt_gpspoint_day`</sql>
     <insert id="add" parameterType="RtGpsPoint">
         INSERT INTO <include refid="rt"/> (user_id, user_name, longitude, latitude, altitude, `time`)
-        VALUES (#{userId}, #{userName}, #{longitude}, #{latitude}, #{altitude}, #{time})
+        VALUES (#{userId}, #{userName}, #{lng}, #{lat}, #{altitude}, #{time})
     </insert>
     <select id="getByUserId" resultMap="baseMap">
         SELECT * FROM <include refid="rtDay"/> WHERE user_id=#{userId}

@@ -129,8 +129,8 @@ public class RouteRecordXml extends StaxHandler<RouteRecord> {
             StringTokenizer tokenizer = new StringTokenizer(pointText, ",", false);
             if (tokenizer.hasMoreTokens())
             {
-                point.setLongitude(Double.parseDouble(tokenizer.nextToken()));
-                point.setLatitude(Double.parseDouble(tokenizer.nextToken()));
+                point.setLng(Double.parseDouble(tokenizer.nextToken()));
+                point.setLat(Double.parseDouble(tokenizer.nextToken()));
                 point.setAltitude(Double.parseDouble(tokenizer.nextToken()));
             }
             return point;

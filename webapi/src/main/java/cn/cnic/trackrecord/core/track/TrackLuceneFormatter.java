@@ -33,7 +33,7 @@ public class TrackLuceneFormatter implements LuceneFormatter<TrackLucene> {
         doc.add(new StoredField("uploadTime", track.getUploadTime().getValue()));
 
         for (TrackPoint point : trackLucene.getPoints()) {
-            for (Field field : SpatialUtils.createIndexFields(point.getLongitude(), point.getLatitude())) {
+            for (Field field : SpatialUtils.createIndexFields(point.getLng(), point.getLat())) {
                 doc.add(field);
             }
         }

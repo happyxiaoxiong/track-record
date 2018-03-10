@@ -169,9 +169,9 @@ public class TrackController {
                 Query timeQuery = IntPoint.newRangeQuery("startTime", params.getStartTime().getValue(), params.getEndTime().getValue());
                 queryBuilder.add(timeQuery, BooleanClause.Occur.MUST);
             }
-            if (params.getDistance() > 0 && Objects.nonNull(params.getLatitude()) && Objects.nonNull(params.getLongitude())) {
+            if (params.getDistance() > 0 && Objects.nonNull(params.getLat()) && Objects.nonNull(params.getLng())) {
                 //范围搜索
-                Query distanceQuery = LuceneQueryUtils.spatialCircleQuery(params.getLongitude(), params.getLatitude(), params.getDistance());
+                Query distanceQuery = LuceneQueryUtils.spatialCircleQuery(params.getLng(), params.getLat(), params.getDistance());
                 queryBuilder.add(distanceQuery, BooleanClause.Occur.MUST);
             }
             BooleanQuery query = queryBuilder.build();
