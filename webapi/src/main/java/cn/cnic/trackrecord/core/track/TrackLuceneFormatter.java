@@ -17,6 +17,8 @@ public class TrackLuceneFormatter implements LuceneFormatter<TrackLucene> {
         doc.add(new StoredField("id", track.getId()));
         doc.add(new TextField("name", track.getName(), Field.Store.YES));
         doc.add(new TextField("userName", track.getUserName(), Field.Store.YES));
+
+        doc.add(new IntPoint("userId", track.getUserId()));
         doc.add(new StoredField("userId", track.getUserId()));
         //如果要排序使用，必须同时创建同名的StoredField类与NumericDocValuesField类
         doc.add(new IntPoint("startTime", track.getStartTime().getValue()));

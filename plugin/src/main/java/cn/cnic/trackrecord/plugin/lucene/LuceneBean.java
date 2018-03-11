@@ -25,6 +25,7 @@ public class LuceneBean {
     private LuceneProperties properties;
     private Directory directory;
     private Analyzer analyzer = LuceneQueryUtils.getAnalyzer();
+
     @PostConstruct
     public void init() {
         try {

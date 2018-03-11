@@ -11,6 +11,8 @@ import lombok.Setter;
 @Setter
 @Getter
 public class TrackSearchParams extends Page {
+    @ApiModelProperty(value = "用户id")
+    private Integer userId;
     @ApiModelProperty(value = "关键字(轨迹名称、记录人、关键地点、说明)")
     private String keyword;
     @ApiModelProperty(value = "开始巡护时间", dataType = "string", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11", reference = "string")

@@ -2,18 +2,19 @@ package cn.cnic.trackrecord.worker;
 
 import cn.cnic.trackrecord.common.date.LongDate;
 import cn.cnic.trackrecord.common.date.ShortDate;
-import cn.cnic.trackrecord.common.util.Objects;
 import cn.cnic.trackrecord.data.entity.TrackStat;
 import cn.cnic.trackrecord.data.entity.User;
 import cn.cnic.trackrecord.service.TrackService;
 import cn.cnic.trackrecord.service.TrackStatService;
 import cn.cnic.trackrecord.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.*;
 
+@Slf4j
 public class TrackStatWorker {
 
     @Autowired
@@ -33,6 +34,8 @@ public class TrackStatWorker {
         List<User> users = userService.getAll();
         Date today = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
         Date yesterday = DateUtils.addDays(today, -1);
+
+        log.debug("stat day: {} to {}", yesterday, today);
 
         List<TrackStat> trackStats = new ArrayList<>(users.size());
         for (User user : users) {
@@ -54,6 +57,8 @@ public class TrackStatWorker {
         List<User> users = userService.getAll();
         Date month = DateUtils.truncate(new Date(), Calendar.MONTH);
         Date lastMonth = DateUtils.addMonths(month, -1);
+
+        log.debug("stat month: {} to {}", lastMonth, month);
 
         List<TrackStat> trackStats = new ArrayList<>(users.size());
         for (User user : users) {

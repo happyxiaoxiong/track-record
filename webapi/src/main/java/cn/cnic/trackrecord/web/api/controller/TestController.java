@@ -11,6 +11,7 @@ import cn.cnic.trackrecord.data.entity.TrackPoint;
 import cn.cnic.trackrecord.data.entity.User;
 import cn.cnic.trackrecord.data.lucene.TrackLucene;
 import cn.cnic.trackrecord.plugin.lucene.LuceneBean;
+import cn.cnic.trackrecord.plugin.lucene.LuceneProperties;
 import cn.cnic.trackrecord.service.TrackFileService;
 import cn.cnic.trackrecord.service.TrackPointService;
 import cn.cnic.trackrecord.service.TrackService;
@@ -25,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
@@ -45,13 +45,16 @@ public class TestController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private TrackFileProperties properties;
+    private TrackFileProperties trackFileProperties;
 
     @Autowired
     private TrackFileService trackFileService;
 
     @Autowired
     private LuceneBean luceneBean;
+
+    @Autowired
+    private LuceneProperties luceneProperties;
 
     @Autowired
     private TrackPointService trackPointService;
@@ -75,7 +78,7 @@ public class TestController {
         try {
             for (String fileName : FileUtils.readLines(new File("/root/path.txt"), "UTF-8")) {
                 File file = new File(fileName + ".kmz");
-                File destFile = Files.getFile(properties.getUploadPath(), file.getName());
+                File destFile = Files.getFile(trackFileProperties.getUploadPath(), file.getName());
                 log.debug("srcFile: {}, destFile: {}", file.getName(), destFile.getAbsolutePath());
                 if (file.exists()) {
                     log.debug("copy file: srcFile: {}, destFile: {}", file.getName(), destFile.getAbsolutePath());
@@ -106,6 +109,10 @@ public class TestController {
     @ApiOperation(value = "创建索引")
     @RequestMapping(value = "lucene", method = RequestMethod.GET)
     public HttpRes<?> lucene() {
+        log.debug("delete lucene index file: {}", luceneProperties.getIndexPath());
+        Files.delete(luceneProperties.getIndexPath());
+
+        log.debug("recreate lucene index file");
         List<Track> tracks = trackService.getAll();
         for (Track track: tracks) {
             List<TrackPoint> points = trackPointService.getByTrackId(track.getId());

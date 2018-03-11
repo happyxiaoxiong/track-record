@@ -146,6 +146,11 @@ public class TrackController {
     public HttpRes<PageInfo<Track>> search(TrackSearchParams params) {
         try {
             BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
+            if (Objects.nonNull(params.getUserId())) {
+                //数字精确搜索
+                Query timeQuery = IntPoint.newExactQuery("userId", params.getUserId());
+                queryBuilder.add(timeQuery, BooleanClause.Occur.MUST);
+            }
             if (StringUtils.isNotBlank(params.getKeyword())) {
                 //多关键字搜索
 //                String[] fields = {"name", "userName", "keySitesList", "annotation"};
