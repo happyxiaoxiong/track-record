@@ -160,10 +160,12 @@ public class TrackController {
 //                queryBuilder.add(new FuzzyQuery(new Term("userName", params.getKeyword())), BooleanClause.Occur.SHOULD);
 //                queryBuilder.add(new FuzzyQuery(new Term("keySitesList", params.getKeyword())), BooleanClause.Occur.SHOULD);
 //                queryBuilder.add(new FuzzyQuery(new Term("annotation", params.getKeyword())), BooleanClause.Occur.SHOULD);
-                queryBuilder.add(new WildcardQuery(new Term("name", "*" + params.getKeyword() + "*")), BooleanClause.Occur.SHOULD);
-                queryBuilder.add(new WildcardQuery(new Term("userName", "*" + params.getKeyword() + "*")), BooleanClause.Occur.SHOULD);
-                queryBuilder.add(new WildcardQuery(new Term("keySitesList", "*" + params.getKeyword() + "*")), BooleanClause.Occur.SHOULD);
-                queryBuilder.add(new WildcardQuery(new Term("annotation", "*" + params.getKeyword() + "*")), BooleanClause.Occur.SHOULD);
+                BooleanQuery.Builder keywordQueryBuilder = new BooleanQuery.Builder();
+                keywordQueryBuilder.add(new WildcardQuery(new Term("name", "*" + params.getKeyword() + "*")), BooleanClause.Occur.SHOULD);
+                keywordQueryBuilder.add(new WildcardQuery(new Term("userName", "*" + params.getKeyword() + "*")), BooleanClause.Occur.SHOULD);
+                keywordQueryBuilder.add(new WildcardQuery(new Term("keySitesList", "*" + params.getKeyword() + "*")), BooleanClause.Occur.SHOULD);
+                keywordQueryBuilder.add(new WildcardQuery(new Term("annotation", "*" + params.getKeyword() + "*")), BooleanClause.Occur.SHOULD);
+                queryBuilder.add(keywordQueryBuilder.build(), BooleanClause.Occur.MUST);
             }
             if ((Objects.nonNull(params.getStartTime()) && !params.getStartTime().equals(LongDate.NullValue))
                     || (Objects.nonNull(params.getEndTime()) && !params.getEndTime().equals(LongDate.NullValue))) {
