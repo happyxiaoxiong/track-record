@@ -1,31 +1,29 @@
 package cn.cnic.trackrecord.common.util;
 
 public class Medias {
-    private static final String[] IMAGE_TYPES = { "jpg", "png", "jpeg", "bmp", "jpe", "gif", "ico" };
-    private static final String[] VIDEO_TYPES = { "mp4", "avi", "rmvb", "mpeg", "mov", "mkv", "vob", "flv", "rm",
-            "asf", "f4v", "m4v", "3gp", "ts", "divx", "mpg", "mpe", "wmv", "mts"};
+    private static final String[] IMAGE_TYPES = { "jpg", "png", "jpeg" };
+    private static final String[] VIDEO_TYPES = { "mp4"};
+    private static final String[] AUDIO_TYPES = { "aac", "mp3"};
 
     public static boolean isImage(String fileName) {
-        String lowercaseName = fileName.toLowerCase();
-        for (String imgType : IMAGE_TYPES) {
-            if (lowercaseName.endsWith(imgType)) {
-                return true;
-            }
-        }
-        return false;
+        return is(fileName, IMAGE_TYPES);
     }
 
     public static boolean isVideo(String fileName) {
-        String lowercaseName = fileName.toLowerCase();
-        for (String videoType : VIDEO_TYPES) {
-            if (lowercaseName.endsWith(videoType)) {
-                return true;
-            }
-        }
-        return false;
+        return is(fileName, VIDEO_TYPES);
     }
 
     public static boolean isAudio(String fileName) {
+        return is(fileName, AUDIO_TYPES);
+    }
+
+    private static boolean is(String fileName, String[] types) {
+        String lowercaseName = fileName.toLowerCase();
+        for (String type : types) {
+            if (lowercaseName.endsWith(type)) {
+                return true;
+            }
+        }
         return false;
     }
 }

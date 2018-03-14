@@ -16,7 +16,7 @@ public class FfmpegBean {
     @Autowired
     private FfmpegProperties properties;
 
-    public boolean encodeH264(String srcVideoPath, String destVideoPath) {
+    public boolean encodeVideo(String srcPath, String destPath) {
         // ffmpeg -i input.avi -r 24 output.mp4
         // ffmpeg -i input.avi -r 24 output.ogg
         // ffmpeg -i input.mov -vcodec h264 -acodec aac -strict -2 -r 24 output.mp4 采用这种方式转码
@@ -24,7 +24,7 @@ public class FfmpegBean {
         command.add(properties.getPath());
         command.add("-y");
         command.add("-i");
-        command.add(srcVideoPath);
+        command.add(srcPath);
         command.add("-vcodec");
         command.add("h264");
         command.add("-acodec");
@@ -33,7 +33,26 @@ public class FfmpegBean {
         command.add("-2");
         command.add("-r");
         command.add("24");
-        command.add(destVideoPath);
+        command.add(destPath);
+        return process(srcPath, destPath, command);
+    }
+
+    public boolean encodeAudio(String srcPath, String destPath) {
+        // ffmpeg -i audio.aac -acodec libmp3lame audio.mp3
+        // ffmpeg -i input.wav -vn -ar 44100 -ac 2 -ab 192k -f mp3 output.mp3
+        // ffmpeg -i input.wav -f mp3 output.mp3
+        List<String> command = new java.util.ArrayList<>();
+        command.add(properties.getPath());
+        command.add("-y");
+        command.add("-i");
+        command.add(srcPath);
+        command.add("-f");
+        command.add("mp3");
+        command.add(destPath);
+        return process(srcPath, destPath, command);
+    }
+
+    private boolean process(String srcPath, String destPath, List<String> command) {
         try {
             ProcessBuilder builder = new ProcessBuilder();
             builder.command(command);
@@ -49,8 +68,8 @@ public class FfmpegBean {
         } catch (Exception ignored) {
             ignored.printStackTrace();
         }
-        if (!Files.exists(destVideoPath)) {
-            log.error("`{}`转换失败", srcVideoPath);
+        if (!Files.exists(destPath)) {
+            log.error("`{}`转换失败", srcPath);
             return false;
         }
         return true;
@@ -60,6 +79,6 @@ public class FfmpegBean {
         FfmpegBean ffmpegBean = new FfmpegBean();
         ffmpegBean.properties = new FfmpegProperties();
         ffmpegBean.properties.setPath("D:/ffmpeg/bin/ffmpeg");
-        ffmpegBean.encodeH264("D:\\ffmpeg\\bin\\test.mp4", "D:\\ffmpeg\\bin\\hello.mp4");
+        ffmpegBean.encodeVideo("D:\\ffmpeg\\bin\\test.mp4", "D:\\ffmpeg\\bin\\hello.mp4");
     }
 }

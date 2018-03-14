@@ -109,19 +109,31 @@ class HadoopBean {
         if (Medias.isImage(fileName)) {// 是图片进行压缩
             meta.setThumb(thumbnail(parent, file));
         } else if (Medias.isVideo(fileName)) {// 是视频转码成h264
-            meta.setThumb(h264(parent, file));
+            meta.setThumb(video(parent, file));
         } else if (Medias.isAudio(fileName)) {
-
+            meta.setThumb(audio(parent, file));
         }
         meta.setName(fileName);
         log.debug("append file: {}", meta);
         return meta;
     }
 
-    private FileMeta h264(Path parent, File file) throws IOException {
+    private FileMeta video(Path parent, File file) throws IOException {
         // 需要加上 .mp4后缀，否则会出错
         String destPath = Files.getPathString(properties.getLocalTmpDir(), UUID.randomUUID().toString() + ".mp4");
-        if (ffmpegBean.encodeH264(file.getAbsolutePath(), destPath)) {
+        if (ffmpegBean.encodeVideo(file.getAbsolutePath(), destPath)) {
+            FileMeta fileMeta = appendCallback(new Path(parent, properties.getThumbFileName()), out ->
+                    IOUtils.copyBytes(new FileInputStream(destPath), out, 4096, true));
+            Files.delete(destPath);
+            return fileMeta;
+        }
+        return null;
+    }
+
+    private FileMeta audio(Path parent, File file) throws IOException {
+        // 需要加上 .mp4后缀，否则会出错
+        String destPath = Files.getPathString(properties.getLocalTmpDir(), UUID.randomUUID().toString() + ".mp4");
+        if (ffmpegBean.encodeAudio(file.getAbsolutePath(), destPath)) {
             FileMeta fileMeta = appendCallback(new Path(parent, properties.getThumbFileName()), out ->
                     IOUtils.copyBytes(new FileInputStream(destPath), out, 4096, true));
             Files.delete(destPath);

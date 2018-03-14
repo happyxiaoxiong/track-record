@@ -38,9 +38,7 @@ public class RouteRecordXml extends StaxHandler<RouteRecord> {
                     routeRecordBuilder.placeMarkType(PlaceMarkType.ROUTE);
                 } else if (startElement.getName().getLocalPart().equals("Style")) {
                     Attribute attr = startElement.getAttributeByName(new QName("id"));
-                    if (Objects.nonNull(attr)) {
-                        routeRecordBuilder.style(attr.getValue());
-                    }
+                    routeRecordBuilder.style(Objects.nonNull(attr) ? attr.getValue() : null);// id可能为空
                 } else if (startElement.getName().getLocalPart().equals("coordinates")) {
                     routeRecordBuilder.coordinates(nextData());
                 } else if (startElement.getName().getLocalPart().equals("name")) {
@@ -79,7 +77,7 @@ public class RouteRecordXml extends StaxHandler<RouteRecord> {
             RouteRecord routeRecord = new RouteRecord();
             for (PlaceMarkBuilder placeMarkBuilder : placeMarkBuilders) {
                 RouteStyle routeStyle = placeMarkBuilder.routeStyle();
-                if (Objects.nonNull(routeStyle)) {
+                if (Objects.nonNull(routeStyle) && Objects.nonNull(routeStyle.getId())) {
                     placeMarkBuilder.routeStyle(routeStyleMap.get(routeStyle.getId().replaceFirst("^#+", "")));
                 }
                 routeRecord.getPlaceMarks().add(placeMarkBuilder.build());
@@ -98,14 +96,12 @@ public class RouteRecordXml extends StaxHandler<RouteRecord> {
         }
 
         void style(String id) {
-            if (!StringUtils.isEmpty(id)) {
-                routeStyle = new RouteStyle();
-                routeStyle.setId(id);
-                routeStyleMap.put(id, routeStyle);
+            routeStyle = new RouteStyle();
+            routeStyle.setId(id);
+            routeStyleMap.put(id, routeStyle);
 
-                if (Objects.nonNull(placeMarkBuilder)) {
-                    placeMarkBuilder.routeStyle(routeStyle);
-                }
+            if (Objects.nonNull(placeMarkBuilder)) {
+                placeMarkBuilder.routeStyle(routeStyle);
             }
         }
 

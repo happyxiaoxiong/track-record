@@ -195,7 +195,7 @@ public class TrackFileWorker {
 
             trackFile.setState(TrackFileState.FINISH);
             trackFile.setComment("操作成功");
-        } catch (XMLStreamException | IOException e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
             trackFile.setState(TrackFileState.EXTRACT_AND_SAVE_FAIL);
             trackFile.setComment("错误:数据格式异常");
