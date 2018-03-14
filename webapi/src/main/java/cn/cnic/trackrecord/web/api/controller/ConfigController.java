@@ -39,6 +39,7 @@ public class ConfigController {
         Map<String, String> mp = new HashMap<>();
         mp.put("header", tokenProperties.getHeader());
         mp.put("head", tokenProperties.getTokenHead());
+        mp.put("queryParam", tokenProperties.getQueryParam());
         return mp;
     }
 }
