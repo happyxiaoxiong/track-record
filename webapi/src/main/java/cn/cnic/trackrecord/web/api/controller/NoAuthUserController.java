@@ -1,5 +1,6 @@
 package cn.cnic.trackrecord.web.api.controller;
 
+import cn.cnic.trackrecord.common.date.LongDate;
 import cn.cnic.trackrecord.web.identity.TokenUser;
 import cn.cnic.trackrecord.web.identity.TokenUtils;
 import cn.cnic.trackrecord.web.Const;
@@ -50,6 +51,7 @@ public class NoAuthUserController {
     @ApiOperation(value = "用户注册")
     @RequestMapping(value = "register", method = RequestMethod.POST)
     public HttpRes<?> register(@RequestBody User user) {
+        user.setAddTime(new LongDate());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.add(user);
         return HttpRes.success();
