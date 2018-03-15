@@ -235,6 +235,11 @@ public class TrackController {
         try {
             Track track = trackService.get(id);
             FileMeta fileInfo = hadoops.parsePath(track.getPath(), name);
+            if (Objects.isNull(fileInfo)) {
+                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+
             res.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
             if (Objects.nonNull(fileInfo.getThumb())) {
                fileInfo = fileInfo.getThumb();
@@ -261,6 +266,11 @@ public class TrackController {
         try {
             Track track = trackService.get(id);
             FileMeta fileInfo = hadoops.parsePath(track.getPath(), name);
+            if (Objects.isNull(fileInfo)) {
+                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+
             if (Objects.nonNull(fileInfo.getThumb())) {
                 fileInfo = fileInfo.getThumb();
             }
@@ -279,7 +289,7 @@ public class TrackController {
             res.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
             hadoops.readToOutputStream(String.valueOf(track.getUserId()), fileInfo, offset, res.getOutputStream());
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
     }
 

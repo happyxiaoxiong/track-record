@@ -58,6 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 // 允许对于网站静态资源的无授权访问,对于获取token的rest api要允许匿名访问
                 .antMatchers("/", "/v2/api-docs", "/swagger-ui/**", "/swagger-resources/**", "/*.html", "/**/*.html",
+                        "/webjars/**",
                         Const.API_ROOT + "no_auth/**", Const.API_ROOT + "config", Const.API_ROOT + "test/**"
                 ).permitAll()
                 .and()

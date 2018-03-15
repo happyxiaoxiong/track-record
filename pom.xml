@@ -38,7 +38,7 @@
                 <profileActive>test</profileActive>
                 <mysqlUsername>jecyhw</mysqlUsername>
                 <mysqlPassword>jecyhw@215</mysqlPassword>
-                <mysqlUrl>jdbc:mysql://127.0.0.1:3306/track_record?useUnicode=true&amp;characterEncoding=UTF-8</mysqlUrl>
+                <mysqlUrl>jdbc:mysql://192.168.224.176:3306/track_record?useUnicode=true&amp;characterEncoding=UTF-8</mysqlUrl>
             </properties>
         </profile>
         <profile>
@@ -267,7 +267,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
+            <!--<scope>provided</scope>-->
         </dependency>
     </dependencies>
 </project>
