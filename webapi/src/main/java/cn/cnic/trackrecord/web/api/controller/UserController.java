@@ -73,4 +73,9 @@ public class UserController {
     public HttpRes<List<User>> getAll() {
         return HttpRes.success(userService.getAllByFields(Lists.newArrayList("id", "name")));
     }
+
+
+    @ApiOperation(value = "验证用户token是否有效")
+    @RequestMapping(value = "verify/token", method = RequestMethod.GET)
+    public void verifyToken() { }
 }

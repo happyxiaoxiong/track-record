@@ -35,11 +35,12 @@ public class ConfigController {
         return HttpRes.success(result);
     }
 
-    private Map<String, String> tokenMap() {
-        Map<String, String> mp = new HashMap<>();
+    private Map<String, Object> tokenMap() {
+        Map<String, Object> mp = new HashMap<>();
         mp.put("header", tokenProperties.getHeader());
         mp.put("head", tokenProperties.getTokenHead());
         mp.put("queryParam", tokenProperties.getQueryParam());
+        mp.put("expiration", tokenProperties.getExpiration());
         return mp;
     }
 }
