@@ -76,6 +76,12 @@ public class UserController {
 
 
     @ApiOperation(value = "验证用户token是否有效")
-    @RequestMapping(value = "verify/token", method = RequestMethod.GET)
+    @RequestMapping(value = "token/verify", method = RequestMethod.GET)
     public void verifyToken() { }
+
+    @ApiOperation(value = "刷新用户token")
+    @RequestMapping(value = "token/refresh", method = RequestMethod.GET)
+    public HttpRes<AuthUser> refreshToken() {
+        return HttpRes.success(getAuthUser(userDetailsService.getLoginUser()));
+    }
 }

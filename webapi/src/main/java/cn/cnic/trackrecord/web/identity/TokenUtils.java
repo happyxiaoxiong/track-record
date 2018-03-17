@@ -34,32 +34,25 @@ public class TokenUtils {
             token = request.getParameter(tokenProperties.getQueryParam());
         }
         if (StringUtils.hasLength(token) && token.startsWith(tokenProperties.getTokenHead()) && token.length() > tokenProperties.getTokenHead().length()){
-            final TokenUser user = parseUserFromToken(token.replace(tokenProperties.getTokenHead(),"").trim());
-            if (Objects.nonNull(user)) {
+            final TokenUser user;
+            try {
+                user = parseUserFromToken(token.replace(tokenProperties.getTokenHead(),"").trim());
                 return  new UserAuthentication(user);
+            } catch (IOException e) {
+                log.error(e.getMessage());
             }
         }
         return null;
     }
 
     //Get User Info from the Token
-    public TokenUser parseUserFromToken(String token){
+    private TokenUser parseUserFromToken(String token) throws IOException {
         Claims claims = Jwts.parser()
                 .setSigningKey(tokenProperties.getSecret())
                 .parseClaimsJws(token)
                 .getBody();
-
-        User user = null;
-        try {
-            user = objectMapper.readValue((String)claims.get("user"), User.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        User user = objectMapper.readValue((String)claims.get("user"), User.class);
         return new TokenUser(user);
-    }
-
-    public String createTokenForUser(TokenUser tokenUser) {
-        return createTokenForUser(tokenUser.getUser());
     }
 
     public String createTokenForUser(User user) {
