@@ -13,6 +13,8 @@ public class TrackFile {
     private int id;
     @ApiModelProperty(value = "用户id")
     private int userId;
+    @ApiModelProperty(value = "用户姓名")
+    private String userName;
     @ApiModelProperty(value = "轨迹文件状态", dataType = "int")
     private TrackFileState state;
     @ApiModelProperty(value = "轨迹上传时间", dataType = "string", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11", reference = "string")

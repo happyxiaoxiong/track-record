@@ -167,7 +167,12 @@ public class TrackFileWorker {
             if (track.getUserId() <= 0) {
                 // get user id
                 User user = userService.getByName(track.getUserName());
-                track.setUserId(Objects.nonNull(user) ? user.getId() : trackFile.getUserId());
+                if (Objects.nonNull(user)) {
+                    track.setUserId(user.getId());
+                } else {
+                    log.error("name '{}' doesn't exist in user table, tack file is {}", track.getUserName(), trackFile.getFilename());
+                    track.setUserId(trackFile.getUserId());
+                }
             }
 
             log.debug("{}", track);

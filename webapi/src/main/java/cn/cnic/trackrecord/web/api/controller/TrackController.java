@@ -16,10 +16,7 @@ import cn.cnic.trackrecord.common.util.Objects;
 import cn.cnic.trackrecord.common.xml.Stax.Staxs;
 import cn.cnic.trackrecord.core.track.TrackLuceneFormatter;
 import cn.cnic.trackrecord.core.track.xml.RouteRecordXml;
-import cn.cnic.trackrecord.data.entity.Track;
-import cn.cnic.trackrecord.data.entity.TrackFile;
-import cn.cnic.trackrecord.data.entity.TrackPoint;
-import cn.cnic.trackrecord.data.entity.TrackStat;
+import cn.cnic.trackrecord.data.entity.*;
 import cn.cnic.trackrecord.data.kml.RouteRecord;
 import cn.cnic.trackrecord.data.lucene.TrackLucene;
 import cn.cnic.trackrecord.data.vo.TrackSearchParams;
@@ -105,7 +102,9 @@ public class TrackController {
         try {
             TrackFile trackFile = pluploadBean.upload(plupload, properties.getUploadPath(), new TrackFilePluploadCallback());
             if (Objects.nonNull(trackFile)) {
-                trackFile.setUserId(userDetailsService.getLoginUser().getId());
+                User user = userDetailsService.getLoginUser();
+                trackFile.setUserId(user.getId());
+                trackFile.setUserName(user.getName());
                 trackFileService.add(trackFile);
             }
             return HttpRes.success(trackFile);

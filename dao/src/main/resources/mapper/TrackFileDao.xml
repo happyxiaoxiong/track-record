@@ -4,6 +4,7 @@
     <resultMap id="baseMap" type="TrackFile">
         <id property="id" column="id"/>
         <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
         <result property="state" column="state"/>
         <result property="uploadTime" column="upload_time"/>
         <result property="path" column="path"/>
@@ -17,8 +18,8 @@
     <sql id="table">`track_file`</sql>
 
     <insert id="add" parameterType="TrackFile" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO <include refid="table"/> (user_id, state, upload_time, path, filename, filesize, md5, comment, tries, update_time)
-        VALUES (#{userId}, #{state}, #{uploadTime}, #{path}, #{filename}, #{fileSize}, #{md5}, #{comment}, #{tries}, #{updateTime})
+        INSERT INTO <include refid="table"/> (user_id, user_name, state, upload_time, path, filename, filesize, md5, comment, tries, update_time)
+        VALUES (#{userId}, #{userName} #{state}, #{uploadTime}, #{path}, #{filename}, #{fileSize}, #{md5}, #{comment}, #{tries}, #{updateTime})
     </insert>
     <update id="update" parameterType="TrackFile">
         UPDATE <include refid="table"/>
