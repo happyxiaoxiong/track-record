@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -70,5 +71,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(new VerifyTokenFilter(tokenUtil), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .anyRequest().authenticated();
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/", "/v2/api-docs", "/swagger-ui/**", "/swagger-resources/**", "/*.html", "/**/*.html",
+                "/webjars/**",
+                Const.API_ROOT + "no_auth/**", Const.API_ROOT + "config", Const.API_ROOT + "test/**");
     }
 }
