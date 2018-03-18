@@ -2,6 +2,7 @@ package cn.cnic.trackrecord.common.http.plupupload;
 
 import cn.cnic.trackrecord.common.util.Objects;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,7 +18,7 @@ public class PluploadBean {
     private static final int BUFFER_SIZE = 1024 * 1024;
 
     public<T> T upload(Plupload plupload, String path, PluploadCallback<T> callback) throws IOException {
-        return upload(plupload, path, plupload.getName(), callback);
+        return upload(plupload, path, StringUtils.isEmpty(plupload.getName()) ? plupload.getFile().getName() : plupload.getName(), callback);
     }
 
     public <T> T upload(Plupload plupload, String path, String fileName, PluploadCallback<T> callback) throws IOException {
