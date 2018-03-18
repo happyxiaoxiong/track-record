@@ -94,8 +94,8 @@ public class TrackController {
     @ApiOperation(value = "轨迹文件上传")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "name", value = "文件名(不传默认使用文件名)", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "chunks", value = "文件分块总个数(文件分块上传使用参数)", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "chunk", value = "当前块数,从0计数(文件分块上传使用参数)", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "chunks", value = "文件分块总个数(文件分块上传使用参数)", dataType = "int", paramType = "form"),
+            @ApiImplicitParam(name = "chunk", value = "当前块数,从0计数(文件分块上传使用参数)", dataType = "int", paramType = "form"),
             @ApiImplicitParam(name = "file", value = "文件", dataType = "file", required = true)
     })
     @RequestMapping(value = "file/upload", method = RequestMethod.POST)
