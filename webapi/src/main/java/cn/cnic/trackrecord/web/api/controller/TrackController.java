@@ -16,9 +16,11 @@ import cn.cnic.trackrecord.common.util.Objects;
 import cn.cnic.trackrecord.common.xml.Stax.Staxs;
 import cn.cnic.trackrecord.core.track.TrackLuceneFormatter;
 import cn.cnic.trackrecord.core.track.xml.RouteRecordXml;
-import cn.cnic.trackrecord.data.entity.*;
+import cn.cnic.trackrecord.data.entity.Track;
+import cn.cnic.trackrecord.data.entity.TrackFile;
+import cn.cnic.trackrecord.data.entity.TrackStat;
+import cn.cnic.trackrecord.data.entity.User;
 import cn.cnic.trackrecord.data.kml.RouteRecord;
-import cn.cnic.trackrecord.data.lucene.TrackLucene;
 import cn.cnic.trackrecord.data.vo.TrackSearchParams;
 import cn.cnic.trackrecord.plugin.hadoop.FileMeta;
 import cn.cnic.trackrecord.plugin.hadoop.Hadoops;
@@ -26,7 +28,6 @@ import cn.cnic.trackrecord.plugin.lucene.LuceneBean;
 import cn.cnic.trackrecord.plugin.lucene.LuceneQueryUtils;
 import cn.cnic.trackrecord.plugin.lucene.PageResult;
 import cn.cnic.trackrecord.service.TrackFileService;
-import cn.cnic.trackrecord.service.TrackPointService;
 import cn.cnic.trackrecord.service.TrackService;
 import cn.cnic.trackrecord.service.TrackStatService;
 import cn.cnic.trackrecord.web.Const;
@@ -342,7 +343,7 @@ public class TrackController {
         return HttpRes.success(trackStatService.getByUserIdAndRangeDay(userId, beginTime, endTime));
     }
 
-    private static class TrackFilePluploadCallback implements PluploadCallback<TrackFile> {
+    private class TrackFilePluploadCallback implements PluploadCallback<TrackFile> {
         @Override
         public TrackFile callback(File file) {
             LongDate curTime = new LongDate();
@@ -355,7 +356,7 @@ public class TrackController {
             trackFile.setMd5("");//计算MD5耗时,在任务中计算
             trackFile.setUpdateTime(curTime);
             trackFile.setComment("");
-            trackFile.setTries(0);
+            trackFile.setTries(properties.getTries());
             trackFile.setFileSize((int) file.length());
             return trackFile;
         }

@@ -92,11 +92,11 @@ public class TrackFileWorker {
      * @param trackFile
      */
     private void checkTries(TrackFile trackFile) {
-        if (trackFile.getTries() >= properties.getTries()) {
+        if (trackFile.getTries() == 0) {
             trackFile.setState(TrackFileState.TRY_EXCEED);
             trackFile.setComment("错误:已重试" + properties.getTries() + "次");
         } else {
-            trackFile.setTries(trackFile.getTries() + 1);
+            trackFile.setTries(trackFile.getTries() - 1);
             if (TrackFileState.UPLOAD_SUCCESS.equals(trackFile.getState())) {
                 trackFile.setState(TrackFileState.VERIFYING);
                 trackFile.setComment("正在计算文件MD5");
@@ -199,6 +199,7 @@ public class TrackFileWorker {
             createIndex(track, points);
 
             trackFile.setState(TrackFileState.FINISH);
+            trackFile.setTries(0);
             trackFile.setComment("操作成功");
         } catch (Exception e) {
             log.error(e.getMessage());
