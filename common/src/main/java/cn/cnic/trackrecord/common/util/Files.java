@@ -4,7 +4,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class Files {
+public abstract class Files {
     public static void createDirectory(String path) {
         createDirectory(new File(path));
     }

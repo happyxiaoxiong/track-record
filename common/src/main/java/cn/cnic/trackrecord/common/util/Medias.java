@@ -1,6 +1,6 @@
 package cn.cnic.trackrecord.common.util;
 
-public class Medias {
+public abstract class Medias {
     private static final String[] IMAGE_TYPES = { "jpg", "png", "jpeg" };
     private static final String[] VIDEO_TYPES = { "mp4"};
     private static final String[] AUDIO_TYPES = { "aac", "mp3"};

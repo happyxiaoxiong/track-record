@@ -9,7 +9,7 @@ import org.locationtech.spatial4j.context.SpatialContext;
 import org.locationtech.spatial4j.shape.Shape;
 import org.locationtech.spatial4j.shape.ShapeFactory;
 
-public class SpatialUtils {
+public abstract class SpatialUtils {
     private static final SpatialContext CTX = SpatialContext.GEO;
     private static final SpatialPrefixTree GRID = new GeohashPrefixTree(CTX, 11);
     private static final SpatialStrategy STRATEGY = new RecursivePrefixTreeStrategy(GRID, "location");

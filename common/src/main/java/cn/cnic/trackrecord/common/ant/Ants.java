@@ -17,7 +17,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 @Slf4j
-public class Ants {
+public abstract class Ants {
 
     public static void unzip(String filePath, String unZipPath, boolean isDelete) throws IOException {
         File unzipFile = new File(filePath);

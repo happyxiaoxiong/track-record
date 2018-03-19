@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class Saxs {
+public abstract class Saxs {
     private static SAXParserFactory factory = SAXParserFactory.newInstance();
 
     public static  <T> T parse(SaxHandler<T> saxHandler, String xmlPath) throws ParserConfigurationException, SAXException, IOException {

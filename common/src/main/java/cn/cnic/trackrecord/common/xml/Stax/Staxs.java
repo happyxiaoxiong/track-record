@@ -5,7 +5,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.nio.charset.Charset;
 
-public class Staxs {
+public abstract class Staxs {
     private static XMLInputFactory factory = XMLInputFactory.newInstance();
 
     public static  <T> T parse(StaxHandler<T> saxHandler, String xmlPath) throws XMLStreamException, FileNotFoundException {

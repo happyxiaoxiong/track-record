@@ -11,7 +11,7 @@ import org.apache.lucene.spatial.query.SpatialOperation;
 import org.locationtech.spatial4j.distance.DistanceUtils;
 
 
-public class LuceneQueryUtils {
+public abstract class LuceneQueryUtils {
     private static Analyzer analyzer = new IKAnalyzer();
 
     public static Query multiFieldQuery(String keyword, String[] fields, BooleanClause.Occur[] occurs) throws ParseException {

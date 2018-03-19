@@ -1,6 +1,6 @@
 package cn.cnic.trackrecord.common.util;
 
-public class Objects {
+public abstract class Objects {
 
     public static boolean isNull(Object obj) {
         return obj == null;
