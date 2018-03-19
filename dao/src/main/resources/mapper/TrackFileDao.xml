@@ -19,7 +19,7 @@
 
     <insert id="add" parameterType="TrackFile" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO <include refid="table"/> (user_id, user_name, state, upload_time, path, filename, filesize, md5, comment, tries, update_time)
-        VALUES (#{userId}, #{userName} #{state}, #{uploadTime}, #{path}, #{filename}, #{fileSize}, #{md5}, #{comment}, #{tries}, #{updateTime})
+        VALUES (#{userId}, #{userName}, #{state}, #{uploadTime}, #{path}, #{filename}, #{fileSize}, #{md5}, #{comment}, #{tries}, #{updateTime})
     </insert>
     <update id="update" parameterType="TrackFile">
         UPDATE <include refid="table"/>
