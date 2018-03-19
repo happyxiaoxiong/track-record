@@ -167,14 +167,15 @@ public class TrackFileWorker {
             if (track.getUserId() <= 0) {
                 // get user id
                 User user = userService.getByName(track.getUserName());
-                if (Objects.nonNull(user)) {
-                    track.setUserId(user.getId());
-                } else {
+                if (Objects.isNull(user)) {
                     log.error("name '{}' doesn't exist in user table, tack file is {}", track.getUserName(), trackFile.getFilename());
-                    track.setUserId(trackFile.getUserId());
+                    throw new Exception("error: user name not exist");
                 }
+                track.setUserId(user.getId());
             }
 
+            track.setUploadUserId(trackFile.getUserId());
+            track.setUploadUserName(trackFile.getUserName());
             log.debug("{}", track);
             RouteRecord routeRecord = Staxs.parse(new RouteRecordXml(), Files.getPathString(realTrackPath, properties.getRouteRecordFileName()));
             //保存到hadoop中

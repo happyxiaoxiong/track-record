@@ -34,6 +34,10 @@ public class Track {
     private String filename;
     @ApiModelProperty(value = "文件md5")
     private String md5;
+    @ApiModelProperty(value = "上传人id")
+    private int uploadUserId;
+    @ApiModelProperty(value = "上传人姓名")
+    private String uploadUserName;
     @ApiModelProperty(value = "上传时间", dataType = "string", notes = "格式:yy-MM-dd HH:mm:ss", example = "2017-11-11 11:11:11", reference = "string")
     private LongDate uploadTime;
     @ApiModelProperty(value = "注释说明")

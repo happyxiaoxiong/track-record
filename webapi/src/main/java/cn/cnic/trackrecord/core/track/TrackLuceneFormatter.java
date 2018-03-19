@@ -32,6 +32,8 @@ public class TrackLuceneFormatter implements LuceneFormatter<TrackLucene> {
         doc.add(new StoredField("fileSize", track.getFileSize()));
         doc.add(new StoredField("filename", track.getFilename()));
         doc.add(new TextField("annotation", track.getAnnotation(), Field.Store.YES));
+        doc.add(new StoredField("uploadUserId", track.getUploadUserId()));
+        doc.add(new StoredField("uploadUserName", track.getUploadUserName()));
         doc.add(new StoredField("uploadTime", track.getUploadTime().getValue()));
 
         for (TrackPoint point : trackLucene.getPoints()) {
