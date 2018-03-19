@@ -26,7 +26,6 @@ public class Ants {
             return;
         }
         ZipFile zipFile = new ZipFile(unzipFile, "UTF-8");//统一utf-8编码
-
         Enumeration<ZipEntry> entries = zipFile.getEntries();
         while (entries.hasMoreElements()) {
             ZipEntry zipEntry = entries.nextElement();
@@ -38,7 +37,6 @@ public class Ants {
                 FileUtils.copyInputStreamToFile(zipFile.getInputStream(zipEntry), Paths.get(unZipPath, zipEntry.getName()).toFile());
             }
         }
-
         zipFile.close();
         if (isDelete) {
             Files.delete(unzipFile);
@@ -47,6 +45,7 @@ public class Ants {
 
     public static void zip(List<FileSource> sources, OutputStream os) throws IOException {
         ZipOutputStream zos = new ZipOutputStream(os);
+        zos.setEncoding("UTF-8");
         for (FileSource source : sources) {
             zos.putNextEntry(new ZipEntry(source.getPathName()));
             source.getSource().read(zos);
@@ -61,6 +60,7 @@ public class Ants {
 
     public static void zip(File source, OutputStream os) throws IOException {
         ZipOutputStream zos = new ZipOutputStream(os);
+        zos.setEncoding("UTF-8");
         zip(source, "", zos);
         zos.closeEntry();
         zos.close();
