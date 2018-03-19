@@ -59,6 +59,8 @@ public class TrackLuceneFormatter implements LuceneFormatter<TrackLucene> {
         track.setFileSize(Integer.valueOf(doc.get("fileSize")));
         track.setFilename(doc.get("filename"));
         track.setAnnotation(doc.get("annotation"));
+        track.setUploadUserId(Integer.valueOf(doc.get("uploadUserId")));
+        track.setUploadUserName(doc.get("uploadUserName"));
         track.setUploadTime(new LongDate(Integer.valueOf(doc.get("uploadTime"))));
         return new TrackLucene(track, null);
     }
