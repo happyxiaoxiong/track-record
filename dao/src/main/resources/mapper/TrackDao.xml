@@ -62,7 +62,7 @@
 
     <select id="countUserByDay" resultMap="cn.cnic.trackrecord.dao.TrackStatDao.baseMap">
         SELECT user_id, user_name, count(id) AS total_count, sum(`length`) AS total_length, sum(endtime - starttime) AS total_time FROM <include refid="table"/>
-        WHERE user_id=#{userId} AND starttime>=#{beginTime} AND starttime&lt;#{endTime}
+        WHERE user_id=#{userId} AND starttime>=#{beginTime} AND starttime&lt;#{endTime} GROUP BY user_id
     </select>
     <select id="getAll" resultMap="baseMap">
         SELECT * FROM <include refid="table"/>

@@ -28,7 +28,7 @@
     </insert>
     <select id="countUserByMonth" resultMap="baseMap">
         SELECT user_id, user_name, sum(total_time) AS total_time, sum(total_length) AS total_length, count(id) AS total_day, sum(total_count) AS total_count FROM <include refid="table"/>
-        WHERE user_id=#{userId} `date`>=#{beginTime} AND `date`&lt;{endTime}
+        WHERE user_id=#{userId} `date`>=#{beginTime} AND `date`&lt;{endTime} GROUP BY user_id
     </select>
     <select id="getByMonth" resultMap="baseMap">
         SELECT * FROM <include refid="table"/> WHERE `date`=#{date} AND `type`=1
