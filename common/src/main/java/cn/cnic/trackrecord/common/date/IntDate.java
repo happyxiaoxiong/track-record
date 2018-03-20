@@ -29,6 +29,10 @@ public abstract class IntDate {
         return getValue() * 1000L;
     }
 
+    public Date toDate() {
+        return new Date(getTimeMillis());
+    }
+
     static int toInt(long timeMillis) {
         return (int)(timeMillis / 1000);
     }

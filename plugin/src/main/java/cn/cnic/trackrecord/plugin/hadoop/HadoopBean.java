@@ -131,8 +131,7 @@ class HadoopBean {
     }
 
     private FileMeta audio(Path parent, File file) throws IOException {
-        // 需要加上 .mp4后缀，否则会出错
-        String destPath = Files.getPathString(properties.getLocalTmpDir(), UUID.randomUUID().toString() + ".mp4");
+        String destPath = Files.getPathString(properties.getLocalTmpDir(), UUID.randomUUID().toString() + ".mp3");
         if (ffmpegBean.encodeAudio(file.getAbsolutePath(), destPath)) {
             FileMeta fileMeta = appendCallback(new Path(parent, properties.getThumbFileName()), out ->
                     IOUtils.copyBytes(new FileInputStream(destPath), out, 4096, true));

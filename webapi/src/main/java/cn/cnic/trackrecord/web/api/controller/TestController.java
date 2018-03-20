@@ -12,16 +12,15 @@ import cn.cnic.trackrecord.data.entity.User;
 import cn.cnic.trackrecord.data.lucene.TrackLucene;
 import cn.cnic.trackrecord.plugin.lucene.LuceneBean;
 import cn.cnic.trackrecord.plugin.lucene.LuceneProperties;
-import cn.cnic.trackrecord.service.TrackFileService;
-import cn.cnic.trackrecord.service.TrackPointService;
-import cn.cnic.trackrecord.service.TrackService;
-import cn.cnic.trackrecord.service.UserService;
+import cn.cnic.trackrecord.service.*;
 import cn.cnic.trackrecord.web.Const;
 import cn.cnic.trackrecord.web.config.property.TrackFileProperties;
+import cn.cnic.trackrecord.worker.TrackStatWorker;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Api(value = "测试API", description = "测试API", tags = "Test")
@@ -61,6 +60,9 @@ public class TestController {
 
     @Autowired
     private TrackService trackService;
+
+    @Autowired
+    private TrackStatService trackStatService;
 
     @RequestMapping(method = RequestMethod.GET, value = "encode")
     public HttpRes<?> encodePassword() {
@@ -122,6 +124,27 @@ public class TestController {
                 log.error(e.getMessage());
                 return HttpRes.fail();
             }
+        }
+        return HttpRes.success();
+    }
+
+    @Autowired
+    private TrackStatWorker trackStatWorker;
+
+    @ApiOperation(value = "统计")
+    @RequestMapping(value = "stat", method = RequestMethod.GET)
+    public HttpRes<?> stat() {
+        Set<Date> dateSet = new HashSet<>();
+        for (Track track : trackService.getAll()) {
+            if (Objects.nonNull(track.getStartTime())) {
+                dateSet.add(DateUtils.addDays(track.getStartTime().toDate(), -1));
+            }
+        }
+        for (Date date : dateSet) {
+            trackStatWorker.statByDay(date);
+        }
+        for (Date start = DateUtils.addYears(new Date(), 4); start.after(new Date()); start = DateUtils.addMonths(start, 1)) {
+            trackStatWorker.statByMonth(start);
         }
         return HttpRes.success();
     }

@@ -47,10 +47,10 @@ public class LuceneBean {
         writer.close();
     }
 
-    public PageResult search(Query query, int n, Sort sort, int pageNum, int pageSize) throws IOException {
+    public PageResult search(Query query, Sort sort, int pageNum, int pageSize) throws IOException {
         DirectoryReader reader = DirectoryReader.open(directory);
         IndexSearcher searcher = new IndexSearcher(reader);
-        TopDocs topDocs = searcher.search(query, n, sort);
+        TopDocs topDocs = searcher.search(query, pageNum * pageSize, sort);
         ScoreDoc[] scoreDocs =  topDocs.scoreDocs;
         int begin = (pageNum - 1) * pageSize, end = Math.min(begin + pageSize, scoreDocs.length);
         List<Document> docs = new LinkedList<>();
@@ -61,11 +61,7 @@ public class LuceneBean {
         return new PageResult((int) topDocs.totalHits, docs);
     }
 
-    public PageResult search(Query query, Sort sort, int pageNum, int pageSize) throws IOException {
-        return search(query, Integer.MAX_VALUE, sort, pageNum, pageSize);
-    }
-
     public PageResult search(Query query, int pageNum, int pageSize) throws IOException {
-        return search(query, Integer.MAX_VALUE, new Sort(new SortField(null, SortField.Type.SCORE)), pageNum, pageSize);
+        return search(query, new Sort(new SortField(null, SortField.Type.SCORE)), pageNum, pageSize);
     }
 }

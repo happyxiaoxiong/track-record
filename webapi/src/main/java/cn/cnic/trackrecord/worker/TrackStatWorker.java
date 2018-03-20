@@ -11,9 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@Component
 @Slf4j
 public class TrackStatWorker {
 
@@ -31,15 +33,19 @@ public class TrackStatWorker {
      */
     @Scheduled(cron = "0 30 2 * * ?")
     public void statByDay() {
-        List<User> users = userService.getAll();
-        Date today = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
-        Date yesterday = DateUtils.addDays(today, -1);
+        statByDay(new Date());
+    }
 
-        log.debug("stat day: {} to {}", yesterday, today);
+    public void statByDay(Date date) {
+        List<User> users = userService.getAll();
+        Date cur = DateUtils.truncate(date, Calendar.DAY_OF_MONTH);
+        Date yesterday = DateUtils.addDays(cur, -1);
+
+        log.debug("stat day: {} to {}", yesterday, cur);
 
         List<TrackStat> trackStats = new ArrayList<>(users.size());
         for (User user : users) {
-            TrackStat trackStat = trackService.countUserByDay(user.getId(), LongDate.from(yesterday), LongDate.from(today));
+            TrackStat trackStat = trackService.countUserByDay(user.getId(), LongDate.from(yesterday), LongDate.from(cur));
             if (user.getId() == trackStat.getId()) {
                 trackStat.setTotalDay(0);
                 trackStat.setType(0);
@@ -54,8 +60,12 @@ public class TrackStatWorker {
      */
     @Scheduled(cron = "0 30 4 1 * ?")
     public void statByMonth() {
+        statByMonth(new Date());
+    }
+
+    public void statByMonth(Date date) {
+        Date month = DateUtils.truncate(date, Calendar.MONTH);
         List<User> users = userService.getAll();
-        Date month = DateUtils.truncate(new Date(), Calendar.MONTH);
         Date lastMonth = DateUtils.addMonths(month, -1);
 
         log.debug("stat month: {} to {}", lastMonth, month);
