@@ -137,7 +137,7 @@ public class TestController {
         Set<Date> dateSet = new HashSet<>();
         for (Track track : trackService.getAll()) {
             if (Objects.nonNull(track.getStartTime()) && !LongDate.NullValue.equals(track.getStartTime())) {
-                dateSet.add(DateUtils.addDays(track.getStartTime().toDate(), 1));
+                dateSet.add(DateUtils.addDays(DateUtils.truncate(track.getStartTime().toDate(), Calendar.DAY_OF_MONTH), 1));
             }
         }
         for (Date date : dateSet) {
