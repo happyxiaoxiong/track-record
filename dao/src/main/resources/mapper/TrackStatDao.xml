@@ -33,7 +33,7 @@
     <select id="getByMonth" resultMap="baseMap">
         SELECT * FROM <include refid="table"/> WHERE `date`=#{date} AND `type`=1
     </select>
-    <select id="getByUserIdAndRangeDay" resultType="TrackStat">
+    <select id="getByUserIdAndRangeDay" resultMap="baseMap">
         SELECT * FROM <include refid="table"/> WHERE user_id=#{userId} AND `date`>=#{beginTime} AND `date`&lt;#{endTime} AND `type`=0
     </select>
 </mapper>
