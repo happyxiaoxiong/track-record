@@ -136,10 +136,12 @@ public class TestController {
     public HttpRes<?> stat() {
         Set<Date> dateSet = new HashSet<>();
         for (Track track : trackService.getAll()) {
+            log.debug("startTime: {}", track.getStartTime());
             if (Objects.nonNull(track.getStartTime())) {
                 dateSet.add(DateUtils.addDays(track.getStartTime().toDate(), 1));
             }
         }
+        log.debug("{}", dateSet);
         for (Date date : dateSet) {
             trackStatWorker.statByDay(date);
         }

@@ -65,6 +65,7 @@ public class TrackStatWorker {
     }
 
     public void statByMonth(Date date) {
+        // sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
         Date month = DateUtils.truncate(date, Calendar.MONTH);
         List<User> users = userService.getAll();
         Date lastMonth = DateUtils.addMonths(month, -1);
