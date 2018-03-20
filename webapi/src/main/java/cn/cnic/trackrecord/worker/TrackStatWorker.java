@@ -46,7 +46,7 @@ public class TrackStatWorker {
         List<TrackStat> trackStats = new ArrayList<>();
         for (User user : users) {
             TrackStat trackStat = trackService.countUserByDay(user.getId(), LongDate.from(yesterday), LongDate.from(cur));
-            log.debug("user: {}, stat: {}", user, trackStat);
+            log.debug("user: {}, stat: {}", user.getId(), trackStat.getUserId());
             if (user.getId() == trackStat.getId()) {
                 trackStat.setTotalDay(0);
                 trackStat.setType(0);
@@ -74,7 +74,7 @@ public class TrackStatWorker {
         List<TrackStat> trackStats = new ArrayList<>();
         for (User user : users) {
             TrackStat trackStat = trackStatService.countUserByMonth(user.getId(), ShortDate.from(lastMonth), ShortDate.from(month));
-            log.debug("user: {}, stat: {}", user, trackStat);
+            log.debug("user: {}, stat: {}", user.getId(), trackStat.getUserId());
             if (user.getId() == trackStat.getId()) {
                 trackStat.setDate(ShortDate.from(lastMonth));
                 trackStat.setType(1);

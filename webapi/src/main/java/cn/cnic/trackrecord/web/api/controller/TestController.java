@@ -137,13 +137,13 @@ public class TestController {
         Set<Date> dateSet = new HashSet<>();
         for (Track track : trackService.getAll()) {
             if (Objects.nonNull(track.getStartTime())) {
-                dateSet.add(DateUtils.addDays(track.getStartTime().toDate(), -1));
+                dateSet.add(DateUtils.addDays(track.getStartTime().toDate(), 1));
             }
         }
         for (Date date : dateSet) {
             trackStatWorker.statByDay(date);
         }
-        for (Date start = DateUtils.addYears(new Date(), 4); start.after(new Date()); start = DateUtils.addMonths(start, 1)) {
+        for (Date start = DateUtils.addYears(new Date(), -4); start.before(DateUtils.addYears(new Date(), -2)); start = DateUtils.addMonths(start, 1)) {
             trackStatWorker.statByMonth(start);
         }
         return HttpRes.success();
