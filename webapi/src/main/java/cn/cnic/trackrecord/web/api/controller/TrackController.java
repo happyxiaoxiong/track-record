@@ -122,7 +122,7 @@ public class TrackController {
         return HttpRes.success(trackFileService.getByStartUploadTimeAndUserId(startTime, userDetailsService.getLoginUser().getId()));
     }
 
-    @ApiOperation(value = "根据track_file_id获取track_file")
+    @ApiOperation(value = "根据轨迹上传文件id获取轨迹上传文件信息")
     @RequestMapping(value = "file/{track_file_id}", method = RequestMethod.GET)
     @ResponseBody
     public HttpRes<TrackFile> getTrackFileById(@PathVariable("track_file_id") int trackFileId) {
@@ -293,7 +293,7 @@ public class TrackController {
         }
     }
 
-    @ApiOperation(value = "获取轨迹视频")
+    @ApiOperation(value = "根据轨迹id下载轨迹")
     @RequestMapping(value = "download/{id}", method = RequestMethod.GET)
     public void download(@ApiParam(name = "id", value = "轨迹id") @PathVariable int id, HttpServletResponse res) {
         try {
@@ -321,7 +321,7 @@ public class TrackController {
         }
     }
 
-    @ApiOperation(value = "轨迹统计")
+    @ApiOperation(value = "根据月份获取所有用户的统计信息")
     @ApiImplicitParams(
             @ApiImplicitParam(name = "month", value = "开始时间,格式:yyyy-MM-dd", dataType = "string", paramType = "query", required = true)
     )
@@ -331,7 +331,7 @@ public class TrackController {
         return HttpRes.success(trackStatService.getByMonth(month));
     }
 
-    @ApiOperation(value = "轨迹统计")
+    @ApiOperation(value = "根据月份和用户id获取该月内用户的所有日统计信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "用户id", dataType = "int", paramType = "query", required = true),
             @ApiImplicitParam(name = "beginTime", value = "开始时间,格式:yyyy-MM-dd", dataType = "string", paramType = "query", required = true),

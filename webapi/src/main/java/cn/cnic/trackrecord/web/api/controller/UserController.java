@@ -39,7 +39,7 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @ApiOperation(value = "用户修改密码")
+    @ApiOperation(value = "用户密码修改")
     @RequestMapping(value = "change/password", method = RequestMethod.POST)
     public HttpRes<AuthUser> changePassword(@RequestBody UserChangePassword userChangePassword) {
         User user = userService.get(userDetailsService.getLoginUser().getId());
@@ -52,7 +52,7 @@ public class UserController {
         return HttpRes.fail();
     }
 
-    @ApiOperation(value = "用户修改密码")
+    @ApiOperation(value = "用户基本信息修改")
     @RequestMapping(value = "change/profile", method = RequestMethod.POST)
     public HttpRes<?> changeInfo(@RequestBody User user) {
         user.setId(userDetailsService.getLoginUser().getId());
@@ -68,7 +68,7 @@ public class UserController {
         return new AuthUser(token, user);
     }
 
-    @ApiOperation(value = "用户信息修改")
+    @ApiOperation(value = "获取所有用户")
     @RequestMapping(value = "all", method = RequestMethod.GET)
     public HttpRes<List<User>> getAll() {
         return HttpRes.success(userService.getAllByFields(Lists.newArrayList("id", "name")));

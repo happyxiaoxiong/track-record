@@ -22,7 +22,7 @@ public class TrackDetailXml extends StaxHandler<Track> {
                     track.setName(nextData());
                 } else if (startElement.getName().getLocalPart().equals("author")) {
                     track.setUserName(nextData());// author
-                } else if (startElement.getName().getLocalPart().equals("author_id")) {
+                } else if (startElement.getName().getLocalPart().equals("authorid")) {
                     track.setUserId(Integer.valueOf(nextData()));// author
                 } else if (startElement.getName().getLocalPart().equals("starttime")) {
                     track.setStartTime(LongDate.from(nextData()));
