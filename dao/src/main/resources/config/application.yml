@@ -1,11 +1,9 @@
 spring:
-  profiles:
-    active: @profileActive@
   datasource:
-    name: ynwls_db
-    username: @mysqlUsername@
-    password: @mysqlPassword@
-    url: @mysqlUrl@
+    name: @jdbc.name@
+    username: @jdbc.usename@
+    password: @jdbc.password@
+    url: @jdbc.url@
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.jdbc.Driver
     druid:

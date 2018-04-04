@@ -1,6 +1,4 @@
 spring:
-  profiles:
-    active: @profileActive@
   jackson:
       default-property-inclusion: non_null
   http:
@@ -15,11 +13,28 @@ logging:
   level:
     org:
       springframework:
-        web: debug
+        web: @log.level@
     cn:
       cnic:
-        trackrecord: debug
+        trackrecord: @log.level@
 
 server:
   tomcat:
     uri-encoding: utf-8
+
+jwt:
+  expiration: @jwt.expiration@
+  header: @jwt.header@
+  query-param: @jwt.query-param@
+  secret: @jwt.secret@
+  token-head: @jwt.token-head@
+
+track:
+  file:
+    upload-path: @track.file.upload-path@
+    unzip-path: @track.file.unzip-path@
+    fixed-delay: @track.file.fixed-delay@
+    tries: @track.file.tries@
+    route-record-file-name: @track.file.route-record-file-name@
+    track-detail-file-name: @track.file.track-detail-file-name@
+
