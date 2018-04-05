@@ -82,7 +82,7 @@ public class TestController {
             for (String fileName : FileUtils.readLines(new File(filePath), "UTF-8")) {
                 File file = new File(fileName + ".kmz");
                 File destFile = Files.getFile(trackFileProperties.getUploadPath(), file.getName());
-                log.debug("srcFile: {}, destFile: {}", file.getName(), destFile.getAbsolutePath());
+                log.debug("srcFile: {}, destFile: {}", file.getAbsolutePath(), destFile.getAbsolutePath());
                 if (file.exists()) {
                     log.debug("copy file: srcFile: {}, destFile: {}", file.getName(), destFile.getAbsolutePath());
                     FileUtils.copyFile(file, destFile);
