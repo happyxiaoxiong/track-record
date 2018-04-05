@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
@@ -76,9 +77,9 @@ public class TestController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "import")
-    public HttpRes<?> importTracks() {
+    public HttpRes<?> importTracks(@RequestParam String filePath) {
         try {
-            for (String fileName : FileUtils.readLines(new File("/root/path.txt"), "UTF-8")) {
+            for (String fileName : FileUtils.readLines(new File(filePath), "UTF-8")) {
                 File file = new File(fileName + ".kmz");
                 File destFile = Files.getFile(trackFileProperties.getUploadPath(), file.getName());
                 log.debug("srcFile: {}, destFile: {}", file.getName(), destFile.getAbsolutePath());
