@@ -96,7 +96,7 @@ public class TestController {
                     trackFile.setMd5("");//计算MD5耗时,在任务中计算
                     trackFile.setUpdateTime(curTime);
                     trackFile.setComment("");
-                    trackFile.setTries(0);
+                    trackFile.setTries(trackFileProperties.getTries());
                     trackFile.setFileSize((int) file.length());
                     trackFileService.add(trackFile);
                 }
