@@ -160,7 +160,6 @@ public class TrackFileWorker {
      */
     private void extractAndSave(TrackFile trackFile) {
         try {
-            //TODO
             String realTrackPath = Files.getRealTrackPath(trackFile.getPath());
             Track track = Staxs.parse(new TrackDetailXml(), Files.getPathString(realTrackPath, properties.getTrackDetailFileName()));
 
@@ -173,9 +172,12 @@ public class TrackFileWorker {
                 }
                 track.setUserId(user.getId());
             }
-
             track.setUploadUserId(trackFile.getUserId());
-            track.setUploadUserName(trackFile.getUserName());
+            if (Objects.nonNull(trackFile.getUserName())) {
+                track.setUploadUserName(trackFile.getUserName());
+            } else {
+                track.setUploadUserName(track.getUserName());
+            }
             log.debug("{}", track);
             RouteRecord routeRecord = Staxs.parse(new RouteRecordXml(), Files.getPathString(realTrackPath, properties.getRouteRecordFileName()));
             //保存到hadoop中
