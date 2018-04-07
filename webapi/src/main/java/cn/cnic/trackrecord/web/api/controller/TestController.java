@@ -4,6 +4,7 @@ import cn.cnic.trackrecord.common.date.LongDate;
 import cn.cnic.trackrecord.common.enumeration.TrackFileState;
 import cn.cnic.trackrecord.common.http.HttpRes;
 import cn.cnic.trackrecord.common.util.Files;
+import cn.cnic.trackrecord.common.util.Objects;
 import cn.cnic.trackrecord.core.track.TrackLuceneFormatter;
 import cn.cnic.trackrecord.data.entity.Track;
 import cn.cnic.trackrecord.data.entity.TrackFile;
@@ -79,27 +80,36 @@ public class TestController {
     @RequestMapping(method = RequestMethod.GET, value = "import")
     public HttpRes<?> importTracks(@RequestParam String filePath) {
         try {
-            for (String fileName : FileUtils.readLines(new File(filePath), "UTF-8")) {
-                File file = new File(fileName + ".kmz");
-                File destFile = Files.getFile(trackFileProperties.getUploadPath(), file.getName());
-                log.debug("srcFile: {}, destFile: {}", file.getAbsolutePath(), destFile.getAbsolutePath());
-                if (file.exists()) {
-                    log.debug("copy file: srcFile: {}, destFile: {}", file.getName(), destFile.getAbsolutePath());
-                    FileUtils.copyFile(file, destFile);
-                    LongDate curTime = new LongDate();
-
-                    TrackFile trackFile = new TrackFile();
-                    trackFile.setState(TrackFileState.UPLOAD_SUCCESS);
-                    trackFile.setUploadTime(curTime);
-                    trackFile.setPath(file.getAbsolutePath());
-                    trackFile.setFilename(file.getName());
-                    trackFile.setMd5("");//计算MD5耗时,在任务中计算
-                    trackFile.setUpdateTime(curTime);
-                    trackFile.setComment("");
-                    trackFile.setTries(trackFileProperties.getTries());
-                    trackFile.setFileSize((int) file.length());
-                    trackFileService.add(trackFile);
+            File file = new File(filePath);
+            if (file.exists()) {
+                File[] kmzFiles;
+                if (file.isFile()) {
+                    kmzFiles = new File[] {file};
+                } else {
+                    kmzFiles = file.listFiles();
                 }
+
+                if (Objects.nonNull(kmzFiles)) {
+                    for (File kmzFile : kmzFiles) {
+                        String destPath = Files.getPathString(trackFileProperties.getUploadPath(), kmzFile.getName());
+                        log.debug("copy file: srcFile: {}, destFile: {}", kmzFile.getName(), destPath);
+                        FileUtils.copyFile(kmzFile, new File(destPath));
+                        LongDate curTime = new LongDate();
+
+                        TrackFile trackFile = new TrackFile();
+                        trackFile.setState(TrackFileState.UPLOAD_SUCCESS);
+                        trackFile.setUploadTime(curTime);
+                        trackFile.setPath(destPath);
+                        trackFile.setFilename(kmzFile.getName());
+                        trackFile.setMd5("");//计算MD5耗时,在任务中计算
+                        trackFile.setUpdateTime(curTime);
+                        trackFile.setComment("");
+                        trackFile.setTries(trackFileProperties.getTries());
+                        trackFile.setFileSize((int) kmzFile.length());
+                        trackFileService.add(trackFile);
+                    }
+                }
+
             }
             return HttpRes.success();
         } catch (IOException e) {
