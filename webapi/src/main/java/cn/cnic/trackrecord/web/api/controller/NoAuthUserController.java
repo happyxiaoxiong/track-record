@@ -38,14 +38,19 @@ public class NoAuthUserController {
 
     @ApiOperation(value = "用户登录授权")
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public HttpRes<AuthUser> login(@RequestBody Login login) {
+    public HttpRes<?> login(@RequestBody Login login) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(login.getAccount(), login.getPassword());
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        User user = ((TokenUser) authentication.getPrincipal()).getUser();
-        String token = tokenUtil.createTokenForUser(user);
-        user.setPassword(null);
-        AuthUser userVo = new AuthUser(token, user);
-        return HttpRes.success(userVo);
+        try {
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
+            User user = ((TokenUser) authentication.getPrincipal()).getUser();
+            String token = tokenUtil.createTokenForUser(user);
+            user.setPassword(null);
+            AuthUser userVo = new AuthUser(token, user);
+            return HttpRes.success(userVo);
+        } catch (Exception ex) {
+            return HttpRes.fail("account or password not correct");
+        }
+
     }
 
     @ApiOperation(value = "用户注册")

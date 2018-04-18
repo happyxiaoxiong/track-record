@@ -2,6 +2,7 @@ package cn.cnic.trackrecord.web.config;
 
 import cn.cnic.trackrecord.web.Const;
 import cn.cnic.trackrecord.web.config.filter.AuthenticationFilter;
+import cn.cnic.trackrecord.web.config.filter.CorsFilter;
 import cn.cnic.trackrecord.web.config.filter.VerifyTokenFilter;
 import cn.cnic.trackrecord.web.identity.TokenUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +18,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -53,16 +55,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 // 基于token，所以不需要session
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-//                .authorizeRequests()
-//                // 允许对于网站静态资源的无授权访问,对于获取token的rest api要允许匿名访问
-//                .antMatchers("/", "/v2/api-docs", "/swagger-ui/**", "/swagger-resources/**", "/*.html", "/**/*.html",
-//                        "/webjars/**",
-//                        Const.API_ROOT + "no_auth/**", Const.API_ROOT + "config", Const.API_ROOT + "test/**"
-//                ).permitAll()
+                .and()
+                .authorizeRequests()
+                // 对于获取token的rest api要允许匿名访问
+                .antMatchers(Const.API_ROOT + "no_auth/**", Const.API_ROOT + "config", Const.API_ROOT + "test/**")
+                .permitAll()
                 .and()
                 // Add CORS Filter
-//                .addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class)
+                .addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class)
                 // custom JSON based authentication by POST of {"account":"<account>","password":"<password>"} which sets the token header upon authentication
                 .addFilterBefore(new AuthenticationFilter(Const.API_ROOT + "no_auth/login", HttpMethod.POST.name(), authenticationManager(), tokenUtil, objectMapper), UsernamePasswordAuthenticationFilter.class)
                 // Custom Token based authentication based on the header previously given to the client
@@ -73,8 +73,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
+        //允许对于网站静态资源的无授权访问,
         web.ignoring().antMatchers("/", "/v2/api-docs", "/swagger-ui/**", "/swagger-resources/**", "/*.html", "/**/*.html",
-                "/webjars/**",
-                Const.API_ROOT + "no_auth/**", Const.API_ROOT + "config", Const.API_ROOT + "test/**");
+                "/webjars/**");
     }
 }
