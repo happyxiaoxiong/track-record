@@ -62,7 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 // Add CORS Filter
-                .addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class)
+//                .addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class)
                 // custom JSON based authentication by POST of {"account":"<account>","password":"<password>"} which sets the token header upon authentication
                 .addFilterBefore(new AuthenticationFilter(Const.API_ROOT + "no_auth/login", HttpMethod.POST.name(), authenticationManager(), tokenUtil, objectMapper), UsernamePasswordAuthenticationFilter.class)
                 // Custom Token based authentication based on the header previously given to the client
