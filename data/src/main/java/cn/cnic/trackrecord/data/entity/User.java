@@ -19,7 +19,7 @@ public class User {
     private int id;
     @ApiModelProperty(value = "账号", required = true, notes = "唯一")
     private String account;
-    @ApiModelProperty(value = "密码", required = true, hidden = true)
+    @ApiModelProperty(value = "密码", required = true)
     private String password;
     @ApiModelProperty(value = "姓名", required = true)
     private String name;

@@ -56,6 +56,9 @@ public class NoAuthUserController {
     @ApiOperation(value = "用户注册")
     @RequestMapping(value = "register", method = RequestMethod.POST)
     public HttpRes<?> register(@RequestBody User user) {
+        if (userService.existByAccount(user.getAccount())) {
+            return  HttpRes.fail("account exist");
+        }
         user.setAddTime(new LongDate());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.add(user);
