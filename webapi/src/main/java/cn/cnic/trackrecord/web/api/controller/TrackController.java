@@ -94,12 +94,11 @@ public class TrackController {
             @ApiImplicitParam(name = "name", value = "文件名(不传默认使用文件名)", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "chunks", value = "文件分块总个数(文件分块上传使用参数)", dataType = "int", paramType = "form"),
             @ApiImplicitParam(name = "chunk", value = "当前块数,从0计数(文件分块上传使用参数)", dataType = "int", paramType = "form"),
-            @ApiImplicitParam(name = "file", value = "文件", dataType = "file", required = true)
+            @ApiImplicitParam(name = "file", value = "文件", dataType = "__file", paramType = "form", required = true)
     })
-    @RequestMapping(value = "file/upload", method = RequestMethod.POST)
+    @RequestMapping(value = "file/upload", method = RequestMethod.POST, consumes = "multipart/*", headers = "content-type=multipart/form-data")
     @ResponseBody
-    public HttpRes<TrackFile> upload(Plupload plupload, HttpServletRequest request, HttpServletResponse response) {
-        plupload.setRequest(request);
+    public HttpRes<TrackFile> upload(Plupload plupload) {
         try {
             TrackFile trackFile = pluploadBean.upload(plupload, properties.getUploadPath(), new TrackFilePluploadCallback());
             if (Objects.nonNull(trackFile)) {
