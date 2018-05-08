@@ -1,5 +1,6 @@
 package cn.cnic.trackrecord.web.config.filter;
 
+import cn.cnic.trackrecord.common.util.Objects;
 import cn.cnic.trackrecord.web.identity.TokenUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -14,7 +15,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import cn.cnic.trackrecord.common.util.Objects;
 
 
 public class VerifyTokenFilter extends GenericFilterBean {

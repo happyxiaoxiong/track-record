@@ -1,10 +1,10 @@
 package cn.cnic.trackrecord.plugin.lucene.ik;
 
-import java.io.Reader;
-import java.io.StringReader;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.util.IOUtils;
+
+import java.io.Reader;
+import java.io.StringReader;
 
 public class IKAnalyzer extends Analyzer {
 

@@ -1,6 +1,5 @@
 package cn.cnic.trackrecord.web.identity;
 
-import cn.cnic.trackrecord.common.util.Objects;
 import cn.cnic.trackrecord.data.entity.User;
 import cn.cnic.trackrecord.web.config.property.TokenProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;

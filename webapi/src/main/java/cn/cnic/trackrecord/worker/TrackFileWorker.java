@@ -1,7 +1,7 @@
 package cn.cnic.trackrecord.worker;
 
-import cn.cnic.trackrecord.common.date.LongDate;
 import cn.cnic.trackrecord.common.ant.Ants;
+import cn.cnic.trackrecord.common.date.LongDate;
 import cn.cnic.trackrecord.common.enumeration.TrackFileState;
 import cn.cnic.trackrecord.common.util.Files;
 import cn.cnic.trackrecord.common.util.Objects;
@@ -30,7 +30,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
 
-import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

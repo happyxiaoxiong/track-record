@@ -1,7 +1,7 @@
 package cn.cnic.trackrecord.common.enumeration;
 
 public enum TrackFileState implements ValuedEnum {
-    // 定义中间步骤必须以 ... 结尾
+    // 定义中间步骤必须以 ... 结尾, 0表示完成，不要修改
     UPLOAD_SUCCESS("上传成功待验证...", 1),
     VERIFYING("验证中...", 2),
     UNZIPPING("解压中...", 3),

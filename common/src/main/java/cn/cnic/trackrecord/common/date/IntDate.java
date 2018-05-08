@@ -1,7 +1,7 @@
 package cn.cnic.trackrecord.common.date;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.Data;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

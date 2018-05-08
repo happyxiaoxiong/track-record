@@ -1,11 +1,9 @@
 package cn.cnic.trackrecord.web.config;
 
 import cn.cnic.trackrecord.web.config.property.TokenProperties;
-import cn.cnic.trackrecord.web.identity.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.ResponseEntity;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;

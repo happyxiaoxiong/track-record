@@ -2,7 +2,6 @@ package cn.cnic.trackrecord.web.config;
 
 import cn.cnic.trackrecord.web.Const;
 import cn.cnic.trackrecord.web.config.filter.AuthenticationFilter;
-import cn.cnic.trackrecord.web.config.filter.CorsFilter;
 import cn.cnic.trackrecord.web.config.filter.VerifyTokenFilter;
 import cn.cnic.trackrecord.web.identity.TokenUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +17,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration

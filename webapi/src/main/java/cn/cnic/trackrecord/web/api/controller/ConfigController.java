@@ -1,11 +1,11 @@
 package cn.cnic.trackrecord.web.api.controller;
 
-import cn.cnic.trackrecord.web.config.property.TokenProperties;
 import cn.cnic.trackrecord.common.enumeration.Gender;
 import cn.cnic.trackrecord.common.enumeration.Role;
+import cn.cnic.trackrecord.common.http.HttpRes;
 import cn.cnic.trackrecord.common.http.HttpResCode;
 import cn.cnic.trackrecord.web.Const;
-import cn.cnic.trackrecord.common.http.HttpRes;
+import cn.cnic.trackrecord.web.config.property.TokenProperties;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
