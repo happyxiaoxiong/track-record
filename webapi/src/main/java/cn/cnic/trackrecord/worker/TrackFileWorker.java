@@ -166,7 +166,7 @@ public class TrackFileWorker {
                 // get user id
                 User user = userService.getByName(track.getUserName());
                 if (Objects.isNull(user)) {
-                    log.error("name '{}' doesn't exist in user table, tack file is {}", track.getUserName(), trackFile.getFilename());
+                    log.error("name '{}' doesn't exist in user table, track file is {}", track.getUserName(), trackFile.getFilename());
                     throw new Exception("error: user name not exist");
                 }
                 track.setUserId(user.getId());
