@@ -16,6 +16,10 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 枚举类型和数据库int类型互转
+ * @param <E>
+ */
 @MappedTypes(value = { Gender.class, Role.class, TrackFileState.class})
 public class ValuedEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
     private final Map<Integer, E> map = new HashMap<>();

@@ -3,6 +3,9 @@ package cn.cnic.trackrecord.common.http;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 返回的编码，0表示成功，-1表示失败
+ */
 public enum HttpResCode {
     SUCCESS(0),
     FAIL(-1),

@@ -8,6 +8,9 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 
+/**
+ * json的ShortDate类型序列化
+ */
 public class ShortDateSerializer extends JsonSerializer<ShortDate> {
 
     @Override

@@ -10,6 +10,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
 
+/**
+ * json的LongDate类型反序列化
+ */
 public class LongDateDeserializer extends JsonDeserializer<LongDate> {
 
     @Override

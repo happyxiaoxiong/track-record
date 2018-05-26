@@ -6,6 +6,10 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
+/**
+ * stax方式解析xml接口
+ * @param <T>
+ */
 public abstract class StaxHandler<T> {
     private XMLEventReader xmlEventReader;
 

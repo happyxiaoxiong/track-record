@@ -1,5 +1,8 @@
 package cn.cnic.trackrecord.common.enumeration;
 
+/**
+ * 用户角色枚举
+ */
 public enum Role implements ValuedEnum {
     ADMIN("管理员", 0),
     USER("巡护人", 1);

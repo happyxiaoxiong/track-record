@@ -6,6 +6,9 @@ import org.springframework.format.Formatter;
 import java.text.ParseException;
 import java.util.Locale;
 
+/**
+ * LongDate转换器
+ */
 public class LongDateFormatter implements Formatter<LongDate> {
     @Override
     public LongDate parse(String text, Locale locale) throws ParseException {

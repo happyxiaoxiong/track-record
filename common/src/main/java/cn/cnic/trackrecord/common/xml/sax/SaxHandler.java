@@ -5,6 +5,10 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * sax来处理xml文件
+ * @param <T>
+ */
 @Slf4j
 public abstract class SaxHandler<T> extends DefaultHandler {
 

@@ -12,6 +12,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * IntDate和数据库的int类型互转
+ * @param <E>
+ */
 @MappedTypes(value = { LongDate.class, ShortDate.class })
 public class IntDateTypeHandler<E extends IntDate> extends BaseTypeHandler<E> {
     private final Class<E> type;

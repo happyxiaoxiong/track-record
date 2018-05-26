@@ -8,6 +8,9 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 
+/**
+ * json的LongDate类型序列化
+ */
 public class LongDateSerializer extends JsonSerializer<LongDate> {
 
     @Override

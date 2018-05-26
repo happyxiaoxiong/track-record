@@ -1,7 +1,10 @@
 package cn.cnic.trackrecord.common.enumeration;
 
+/**
+ * kmz文件处理状态
+ */
 public enum TrackFileState implements ValuedEnum {
-    // 定义中间步骤必须以 ... 结尾, 0表示完成，不要修改
+    // 定义中间步骤遵守以 ... 结尾, 0表示完成，正整数代表正在进行到哪一步，对应的负整数表明哪一步出的啥错误
     UPLOAD_SUCCESS("上传成功待验证...", 1),
     VERIFYING("验证中...", 2),
     UNZIPPING("解压中...", 3),

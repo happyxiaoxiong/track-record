@@ -10,11 +10,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * yyyy-MM-dd
+ */
 @ApiModel("日期格式: yyyy-MM-dd")
 @JsonDeserialize(using = ShowDateDeserializer.class)
 @JsonSerialize(using = ShortDateSerializer.class)
 public class ShortDate extends IntDate {
-    public final static ShortDate NullValue = new ShortDate(0);
+    public static final ShortDate NullValue = new ShortDate(0);
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public ShortDate() { }

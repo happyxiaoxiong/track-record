@@ -10,6 +10,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
 
+/**
+ * json的ShortDate类型反序列化
+ */
 public class ShowDateDeserializer extends JsonDeserializer<ShortDate> {
 
     @Override

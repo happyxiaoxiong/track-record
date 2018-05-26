@@ -6,6 +6,9 @@ import org.springframework.format.Formatter;
 import java.text.ParseException;
 import java.util.Locale;
 
+/**
+ * ShortDate转换器
+ */
 public class ShortDateFormatter implements Formatter<ShortDate> {
     @Override
     public ShortDate parse(String text, Locale locale) throws ParseException {

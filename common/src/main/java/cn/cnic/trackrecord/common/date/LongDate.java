@@ -10,11 +10,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * yyyy-MM-dd HH:mm:ss
+ */
 @ApiModel("日期格式: yyyy-MM-dd HH:mm:ss")
 @JsonDeserialize(using = LongDateDeserializer.class)
 @JsonSerialize(using = LongDateSerializer.class)
 public class LongDate extends IntDate {
-    public final static LongDate NullValue = new LongDate(0);
+    public static final LongDate NullValue = new LongDate(0);
 
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
