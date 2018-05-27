@@ -24,7 +24,7 @@
         SELECT * FROM <include refid="rt"/>
         WHERE user_id=#{userId} AND `time`>=#{startTime} AND `time`&lt;= #{endTime}
     </select>
-    <select id="getByGtTime" resultMap="baseMap">
+    <select id="getByGteTime" resultMap="baseMap">
         SELECT * FROM <include refid="rtDay"/> WHERE `time`>=#{startTime}
     </select>
 </mapper>

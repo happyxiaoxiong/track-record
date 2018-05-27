@@ -17,7 +17,7 @@ public class RtGpsPointServiceImpl implements RtGpsPointService {
 
     @Override
     public List<RtGpsPoint> getByGtTime(LongDate startTime) {
-        return rtGpsPointDao.getByGtTime(startTime);
+        return rtGpsPointDao.getByGteTime(startTime);
     }
 
     @Override

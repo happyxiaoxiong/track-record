@@ -7,13 +7,16 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
 /**
- * stax方式解析xml接口
+ * stax方式解析xml接口，需要理解stax解析xml的机制
  * @param <T>
  */
 public abstract class StaxHandler<T> {
     private XMLEventReader xmlEventReader;
 
     private boolean stop = false;
+    /**
+     *  xml根标签，用来记录解析是否结束
+     */
     private String firstElement = null;
 
     protected String nextData() throws XMLStreamException {
@@ -26,6 +29,10 @@ public abstract class StaxHandler<T> {
         return "";
     }
 
+    /**
+     * xml文档是否解析完
+     * @return
+     */
     protected boolean hasNext() {
         return !stop && xmlEventReader.hasNext();
     }
@@ -44,7 +51,15 @@ public abstract class StaxHandler<T> {
         this.xmlEventReader = xmlEventReader;
     }
 
-    abstract public void parse() throws XMLStreamException;
+    /**
+     * 具体解析需要实现的方法
+     * @throws XMLStreamException
+     */
+    public abstract void parse() throws XMLStreamException;
 
-    abstract public T getResult();
+    /**
+     * 获取解析后的结果
+     * @return
+     */
+    public abstract T getResult();
 }

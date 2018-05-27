@@ -5,11 +5,34 @@ import cn.cnic.trackrecord.data.entity.TrackPoint;
 import java.util.List;
 
 public class PlaceMarkBuilder {
-    private String name;//两者都有
-    private List<String> desc;//关键点的描述
-    private TrackPoint point;//关键点的坐标
-    private List<TrackPoint> route;//轨迹的坐标
-    private RouteStyle routeStyle;//轨迹的样式
+    /**
+     * 名称
+     */
+    private String name;
+
+    /**
+     * 关键点的描述
+     */
+    private List<String> desc;
+
+    /**
+     * 关键点的坐标
+     */
+    private TrackPoint point;
+
+    /**
+     * 轨迹的坐标
+     */
+    private List<TrackPoint> route;
+
+    /**
+     * 轨迹的样式
+     */
+    private RouteStyle routeStyle;
+
+    /**
+     * 标注类型
+     */
     private PlaceMarkType type;
 
     public void name(String name) {
@@ -66,6 +89,10 @@ public class PlaceMarkBuilder {
         return null;
     }
 
+    /**
+     * 构建关键点标注
+     * @return
+     */
     private PlaceMark buildKeyPointPlaceMark() {
         KeyPointPlaceMark placeMark = new KeyPointPlaceMark();
         placeMark.setName(this.name);
@@ -74,6 +101,10 @@ public class PlaceMarkBuilder {
         return placeMark;
     }
 
+    /**
+     * 构建路线标注
+     * @return
+     */
     private PlaceMark buildRoutePlaceMark() {
         RoutePlaceMark placeMark = new RoutePlaceMark();
         placeMark.setName(this.name);

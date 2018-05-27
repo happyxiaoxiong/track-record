@@ -11,6 +11,8 @@ public interface TrackService {
     int addAndGetId(Track track);
 
     boolean existByMd5AndFileSize(String md5, int fileSize);
+
+    @Deprecated
     List<Track> getByTrackSearchParams(TrackSearchParams params);
 
     Track get(int id);

@@ -27,6 +27,7 @@ public class TrackServiceImpl implements TrackService {
         return trackDao.existByMd5AndFileSize(md5, fileSize);
     }
 
+    @Deprecated
     @Override
     public List<Track> getByTrackSearchParams(TrackSearchParams params) {
         return trackDao.getByTrackSearchParams(params);

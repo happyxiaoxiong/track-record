@@ -8,18 +8,27 @@ import java.nio.charset.Charset;
 public abstract class Staxs {
     private static XMLInputFactory factory = XMLInputFactory.newInstance();
 
-    public static  <T> T parse(StaxHandler<T> saxHandler, String xmlPath) throws XMLStreamException, FileNotFoundException {
-        return parse(saxHandler, new File(xmlPath));
+    /**
+     * 解析xml文件
+     * @param staxHandler stax解析器
+     * @param xmlPath
+     * @param <T>
+     * @return
+     * @throws XMLStreamException
+     * @throws FileNotFoundException
+     */
+    public static  <T> T parse(StaxHandler<T> staxHandler, String xmlPath) throws XMLStreamException, FileNotFoundException {
+        return parse(staxHandler, new File(xmlPath));
     }
 
-    public static  <T> T parse(StaxHandler<T> saxHandler, File xmlFile) throws XMLStreamException, FileNotFoundException {
-        return parse(saxHandler, new FileInputStream(xmlFile));
+    public static  <T> T parse(StaxHandler<T> staxHandler, File xmlFile) throws XMLStreamException, FileNotFoundException {
+        return parse(staxHandler, new FileInputStream(xmlFile));
     }
 
-    public static  <T> T parse(StaxHandler<T> saxHandler, InputStream inputStream) throws XMLStreamException {
+    public static  <T> T parse(StaxHandler<T> staxHandler, InputStream inputStream) throws XMLStreamException {
         //指定编码解决'Invalid UTF-8 middle byte 0x7b'
-        saxHandler.setXmlEventReader(factory.createXMLEventReader(new InputStreamReader(inputStream, Charset.forName("UTF-8"))));
-        saxHandler.parse();
-        return saxHandler.getResult();
+        staxHandler.setXmlEventReader(factory.createXMLEventReader(new InputStreamReader(inputStream, Charset.forName("UTF-8"))));
+        staxHandler.parse();
+        return staxHandler.getResult();
     }
 }
