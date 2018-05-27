@@ -12,18 +12,38 @@ import org.locationtech.spatial4j.shape.ShapeFactory;
 public abstract class SpatialUtils {
     private static final SpatialContext CTX = SpatialContext.GEO;
     private static final SpatialPrefixTree GRID = new GeohashPrefixTree(CTX, 11);
+    /**
+     * 索引和查询模型的策略接口
+     */
     private static final SpatialStrategy STRATEGY = new RecursivePrefixTreeStrategy(GRID, "location");
 
-    public static Shape makePoint(double x, double y) {
-        return getShapeFactory().pointXY(x, y);
+    /**
+     * 构造点
+     * @param lng 经度
+     * @param lat 纬度
+     * @return
+     */
+    public static Shape makePoint(double lng, double lat) {
+        return getShapeFactory().pointXY(lng, lat);
     }
 
+    /**
+     * 构造索引
+     * @param shape
+     * @return
+     */
     public static Field[] createIndexFields(Shape shape) {
         return STRATEGY.createIndexableFields(shape);
     }
 
-    public static Field[] createIndexFields(double x, double y) {
-        return createIndexFields(makePoint(x, y));
+    /**
+     * 构造索引
+     * @param lng 经度
+     * @param lat 纬度
+     * @return
+     */
+    public static Field[] createIndexFields(double lng, double lat) {
+        return createIndexFields(makePoint(lng, lat));
     }
 
     public static ShapeFactory getShapeFactory() {

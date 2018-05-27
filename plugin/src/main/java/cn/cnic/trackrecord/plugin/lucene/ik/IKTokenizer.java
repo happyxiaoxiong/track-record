@@ -12,7 +12,7 @@ import java.io.Reader;
 
 public final class IKTokenizer extends Tokenizer {
     // IK分词器实现
-    private IKSegmenter _IKImplement;
+    private IKSegmenter ikSegmenter;
 
     // 词元文本属性
     private final CharTermAttribute termAtt;
@@ -31,14 +31,14 @@ public final class IKTokenizer extends Tokenizer {
         offsetAtt = addAttribute(OffsetAttribute.class);
         termAtt = addAttribute(CharTermAttribute.class);
         typeAtt = addAttribute(TypeAttribute.class);
-        _IKImplement = new IKSegmenter(input, useSmart);
+        ikSegmenter = new IKSegmenter(input, useSmart);
     }
 
     @Override
     public boolean incrementToken() throws IOException {
         // 清除所有的词元属性
         clearAttributes();
-        Lexeme nextLexeme = _IKImplement.next();
+        Lexeme nextLexeme = ikSegmenter.next();
         if (nextLexeme != null) {
             // 将Lexeme转成Attributes
             // 设置词元文本
@@ -61,11 +61,11 @@ public final class IKTokenizer extends Tokenizer {
 
     public void reset() throws IOException {
         super.reset();
-        _IKImplement.reset(input);
+        ikSegmenter.reset(input);
     }
 
     @Override
-    public final void end() {
+    public void end() {
         // set final offset
         int finalOffset = correctOffset(this.endPosition);
         offsetAtt.setOffset(finalOffset, finalOffset);

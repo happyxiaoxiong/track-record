@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 @PropertySource(value = {"classpath:plugin-lucene.properties"})
 @ConfigurationProperties("plugin.lucene.conf")
 public class LuceneProperties {
+    /**
+     * 轨迹数据索引文件路径，需要有权限
+     */
     private String indexPath = "";
 
 }

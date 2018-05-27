@@ -11,6 +11,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PageResult {
+    /**
+     * 总数
+     */
     private int total;
+    /**
+     * 结果列表
+     */
     private List<Document> docs;
 }

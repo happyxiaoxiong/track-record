@@ -16,6 +16,12 @@ public class FfmpegBean {
     @Autowired
     private FfmpegProperties properties;
 
+    /**
+     * 视频转码
+     * @param srcPath 源视频路径
+     * @param destPath 转码后视频路径
+     * @return
+     */
     public boolean encodeVideo(String srcPath, String destPath) {
         // ffmpeg -i input.avi -r 24 output.mp4
         // ffmpeg -i input.avi -r 24 output.ogg
@@ -37,6 +43,12 @@ public class FfmpegBean {
         return process(srcPath, destPath, command);
     }
 
+    /**
+     * 音频转码
+     * @param srcPath 源音频路径
+     * @param destPath 转码后音频路径
+     * @return
+     */
     public boolean encodeAudio(String srcPath, String destPath) {
         // ffmpeg -i audio.aac -acodec libmp3lame audio.mp3
         // ffmpeg -i input.wav -vn -ar 44100 -ac 2 -ab 192k -f mp3 output.mp3

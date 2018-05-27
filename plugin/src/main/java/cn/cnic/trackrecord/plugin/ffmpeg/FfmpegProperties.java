@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 @Setter
 @Getter
 public class FfmpegProperties {
+    /**
+     * ffmpeg的bin路径
+     */
     private String path;
 
 }

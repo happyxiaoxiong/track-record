@@ -6,6 +6,9 @@ import org.apache.lucene.util.IOUtils;
 import java.io.Reader;
 import java.io.StringReader;
 
+/**
+ * IK中文分词器
+ */
 public class IKAnalyzer extends Analyzer {
 
     @Override
