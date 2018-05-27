@@ -34,12 +34,12 @@ public class RtGpsPointController {
     @ApiOperation(value = "获取所有用户的当前在线位置")
     @RequestMapping(value = "all", method = RequestMethod.GET)
     public HttpRes<List<RtGpsPoint>> getAll() {
-        return HttpRes.success(rtGpsPointService.getByGtTime(LongDate.from(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH))));
+        return HttpRes.success(rtGpsPointService.getByGteTime(LongDate.from(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH))));
     }
 
     @ApiOperation(value = "跟新位置信息", notes = "id和userId和userName三个参数不用设置,time参数格式为yyyy-MM-dd HH:mm:ss")
     @RequestMapping(value = "update", method = RequestMethod.POST)
-    public HttpRes<Boolean> updatePosition( @RequestBody RtGpsPoint gpsPoint) {
+    public HttpRes<Boolean> updatePosition(@RequestBody RtGpsPoint gpsPoint) {
         User user = userDetailsService.getLoginUser();
         gpsPoint.setUserId(user.getId());
         gpsPoint.setUserName(user.getName());
