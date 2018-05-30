@@ -90,6 +90,14 @@ public class TrackController {
     @Autowired
     private TrackStatService trackStatService;
 
+    /**
+     * 用户上传文件，服务器端接收之后忘track_file表中插入一条上传记录，并返回
+     * @see cn.cnic.trackrecord.data.entity.TrackFile 。
+     * 上传轨迹由
+     * @see cn.cnic.trackrecord.worker.TrackFileWorker 任务进行处理。
+     * @param plupload 上传参数
+     * @return
+     */
     @ApiOperation(value = "轨迹文件上传")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "name", value = "文件名(不传默认使用文件名)", dataType = "string", paramType = "form"),
@@ -251,12 +259,6 @@ public class TrackController {
         }
     }
 
-//    @ApiOperation(value = "获取轨迹音频")
-//    @RequestMapping(value = "{id}/audio/{name:.+}", method = RequestMethod.GET)
-//    public byte[] getAudio(@ApiParam(name = "id", value = "轨迹id") @PathVariable int id,
-//                           @ApiParam(name = "name", value = "轨迹图片名称") @PathVariable String name) {
-//        return null;
-//    }
 
     @ApiOperation(value = "获取轨迹音/视频")
     @RequestMapping(value = "{id}/{media:audio|video}/{name:.+}", method = RequestMethod.GET)
