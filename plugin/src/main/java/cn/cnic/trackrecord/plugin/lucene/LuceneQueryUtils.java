@@ -16,29 +16,29 @@ public abstract class LuceneQueryUtils {
 
     /**
      * 构造多关键字查询
-     * @param keyword 关键词
+     * @param keywords 关键词列表
      * @param fields 需要查询的关键字
      * @param occurs 多个关键字之间的连接条件运算符
      * @return
      * @throws ParseException
      */
-    public static Query multiFieldQuery(String keyword, String[] fields, BooleanClause.Occur[] occurs) throws ParseException {
-        return MultiFieldQueryParser.parse(keyword, fields, occurs, analyzer);
+    public static Query multiFieldQuery(String[] keywords, String[] fields, BooleanClause.Occur[] occurs) throws ParseException {
+        return MultiFieldQueryParser.parse(keywords, fields, occurs, analyzer);
     }
 
     /**
      * 构造多关键字查询，关键字之间使用或连接
-     * @param keyword 关键词
+     * @param keywords 关键词列表
      * @param fields 需要查询的关键字
      * @return
      * @throws ParseException
      */
-    public static Query multiFieldQuery(String keyword, String[] fields) throws ParseException {
+    public static Query multiFieldQuery(String[] keywords, String[] fields) throws ParseException {
         BooleanClause.Occur[] occurs = new BooleanClause.Occur[fields.length];
         for (int i = 0; i < occurs.length; ++i) {
             occurs[i] = BooleanClause.Occur.SHOULD;
         }
-        return multiFieldQuery(keyword, fields, occurs);
+        return multiFieldQuery(keywords, fields, occurs);
     }
 
     /**

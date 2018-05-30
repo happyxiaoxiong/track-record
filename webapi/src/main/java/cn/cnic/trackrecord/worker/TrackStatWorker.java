@@ -18,6 +18,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 轨迹数据统计任务
+ */
 @Component
 @Slf4j
 public class TrackStatWorker {
@@ -47,6 +50,7 @@ public class TrackStatWorker {
         log.debug("stat day: {} to {}", yesterday, cur);
 
         List<TrackStat> trackStats = new ArrayList<>();
+        // 统计每个用户前一天的巡护总次数、巡护总时间、巡护总长度
         for (User user : users) {
             TrackStat trackStat = trackService.countUserByDay(user.getId(), LongDate.from(yesterday), LongDate.from(cur));
             log.debug("user: {}, stat: {}", user.getId(), trackStat.getUserId());
@@ -77,6 +81,7 @@ public class TrackStatWorker {
         log.debug("stat month: {} to {}", lastMonth, month);
 
         List<TrackStat> trackStats = new ArrayList<>();
+        // 统计每个用户前一个月的巡护总次数、巡护总时间、巡护总长度、巡护总天数
         for (User user : users) {
             TrackStat trackStat = trackStatService.countUserByMonth(user.getId(), ShortDate.from(lastMonth), ShortDate.from(month));
             log.debug("user: {}, stat: {}", user.getId(), trackStat.getUserId());

@@ -8,11 +8,16 @@ import cn.cnic.trackrecord.plugin.lucene.LuceneFormatter;
 import cn.cnic.trackrecord.plugin.lucene.SpatialUtils;
 import org.apache.lucene.document.*;
 
+/**
+ * 轨迹信息和lucene文档互相转换
+ */
 public class TrackLuceneFormatter implements LuceneFormatter<TrackLucene> {
 
     @Override
     public Document to(TrackLucene trackLucene) {
         Track track = trackLucene.getTrack();
+
+        //构建track的document
         Document doc = new Document();
         doc.add(new StoredField("id", track.getId()));
         doc.add(new TextField("name", track.getName(), Field.Store.YES));
@@ -36,6 +41,7 @@ public class TrackLuceneFormatter implements LuceneFormatter<TrackLucene> {
         doc.add(new StoredField("uploadUserName", track.getUploadUserName()));
         doc.add(new StoredField("uploadTime", track.getUploadTime().getValue()));
 
+        //添加track的点信息
         for (TrackPoint point : trackLucene.getPoints()) {
             for (Field field : SpatialUtils.createIndexFields(point.getLng(), point.getLat())) {
                 doc.add(field);

@@ -20,6 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return new TokenUser(user);
     }
 
+    // 获得登陆用户
     public User getLoginUser() {
         TokenUser tokenUser = (TokenUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
         return tokenUser.getUser();

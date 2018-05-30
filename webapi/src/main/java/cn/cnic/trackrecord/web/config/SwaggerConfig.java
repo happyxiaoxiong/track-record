@@ -36,6 +36,7 @@ public class SwaggerConfig {
       .apiInfo(apiInfo())
       .securitySchemes(newArrayList(apiKey()))
       .select().paths(PathSelectors.any())
+                // controller控制器所在包
                 .apis(RequestHandlerSelectors.basePackage("cn.cnic.trackrecord.web.api.controller"))
                 .build()
                 .pathMapping("/")

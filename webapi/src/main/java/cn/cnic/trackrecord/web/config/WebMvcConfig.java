@@ -22,6 +22,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addFormatters(FormatterRegistry registry) {
         super.addFormatters(registry);
+        // 添加对象转换器
         registry.addFormatter(new LongDateFormatter());
         registry.addFormatter(new ShortDateFormatter());
     }

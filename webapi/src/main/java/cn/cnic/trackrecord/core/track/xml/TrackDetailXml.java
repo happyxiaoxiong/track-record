@@ -9,6 +9,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+/**
+ * TrackDetail.xml文件解析。继承
+ * @see cn.cnic.trackrecord.common.xml.Stax.StaxHandler 在解析。
+ */
 public class TrackDetailXml extends StaxHandler<Track> {
     private Track track = new Track();
 
@@ -21,6 +25,7 @@ public class TrackDetailXml extends StaxHandler<Track> {
                 if (startElement.getName().getLocalPart().equals("name")) {
                     track.setName(nextData());
                 } else if (startElement.getName().getLocalPart().equals("author")) {
+
                     track.setUserName(nextData());// author
                 } else if (startElement.getName().getLocalPart().equals("authorid")) {
                     track.setUserId(Integer.valueOf(nextData()));// author

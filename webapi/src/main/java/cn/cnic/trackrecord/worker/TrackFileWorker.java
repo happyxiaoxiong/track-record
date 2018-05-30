@@ -36,6 +36,11 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.xml.stream.XMLStreamException;
+
+/**
+ * kmz轨迹文件解析任务
+ */
 @Slf4j
 @Component
 public class TrackFileWorker {
@@ -63,6 +68,9 @@ public class TrackFileWorker {
     @Autowired
     private TrackLuceneFormatter trackLuceneFormatter;
 
+    /**
+     * 每个1分钟查询数据库看是否有kmz文件未处理
+     */
     @Scheduled(fixedDelay = 1000 * 60)
     public void work() {
         List<TrackFile> trackFiles = trackFileService.getUnfinished();
@@ -71,6 +79,16 @@ public class TrackFileWorker {
         }
     }
 
+    /**
+     * 处理轨迹文件。
+     *
+     * 1.验证轨迹文件是否上传重复
+     * 2.解压轨迹文件
+     * 3.提取轨迹数据并保存
+     *
+     * 正常解析出错不重试，其他异常导致的解析终端会重试解析
+     * @param trackFile
+     */
     private void process(TrackFile trackFile) {
         checkTries(trackFile);
         if (TrackFileState.VERIFYING.equals(trackFile.getState())) {
@@ -154,20 +172,30 @@ public class TrackFileWorker {
     }
 
     /**
-     * 提取kml文件数据,保存在数据库中
+     * 提取kml文件数据,上传轨迹文件到hdfs中，保存到数据库中,建立轨迹数据索引
      * @param trackFile
      */
     private void extractAndSave(TrackFile trackFile) {
         try {
             String realTrackPath = Files.getRealTrackPath(trackFile.getPath());
-            Track track = Staxs.parse(new TrackDetailXml(), Files.getPathString(realTrackPath, properties.getTrackDetailFileName()));
 
+            //解析TrackDetail.xml文件
+            Track track;
+            try {
+                track = Staxs.parse(new TrackDetailXml(), Files.getPathString(realTrackPath, properties.getTrackDetailFileName()));
+            } catch (XMLStreamException e) {
+                e.printStackTrace();
+                log.error(e.getMessage());
+                throw new Exception(properties.getTrackDetailFileName() + "解析错误");
+            }
+
+            // 判断用户id是否存在，兼容老版本
             if (track.getUserId() <= 0) {
                 // get user id
                 User user = userService.getByName(track.getUserName());
                 if (Objects.isNull(user)) {
                     log.error("name '{}' doesn't exist in user table, track file is {}", track.getUserName(), trackFile.getFilename());
-                    throw new Exception("error: user name not exist");
+                    throw new Exception("用户名不存在");
                 }
                 track.setUserId(user.getId());
             }
@@ -177,15 +205,34 @@ public class TrackFileWorker {
             } else {
                 track.setUploadUserName(track.getUserName());
             }
+
             log.debug("{}", track);
-            RouteRecord routeRecord = Staxs.parse(new RouteRecordXml(), Files.getPathString(realTrackPath, properties.getRouteRecordFileName()));
+
+            //解析RouteRecord.kml文件
+            RouteRecord routeRecord;
+            try {
+                routeRecord = Staxs.parse(new RouteRecordXml(), Files.getPathString(realTrackPath, properties.getRouteRecordFileName()));
+            } catch (XMLStreamException e) {
+                e.printStackTrace();
+                log.error(e.getMessage());
+                throw new Exception(properties.getRouteRecordFileName() + "解析错误");
+            }
+
             //保存到hadoop中
-            track.setPath(hadoops.appendKmzFiles(String.valueOf(track.getUserId()), new File(trackFile.getPath()), false));
+            try {
+                track.setPath(hadoops.appendKmzFiles(String.valueOf(track.getUserId()), new File(trackFile.getPath()), false));
+            } catch (IOException e) {
+                e.printStackTrace();
+                log.error(e.getMessage());
+                throw new Exception("文件保存到hdfs发生错误");
+            }
+
             track.setFileSize(trackFile.getFileSize());
             track.setFilename(trackFile.getFilename());
             track.setMd5(trackFile.getMd5());
             track.setUploadTime(new LongDate());
 
+            // 保存track和trackPoints
             trackService.addAndGetId(track);
             List<TrackPoint> points = new LinkedList<>();
             for (PlaceMark placeMark : routeRecord.getPlaceMarks()) {
@@ -197,8 +244,15 @@ public class TrackFileWorker {
                 }
             }
             trackPointService.addAll(points);
-            //建立索引
-            createIndex(track, points);
+
+            //必须是先保存track和trackPoints，然后在建立轨迹索引
+            try {
+                createIndex(track, points);
+            } catch (IOException e) {
+                e.printStackTrace();
+                log.error(e.getMessage());
+                throw new Exception("轨迹索引创建失败");
+            }
 
             trackFile.setState(TrackFileState.FINISH);
             trackFile.setTries(0);
@@ -206,20 +260,17 @@ public class TrackFileWorker {
         } catch (Exception e) {
             log.error(e.getMessage());
             trackFile.setState(TrackFileState.EXTRACT_AND_SAVE_FAIL);
-            trackFile.setComment("错误:数据格式异常");
-        } finally {
+            trackFile.setComment(e.getMessage());
+        }
+        finally {
             trackFile.setUpdateTime(new LongDate());
             trackFileService.update(trackFile);
         }
     }
 
-    private void createIndex(Track track, List<TrackPoint> trackPoints) {
+    private void createIndex(Track track, List<TrackPoint> trackPoints) throws IOException {
         TrackLucene trackLucene = new TrackLucene(track, trackPoints);
-        try {
-            luceneBean.add(trackLuceneFormatter, trackLucene);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        luceneBean.add(trackLuceneFormatter, trackLucene);
     }
 
 }

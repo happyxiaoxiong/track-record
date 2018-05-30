@@ -42,6 +42,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.IntPoint;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -150,21 +151,19 @@ public class TrackController {
                 Query timeQuery = IntPoint.newExactQuery("userId", params.getUserId());
                 queryBuilder.add(timeQuery, BooleanClause.Occur.MUST);
             }
-            if (StringUtils.isNotBlank(params.getKeyword())) {
+            String keyWordStr = params.getKeyword().trim();
+            if (!keyWordStr.isEmpty()) {
                 //多关键字搜索
-//                String[] fields = {"name", "userName", "keySitesList", "annotation"};
-//                Query keywordQuery = LuceneQueryUtils.multiFieldQuery(params.getKeyword(), fields);
-//                queryBuilder.add(keywordQuery, BooleanClause.Occur.SHOULD);
-//                queryBuilder.add(new FuzzyQuery(new Term("name", params.getKeyword())), BooleanClause.Occur.SHOULD);
-//                queryBuilder.add(new FuzzyQuery(new Term("userName", params.getKeyword())), BooleanClause.Occur.SHOULD);
-//                queryBuilder.add(new FuzzyQuery(new Term("keySitesList", params.getKeyword())), BooleanClause.Occur.SHOULD);
-//                queryBuilder.add(new FuzzyQuery(new Term("annotation", params.getKeyword())), BooleanClause.Occur.SHOULD);
-                BooleanQuery.Builder keywordQueryBuilder = new BooleanQuery.Builder();
-                keywordQueryBuilder.add(new WildcardQuery(new Term("name", "*" + params.getKeyword() + "*")), BooleanClause.Occur.SHOULD);
-                keywordQueryBuilder.add(new WildcardQuery(new Term("userName", "*" + params.getKeyword() + "*")), BooleanClause.Occur.SHOULD);
-                keywordQueryBuilder.add(new WildcardQuery(new Term("keySitesList", "*" + params.getKeyword() + "*")), BooleanClause.Occur.SHOULD);
-                keywordQueryBuilder.add(new WildcardQuery(new Term("annotation", "*" + params.getKeyword() + "*")), BooleanClause.Occur.SHOULD);
-                queryBuilder.add(keywordQueryBuilder.build(), BooleanClause.Occur.MUST);
+                String[] fields = {"name", "userName", "keySitesList", "annotation"};
+                String[] keywords = keyWordStr.split(" "); // 以空格分隔出多关键字
+                List<String> stringList = new ArrayList<>();
+                for (String keyword : keywords) {
+                    if (!keyword.isEmpty()) {
+                        stringList.add(keyword);
+                    }
+                }
+                Query keywordQuery = LuceneQueryUtils.multiFieldQuery(stringList.toArray(new String[0]), fields);
+                queryBuilder.add(keywordQuery, BooleanClause.Occur.SHOULD);
             }
             if ((Objects.nonNull(params.getStartTime()) && !params.getStartTime().equals(LongDate.NullValue))
                     || (Objects.nonNull(params.getEndTime()) && !params.getEndTime().equals(LongDate.NullValue))) {
@@ -181,7 +180,7 @@ public class TrackController {
                 queryBuilder.add(distanceQuery, BooleanClause.Occur.MUST);
             }
             BooleanQuery query = queryBuilder.build();
-            if (query.clauses().isEmpty()) {
+            if (query.clauses().isEmpty()) { // 搜索条件为空，返回所有文档
                 query = queryBuilder.add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD).build();
             }
             PageResult pageResult = luceneBean.search(query, params.getPageNum(), params.getPageSize());
@@ -192,7 +191,7 @@ public class TrackController {
                 page.add(trackLuceneFormatter.from(doc).getTrack());
             }
             return HttpRes.success(new PageInfo<>(page));
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
             return HttpRes.fail();
         }
@@ -207,9 +206,11 @@ public class TrackController {
             res.setCode(HttpResCode.SUCCESS.getCode());
 
             Track track = trackService.get(id);
+            // 获得文件元信息
             FileMeta fileMeta = hadoops.parsePath(track.getPath(), properties.getRouteRecordFileName());
-            RouteRecordXml routeRecordXml = new RouteRecordXml();
             hadoops.readToCallBack(String.valueOf(track.getUserId()), fileMeta, in -> {
+                // 对hdfs文件流解析
+                RouteRecordXml routeRecordXml = new RouteRecordXml();
                 try {
                     res.setData(Staxs.parse(routeRecordXml, in));
                 } catch (XMLStreamException e) {
@@ -240,9 +241,10 @@ public class TrackController {
             }
 
             res.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-            if (Objects.nonNull(fileInfo.getThumb())) {
+            if (Objects.nonNull(fileInfo.getThumb())) { // 有压缩图就获取压缩图的元信息，返回压缩图
                fileInfo = fileInfo.getThumb();
             }
+            // 将hdfs文件流读取到 HttpServletResponse 的响应流中
             hadoops.readToOutputStream(String.valueOf(track.getUserId()), fileInfo, res.getOutputStream());
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -273,12 +275,14 @@ public class TrackController {
             if (Objects.nonNull(fileInfo.getThumb())) {
                 fileInfo = fileInfo.getThumb();
             }
+
+            // 根据请求头部获读取的音视频文件的范围，播放音视频是有range头部，下载没有range头部，根据range头部来区分是播放还是下载
             int offset = 0;
             String range = req.getHeader("Range");
-            if (Objects.isNull(range)) {
+            if (Objects.isNull(range)) { // 下载
                 res.setHeader("Content-Disposition", "attachment; filename=" + name);
                 res.setContentLength(fileInfo.getSize());
-            } else {
+            } else { // 音视频播放
                 offset = Integer.valueOf(range.substring(range.indexOf("=") + 1, range.indexOf("-")));
                 int end = range.endsWith("-") ? fileInfo.getSize() - 1 : Integer.valueOf(range.substring(range.indexOf("-") + 1));
                 res.setHeader("Content-Range", "bytes " + offset + "-" + end + "/" + String.valueOf(fileInfo.getSize()));
@@ -299,6 +303,7 @@ public class TrackController {
             Track track = trackService.get(id);
             List<FileMeta> fileMetas = hadoops.parsePath(track.getPath());
             List<FileSource> sources = new ArrayList<>(fileMetas.size());
+            // 获取kmz轨迹中的所有FileSource信息，在一起进行压缩
             for (FileMeta meta : fileMetas) {
                 String pathPrefix = "";
                 if (Medias.isImage(meta.getName())) {
@@ -311,9 +316,11 @@ public class TrackController {
                 sources.add(new FileSource(Files.getPathString(pathPrefix, meta.getName()),
                         os -> hadoops.readToOutputStream(String.valueOf(track.getUserId()), meta, os, false)));
             }
+
             res.setHeader("Content-Disposition", "attachment; filename=" + track.getFilename());
             res.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-//            res.setContentLength(track.getFileSize());
+//          注意压缩的kmz文件大小和track.getFileSize()不是一个大小，所以不能通过res.setContentLength(track.getFileSize())来设置文件大小，否则前端会下载失败
+
             Ants.zip(sources, res.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();

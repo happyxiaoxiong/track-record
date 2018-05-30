@@ -22,6 +22,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /* This filter maps to /session and tries to validate the username and password */
+
+/**
+ * 登陆授权过滤器
+ */
 public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     private TokenUtils tokenUtil;
@@ -36,8 +40,10 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
+        // 获取登陆信息，用户账号密码
         Login loginVo = objectMapper.readValue(request.getInputStream(), Login.class);
-        //final UsernamePasswordAuthenticationToken loginToken = new UsernamePasswordAuthenticationToken("demo", "demo");
+
+        //验证用户信息
         final UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginVo.getAccount(), loginVo.getPassword());
         try{
             return getAuthenticationManager().authenticate(authToken); // This will take to successfulAuthentication or faliureAuthentication function
@@ -47,6 +53,15 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
         }
     }
 
+    /**
+     * 验证成功返回jwt token信息
+     * @param request
+     * @param response
+     * @param chain
+     * @param authToken
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     protected void successfulAuthentication (HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authToken) throws IOException, ServletException {
         User user = ((TokenUser)authToken.getPrincipal()).getUser();

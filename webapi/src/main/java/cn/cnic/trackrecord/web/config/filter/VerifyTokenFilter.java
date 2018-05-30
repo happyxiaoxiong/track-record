@@ -16,7 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-
+/**
+ * 验证过滤器，验证jwt token是否合法
+ */
 public class VerifyTokenFilter extends GenericFilterBean {
 
     private final TokenUtils tokenUtil;

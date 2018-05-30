@@ -21,6 +21,16 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * RouteRecord.kml文件解析。继承
+ * @see cn.cnic.trackrecord.common.xml.Stax.StaxHandler 在解析。
+ * 一个RouteRecord.kml文件存在两种
+ * @see cn.cnic.trackrecord.data.kml.PlaceMark 标注，分别是
+ * 关键点坐标信息标注
+ * @see cn.cnic.trackrecord.data.kml.KeyPointPlaceMark 和
+ * 轨迹坐标点信息标注
+ * @see cn.cnic.trackrecord.data.kml.RoutePlaceMark
+ */
 @Slf4j
 public class RouteRecordXml extends StaxHandler<RouteRecord> {
     private RouteRecordBuilder routeRecordBuilder = new RouteRecordBuilder();
@@ -66,9 +76,18 @@ public class RouteRecordXml extends StaxHandler<RouteRecord> {
     }
 
     static private class RouteRecordBuilder {
+        /**
+         * 匹配图片、音视频标签
+         */
         private static Pattern descPatten = Pattern.compile("(img|video|audio)\\s+src=\"([^\"]+)\"");
+        /**
+         * 用来保存RouteRecord.xml文件的所有Style，key为Style的id
+         *
+         * Style是轨迹路径的样式，一个RouteRecord.xml下可能会存在多条路线，每条Style不一样。
+         */
         private Map<String, RouteStyle> routeStyleMap = new HashMap<>();
         private RouteStyle routeStyle;
+
         private List<PlaceMarkBuilder> placeMarkBuilders = new LinkedList<>();
         private PlaceMarkBuilder placeMarkBuilder;
 
@@ -77,6 +96,7 @@ public class RouteRecordXml extends StaxHandler<RouteRecord> {
             for (PlaceMarkBuilder placeMarkBuilder : placeMarkBuilders) {
                 RouteStyle routeStyle = placeMarkBuilder.routeStyle();
                 if (Objects.nonNull(routeStyle) && Objects.nonNull(routeStyle.getId())) {
+                    // routeStyle的id以#开头，需要替换掉再转成数字
                     placeMarkBuilder.routeStyle(routeStyleMap.get(routeStyle.getId().replaceFirst("^#+", "")));
                 }
                 routeRecord.getPlaceMarks().add(placeMarkBuilder.build());
@@ -121,6 +141,7 @@ public class RouteRecordXml extends StaxHandler<RouteRecord> {
 
         TrackPoint trackPoint(String pointText) {
             TrackPoint point = new TrackPoint();
+            //坐标点信息以,分隔
             StringTokenizer tokenizer = new StringTokenizer(pointText, ",", false);
             if (tokenizer.hasMoreTokens())
             {
@@ -133,6 +154,7 @@ public class RouteRecordXml extends StaxHandler<RouteRecord> {
 
         List<TrackPoint> trackPoints(String pointsText) {
             List<TrackPoint> points = new LinkedList<>();
+            //坐标点之间以空格分隔
             StringTokenizer tokenizer = new StringTokenizer(pointsText, " ", false);
             while (tokenizer.hasMoreTokens()) {
                 points.add(trackPoint(tokenizer.nextToken()));
@@ -162,9 +184,7 @@ public class RouteRecordXml extends StaxHandler<RouteRecord> {
             List<String> desc = new LinkedList<>();
             Matcher matcher = descPatten.matcher(descText);
             while (matcher.find()) {
-                //                    if (new File(result).exists()) {//判断下该文件是否存在
-                //                        desc.add(result);//虚拟目录+父目录+当前的图片目录
-                //                    }
+                // 一个src下的多个图片、音视频地址之间以,分隔。matcher.group(2)是取得src的内容
                 desc.addAll(Arrays.asList(matcher.group(2).split(",")));
             }
             placeMarkBuilder.desc(desc);

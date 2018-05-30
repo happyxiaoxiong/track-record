@@ -28,10 +28,12 @@ public class TokenUtils {
     private TokenProperties tokenProperties;
 
     public Authentication verifyToken(HttpServletRequest request) {
+        // 获取token
         String token = request.getHeader(tokenProperties.getHeader());
         if (!StringUtils.hasLength(token)) {
             token = request.getParameter(tokenProperties.getQueryParam());
         }
+        // 验证token是否合法
         if (StringUtils.hasLength(token) && token.startsWith(tokenProperties.getTokenHead()) && token.length() > tokenProperties.getTokenHead().length()){
             final TokenUser user;
             try {
@@ -44,7 +46,7 @@ public class TokenUtils {
         return null;
     }
 
-    //Get User Info from the Token
+    // 从token中解析user信息
     private TokenUser parseUserFromToken(String token) throws IOException {
         Claims claims = Jwts.parser()
                 .setSigningKey(tokenProperties.getSecret())
@@ -54,6 +56,7 @@ public class TokenUtils {
         return new TokenUser(user);
     }
 
+    // 根据用户信息创建token
     public String createTokenForUser(User user) {
         try {
             return Jwts.builder()
