@@ -172,7 +172,10 @@ public class TrackController {
             }
             if ((Objects.nonNull(params.getStartTime()) && !params.getStartTime().equals(LongDate.NullValue))
                     || (Objects.nonNull(params.getEndTime()) && !params.getEndTime().equals(LongDate.NullValue))) {
-                if (params.getEndTime().equals(LongDate.NullValue)) {
+                if (Objects.isNull(params.getStartTime())) {
+                    params.setStartTime(LongDate.NullValue);
+                }
+                if (Objects.isNull(params.getEndTime()) || params.getEndTime().equals(LongDate.NullValue)) {
                     params.setEndTime(new LongDate());
                 }
                 //数字范围搜索
