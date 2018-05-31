@@ -159,19 +159,16 @@ public class TrackController {
                 Query timeQuery = IntPoint.newExactQuery("userId", params.getUserId());
                 queryBuilder.add(timeQuery, BooleanClause.Occur.MUST);
             }
-            String keyWordStr = params.getKeyword().trim();
-            if (!keyWordStr.isEmpty()) {
+            if (StringUtils.isNotBlank(params.getKeyword())) {
                 //多关键字搜索
                 String[] fields = {"name", "userName", "keySitesList", "annotation"};
-                String[] keywords = keyWordStr.split(" "); // 以空格分隔出多关键字
-                List<String> stringList = new ArrayList<>();
+                String[] keywords = params.getKeyword().split(" "); // 以空格分隔出多关键字
                 for (String keyword : keywords) {
                     if (!keyword.isEmpty()) {
-                        stringList.add(keyword);
+                        Query keywordQuery = LuceneQueryUtils.multiFieldQuery(keyword, fields);
+                        queryBuilder.add(keywordQuery, BooleanClause.Occur.SHOULD);
                     }
                 }
-                Query keywordQuery = LuceneQueryUtils.multiFieldQuery(stringList.toArray(new String[0]), fields);
-                queryBuilder.add(keywordQuery, BooleanClause.Occur.SHOULD);
             }
             if ((Objects.nonNull(params.getStartTime()) && !params.getStartTime().equals(LongDate.NullValue))
                     || (Objects.nonNull(params.getEndTime()) && !params.getEndTime().equals(LongDate.NullValue))) {

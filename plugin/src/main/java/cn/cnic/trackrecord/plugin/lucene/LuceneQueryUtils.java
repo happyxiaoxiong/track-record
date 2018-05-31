@@ -22,8 +22,8 @@ public abstract class LuceneQueryUtils {
      * @return
      * @throws ParseException
      */
-    public static Query multiFieldQuery(String[] keywords, String[] fields, BooleanClause.Occur[] occurs) throws ParseException {
-        return MultiFieldQueryParser.parse(keywords, fields, occurs, analyzer);
+    public static Query multiFieldQuery(String keyword, String[] fields, BooleanClause.Occur[] occurs) throws ParseException {
+        return MultiFieldQueryParser.parse(keyword, fields, occurs, analyzer);
     }
 
     /**
@@ -33,12 +33,12 @@ public abstract class LuceneQueryUtils {
      * @return
      * @throws ParseException
      */
-    public static Query multiFieldQuery(String[] keywords, String[] fields) throws ParseException {
+    public static Query multiFieldQuery(String keyword, String[] fields) throws ParseException {
         BooleanClause.Occur[] occurs = new BooleanClause.Occur[fields.length];
         for (int i = 0; i < occurs.length; ++i) {
             occurs[i] = BooleanClause.Occur.SHOULD;
         }
-        return multiFieldQuery(keywords, fields, occurs);
+        return multiFieldQuery(keyword, fields, occurs);
     }
 
     /**
