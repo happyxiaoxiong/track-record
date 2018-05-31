@@ -99,7 +99,7 @@ public class Hadoops {
      * 根据用户id和文件元信息读取hdfs文件流到out输出流中
      * @param id 用户id
      * @param fileInfo 文件元信息
-     * @param offset 文件的偏移位置
+     * @param offset 文件自身的偏移位置，不是hdfs的偏移位置
      * @param out 用来接受hdfs文件流的输出流
      * @throws IOException
      */
@@ -112,7 +112,7 @@ public class Hadoops {
      * 根据用户id和文件元信息读取hdfs文件流到out输出流中
      * @param id 用户id
      * @param fileInfo 文件元信息
-     * @param offset 文件的偏移位置
+     * @param offset 文件自身的偏移位置，不是hdfs的偏移位置
      * @param out 用来接受hdfs文件流的输出流
      * @param close 读取完之后是否关闭流
      * @throws IOException
@@ -126,7 +126,7 @@ public class Hadoops {
      * 根据用户id和文件元信息读取hdfs文件流到out输出流中
      * @param id 用户id
      * @param fileInfo 文件元信息
-     * @param offset 文件的偏移位置
+     * @param offset 文件自身的偏移位置，不是hdfs的偏移位置
      * @param len 读取长度
      * @param out 用来接受hdfs文件流的输出流
      * @throws IOException
@@ -139,7 +139,7 @@ public class Hadoops {
      * 根据用户id和文件元信息读取hdfs文件流到out输出流中
      * @param id 用户id
      * @param fileInfo 文件元信息
-     * @param offset 文件的偏移位置
+     * @param offset 文件自身的偏移位置，不是hdfs的偏移位置
      * @param len 读取长度
      * @param out 用来接受hdfs文件流的输出流
      * @param close 读取完之后是否关闭流

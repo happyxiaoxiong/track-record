@@ -178,7 +178,7 @@ public class TrackController {
                 if (Objects.isNull(params.getEndTime()) || params.getEndTime().equals(LongDate.NullValue)) {
                     params.setEndTime(new LongDate());
                 }
-                //数字范围搜索
+                //时间段搜索
                 Query timeQuery = IntPoint.newRangeQuery("startTime", params.getStartTime().getValue(), params.getEndTime().getValue());
                 queryBuilder.add(timeQuery, BooleanClause.Occur.MUST);
             }

@@ -19,7 +19,7 @@ public class FfmpegBean {
     /**
      * 视频转码
      * @param srcPath 源视频路径
-     * @param destPath 转码后视频路径
+     * @param destPath 转码后视频路径 (视频路径需要加上.mp4后缀)
      * @return
      */
     public boolean encodeVideo(String srcPath, String destPath) {
